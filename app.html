@@ -96,7 +96,8 @@
         }
         .style-card:hover { border-color: var(--text-muted); }
         .style-card.selected { border-color: var(--accent); }
-        .style-preview { width: 100%; aspect-ratio: 16/9; }
+        .style-preview { width: 100%; aspect-ratio: 16/9; position: relative; pointer-events: none; }
+        .style-preview .leaflet-container { cursor: pointer !important; }
         .style-label { padding: 0.5rem; text-align: center; font-size: 0.875rem; font-weight: 600; }
 
         /* ---- Map style hover preview ---- */
