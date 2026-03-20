@@ -174,7 +174,14 @@
         const view = state.views[index];
         document.getElementById('viewBadge').textContent = view.name;
         state.map.flyTo(view.center, view.zoom, { duration: 2, easeLinearity: 0.25 });
-        if (view.rare) showRareCard(view.rare); else hideRareCard();
+        if (view.rare) {
+            document.getElementById('viewTitle').textContent = 'Rare Bird Sighting';
+            document.getElementById('viewBadge').textContent = view.rare.common_name;
+            showRareCard(view.rare);
+        } else {
+            document.getElementById('viewTitle').textContent = (state.content?.species_info?.group_name || 'Bird') + ' Migration';
+            hideRareCard();
+        }
     }
 
     function scheduleNextView(seconds) {
