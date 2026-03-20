@@ -82,11 +82,13 @@
         if (state.tileLayer) state.map.removeLayer(state.tileLayer);
         state.tileLayer = L.tileLayer(tileUrl, { maxZoom: 18, subdomains: 'abcd' }).addTo(state.map);
         state.tileLayer.on('tileerror', function(e) {
-            var delay = 3000 + Math.random() * 7000;
+            if (e.tile.getAttribute('data-retried')) return;
+            e.tile.setAttribute('data-retried', '1');
+            var delay = 3000 + Math.random() * 5000;
             setTimeout(function() {
-                var src = e.tile.getAttribute('data-src') || e.tile.src;
+                var src = e.tile.getAttribute('data-src') || e.tile.src.split('?')[0];
                 e.tile.setAttribute('data-src', src);
-                e.tile.src = src + (src.includes('?') ? '&' : '?') + '_r=' + Date.now();
+                e.tile.src = src + '?_r=' + Date.now();
             }, delay);
         });
 
