@@ -67,6 +67,13 @@
 
     function applyContent() {
         const { preferences, sightings, species_info, rare_sightings } = state.content;
+
+        // If no sightings, show a message instead of blank map
+        if ((!sightings || sightings.length === 0) && (!rare_sightings || rare_sightings.length === 0)) {
+            showError('No sightings available yet for ' + (species_info?.group_name || 'this species group') + '. Data updates automatically \u2014 check back soon.');
+            return;
+        }
+
         document.getElementById('loadingScreen').classList.add('hidden');
 
         // Tile layer
