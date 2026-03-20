@@ -502,12 +502,14 @@ function highlightRadius(km) {
 // ---- Viewer link ----
 function renderLink() {
     if (!S.token) return;
-    const url = location.origin + '/viewer.html?t=' + S.token.token;
-    document.getElementById('viewerUrl').textContent = url;
-    document.getElementById('viewerFullBtn').href = url;
+    const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
+    const fullUrl = location.origin + '/viewer.html?t=' + S.token.token;
+    document.getElementById('viewerUrl').textContent = shortUrl;
+    document.getElementById('viewerFullBtn').href = fullUrl;
 }
 function copyLink() {
-    navigator.clipboard.writeText(location.origin + '/viewer.html?t=' + S.token.token).then(() => {
+    const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
+    navigator.clipboard.writeText(shortUrl).then(() => {
         const b = document.querySelector('[onclick="copyLink()"]'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Link', 2000);
     });
 }
