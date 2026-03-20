@@ -107,7 +107,7 @@
             { name: 'Local', center: [lat, lng], zoom: 10 }
         ];
         if (preferences.rare_birds_enabled && rare_sightings?.length) {
-            rare_sightings.slice(0, 8).forEach(rs => {
+            rare_sightings.slice(0, 4).forEach(rs => {
                 state.views.push({ name: 'Rare: ' + rs.common_name, center: [rs.lat, rs.lng], zoom: 12, rare: rs });
             });
         }
