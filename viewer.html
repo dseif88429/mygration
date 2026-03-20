@@ -7,42 +7,88 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Inter',-apple-system,sans-serif}
+        html,body{width:100%;height:100%;overflow:hidden;background:#0b1120;font-family:'Inter',-apple-system,sans-serif;color:#f1f5f9}
         #map{width:100%;height:100%}
         .overlay{position:absolute;z-index:1000;pointer-events:none;color:#f1f5f9}
-        .title-bar{top:0;left:0;right:0;padding:1rem 1.5rem;background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);display:flex;justify-content:space-between;align-items:flex-start}
-        .title-bar h1{font-size:1.25rem;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,0.5)}
-        .title-bar .view-badge{background:rgba(59,130,246,0.25);color:#93c5fd;padding:0.25rem 0.75rem;border-radius:999px;font-size:0.75rem;font-weight:600;backdrop-filter:blur(4px)}
-        .legend{bottom:2.5rem;right:1rem;background:rgba(11,17,32,0.85);backdrop-filter:blur(8px);border:1px solid rgba(45,58,77,0.6);border-radius:8px;padding:0.75rem 1rem;min-width:180px}
-        .legend h4{font-size:0.625rem;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:0.5rem}
-        .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;padding:0.15rem 0}
+
+        /* Title bar */
+        .title-bar{top:0;left:0;right:0;padding:1.25rem 1.5rem;background:linear-gradient(180deg,rgba(0,0,0,0.6) 0%,transparent 100%);display:flex;justify-content:space-between;align-items:center}
+        .title-bar h1{font-size:1.375rem;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.5)}
+        .back-btn{pointer-events:auto;background:rgba(15,23,42,0.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:0.5rem 1rem;color:#f1f5f9;font-size:0.875rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem}
+        .back-btn:hover{background:rgba(255,255,255,0.12)}
+
+        /* View badge - centered top */
+        .view-badge-wrap{top:1.25rem;left:50%;transform:translateX(-50%);text-align:center}
+        .view-badge{background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);border:1px solid rgba(59,130,246,0.3);border-radius:999px;padding:0.625rem 1.75rem;font-size:1.125rem;font-weight:700;color:#f1f5f9;display:inline-block;letter-spacing:-0.01em}
+
+        /* Legend */
+        .legend{bottom:3rem;right:1.25rem;background:rgba(11,17,32,0.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:0.75rem 1rem;min-width:180px}
+        .legend h4{font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:0.5rem}
+        .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8125rem;padding:0.2rem 0}
         .legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-        .legend-count{margin-left:auto;color:#64748b;font-size:0.6875rem}
-        .attribution{bottom:0;left:0;right:0;padding:0.375rem 1rem;background:linear-gradient(0deg,rgba(0,0,0,0.6) 0%,transparent 100%);font-size:0.5625rem;color:#64748b;display:flex;justify-content:space-between;align-items:center}
+        .legend-count{margin-left:auto;color:#64748b;font-size:0.75rem}
+
+        /* Attribution - lower left */
+        .attribution{bottom:0;left:0;right:0;padding:0.625rem 1.25rem;background:linear-gradient(0deg,rgba(0,0,0,0.5) 0%,transparent 100%);font-size:0.75rem;color:#94a3b8;display:flex;justify-content:space-between;align-items:center}
+        .attribution a{color:#94a3b8;text-decoration:none}
+        .attribution a:hover{color:#f1f5f9}
+
+        /* Progress bar */
         .progress-bar{bottom:0;left:0;height:3px;background:#3b82f6;z-index:1001;transition:width linear}
+
+        /* Loading */
         .loading-screen{position:fixed;inset:0;z-index:9999;background:#0b1120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
         .loading-screen.hidden{display:none}
         .loading-spinner{width:40px;height:40px;border:3px solid #2d3a4d;border-top-color:#3b82f6;border-radius:50%;animation:spin 0.7s linear infinite}
         @keyframes spin{to{transform:rotate(360deg)}}
-        .loading-text{color:#94a3b8;font-size:0.875rem}
-        .rare-alert{top:4.5rem;right:1rem;background:rgba(239,68,68,0.15);backdrop-filter:blur(8px);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:0.75rem 1rem;max-width:280px;transform:translateX(120%);transition:transform 0.4s ease}
+        .loading-text{color:#94a3b8;font-size:1rem}
+
+        /* Rare alert */
+        .rare-alert{top:5rem;right:1.25rem;background:rgba(239,68,68,0.15);backdrop-filter:blur(8px);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:0.75rem 1rem;max-width:300px;transform:translateX(120%);transition:transform 0.4s ease}
         .rare-alert.show{transform:translateX(0);pointer-events:auto}
-        .rare-alert-badge{font-size:0.625rem;font-weight:700;text-transform:uppercase;color:#ef4444;letter-spacing:0.05em}
-        .rare-alert-name{font-size:0.875rem;font-weight:600;margin-top:0.25rem}
-        .rare-alert-location{font-size:0.75rem;color:#94a3b8}
+        .rare-alert-badge{font-size:0.6875rem;font-weight:700;text-transform:uppercase;color:#ef4444}
+        .rare-alert-name{font-size:1rem;font-weight:600;margin-top:0.25rem}
+        .rare-alert-location{font-size:0.8125rem;color:#94a3b8}
+
         .leaflet-control-attribution{display:none!important}
-        @media(max-width:640px){.title-bar{padding:0.625rem 1rem}.title-bar h1{font-size:1rem}.legend{bottom:2rem;right:0.5rem;padding:0.5rem 0.75rem;min-width:140px}.legend-item{font-size:0.6875rem}.rare-alert{top:3.5rem;right:0.5rem;max-width:220px;padding:0.5rem 0.75rem}}
+
+        @media(max-width:640px){
+            .title-bar{padding:0.875rem 1rem}
+            .title-bar h1{font-size:1.125rem}
+            .view-badge{font-size:0.9375rem;padding:0.5rem 1.25rem}
+            .legend{bottom:2.5rem;right:0.75rem;padding:0.5rem 0.75rem;min-width:140px}
+            .legend-item{font-size:0.75rem}
+            .rare-alert{top:4rem;right:0.75rem;max-width:220px}
+        }
     </style>
 </head>
 <body>
 <div class="loading-screen" id="loadingScreen"><div class="loading-spinner"></div><div class="loading-text">Loading migration data...</div></div>
 <div id="map"></div>
-<div class="overlay title-bar" id="titleBar"><h1 id="viewTitle">Bird Migration</h1><div class="view-badge" id="viewBadge">North America</div></div>
+
+<!-- Title bar with back button -->
+<div class="overlay title-bar">
+    <a href="/app.html" class="back-btn">&larr; Settings</a>
+    <h1 id="viewTitle">Bird Migration</h1>
+    <div style="width:100px"></div>
+</div>
+
+<!-- Centered view badge -->
+<div class="overlay view-badge-wrap"><span class="view-badge" id="viewBadge">North America</span></div>
+
+<!-- Legend -->
 <div class="overlay legend" id="legend"><h4>Species</h4><div id="legendItems"></div></div>
-<div class="overlay attribution"><span>Community field observation data</span><span>Mygration</span></div>
+
+<!-- Attribution with eBird credit -->
+<div class="overlay attribution">
+    <span>Data: <a href="https://ebird.org" target="_blank" rel="noopener">eBird.org</a> / Cornell Lab of Ornithology</span>
+    <span>Mygration</span>
+</div>
+
 <div class="overlay progress-bar" id="progressBar" style="width:0;"></div>
 <div class="overlay rare-alert" id="rareAlert"><div class="rare-alert-badge">Rare Sighting</div><div class="rare-alert-name" id="rareAlertName"></div><div class="rare-alert-location" id="rareAlertLocation"></div></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="/js/viewer.js"></script>
+<script src="/js/viewer.js?v=3"></script>
 </body>
 </html>

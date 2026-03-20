@@ -28,6 +28,7 @@
 
         state.map = L.map('map', { center: [39, -98.5], zoom: 4, zoomControl: false, attributionControl: false, fadeAnimation: true, zoomAnimation: true });
         state.markerLayer = L.layerGroup().addTo(state.map);
+        state.map.on('moveend zoomend', function() { updateVisibleCounts(); });
         fetchContent();
         state.pollTimer = setInterval(fetchContent, POLL_INTERVAL);
     }
@@ -105,14 +106,43 @@
         scheduleNextView(preferences.rotation_interval_sec || 15);
     }
 
+    // Scale dot size based on zoom level
+    function dotRadius() {
+        const z = state.map ? state.map.getZoom() : 4;
+        if (z <= 3) return 2;
+        if (z <= 5) return 3;
+        if (z <= 7) return 4;
+        if (z <= 9) return 5;
+        return 6;
+    }
+
     function plotSightings(sightings, speciesInfo) {
         state.markerLayer.clearLayers();
         if (!sightings?.length) return;
+        state.allSightings = sightings;
+        state.speciesInfo = speciesInfo;
         const colorMap = {};
         if (speciesInfo?.species) speciesInfo.species.forEach(sp => { colorMap[sp.code] = sp.color; });
         const defaultColor = speciesInfo?.dot_color || '#3b82f6';
+        const r = dotRadius();
         sightings.forEach(s => {
-            L.circleMarker([s.la, s.ln], { radius: 4, fillColor: colorMap[s.sc] || defaultColor, fillOpacity: 0.8, color: colorMap[s.sc] || defaultColor, weight: 0, interactive: false }).addTo(state.markerLayer);
+            L.circleMarker([s.la, s.ln], { radius: r, fillColor: colorMap[s.sc] || defaultColor, fillOpacity: 0.8, color: colorMap[s.sc] || defaultColor, weight: 0, interactive: false }).addTo(state.markerLayer);
+        });
+    }
+
+    // Update legend counts based on what's visible in the current map bounds
+    function updateVisibleCounts() {
+        if (!state.allSightings || !state.speciesInfo) return;
+        const bounds = state.map.getBounds();
+        const counts = {};
+        state.allSightings.forEach(s => {
+            if (bounds.contains([s.la, s.ln])) {
+                counts[s.sc] = (counts[s.sc] || 0) + 1;
+            }
+        });
+        document.querySelectorAll('.legend-count').forEach(el => {
+            const code = el.dataset.code;
+            if (code) el.textContent = (counts[code] || 0).toLocaleString();
         });
     }
 
@@ -122,7 +152,7 @@
         const counts = {};
         (sightings || []).forEach(s => { counts[s.sc] = (counts[s.sc] || 0) + 1; });
         container.innerHTML = speciesInfo.species.map(sp =>
-            '<div class="legend-item"><span class="legend-dot" style="background:' + sp.color + '"></span><span>' + sp.name + '</span><span class="legend-count">' + (counts[sp.code] || 0) + '</span></div>'
+            '<div class="legend-item"><span class="legend-dot" style="background:' + sp.color + '"></span><span>' + sp.name + '</span><span class="legend-count" data-code="' + sp.code + '">' + (counts[sp.code] || 0) + '</span></div>'
         ).join('');
     }
 
