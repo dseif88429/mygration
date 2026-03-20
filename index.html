@@ -249,6 +249,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
+
 const SC = {
     rthhum:'#10b981', bkchum:'#f59e0b', annhum:'#ef4444', calhum:'#8b5cf6',
     rufhum:'#f97316', coshum:'#06b6d4', brbhum:'#ec4899', brthum:'#facc15'
