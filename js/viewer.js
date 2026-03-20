@@ -174,7 +174,7 @@
         const view = state.views[index];
         document.getElementById('viewBadge').textContent = view.name;
         state.map.flyTo(view.center, view.zoom, { duration: 2, easeLinearity: 0.25 });
-        if (view.rare) showRareAlert(view.rare); else hideRareAlert();
+        if (view.rare) showRareCard(view.rare); else hideRareCard();
     }
 
     function scheduleNextView(seconds) {
@@ -189,12 +189,38 @@
 
     function stopRotation() { clearTimeout(state.rotationTimer); document.getElementById('progressBar').style.cssText = 'width:0;transition:none'; }
 
-    function showRareAlert(rare) {
-        document.getElementById('rareAlertName').textContent = rare.common_name;
-        document.getElementById('rareAlertLocation').textContent = (rare.location_name || '') + (rare.observation_date ? ' (' + rare.observation_date + ')' : '');
-        document.getElementById('rareAlert').classList.add('show');
+    function showRareCard(rare) {
+        var card = document.getElementById('rareCard');
+        document.getElementById('rareCardName').textContent = rare.common_name || '';
+        document.getElementById('rareCardSci').textContent = rare.scientific_name || '';
+        document.getElementById('rareCardLoc').textContent = rare.location_name || '';
+        document.getElementById('rareCardDate').textContent = rare.observation_date ? 'Observed: ' + rare.observation_date : '';
+        document.getElementById('rareCardCount').textContent = rare.observation_count ? rare.observation_count + ' observed' : '';
+
+        // Try to show bird image
+        var img = document.getElementById('rareCardImg');
+        var noimg = document.getElementById('rareCardNoImg');
+        if (rare.image_url) {
+            img.src = rare.image_url;
+            img.alt = rare.common_name;
+            img.style.display = 'block';
+            noimg.style.display = 'none';
+        } else {
+            img.style.display = 'none';
+            noimg.style.display = 'flex';
+        }
+
+        card.classList.add('show');
+        // Hide legend during rare views
+        var legend = document.getElementById('legend');
+        if (legend) legend.style.display = 'none';
     }
-    function hideRareAlert() { document.getElementById('rareAlert').classList.remove('show'); }
+
+    function hideRareCard() {
+        document.getElementById('rareCard').classList.remove('show');
+        var legend = document.getElementById('legend');
+        if (legend) legend.style.display = '';
+    }
 
     function showError(msg) {
         const el = document.getElementById('loadingScreen');

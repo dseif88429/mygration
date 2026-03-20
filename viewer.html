@@ -49,12 +49,32 @@
         @keyframes spin{to{transform:rotate(360deg)}}
         .loading-text{color:#94a3b8;font-size:1.0625rem}
 
-        /* Rare alert */
-        .rare-alert{top:6rem;right:1.25rem;background:rgba(239,68,68,0.15);backdrop-filter:blur(8px);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:1rem 1.25rem;max-width:300px;transform:translateX(120%);transition:transform 0.4s ease}
-        .rare-alert.show{transform:translateX(0);pointer-events:auto}
-        .rare-alert-badge{font-size:0.75rem;font-weight:700;text-transform:uppercase;color:#ef4444}
-        .rare-alert-name{font-size:1.0625rem;font-weight:600;margin-top:0.25rem}
-        .rare-alert-location{font-size:0.875rem;color:#94a3b8}
+        /* Rare sighting full-screen card (bottom bar) */
+        .rare-card{
+            position:absolute;bottom:2rem;left:2rem;right:2rem;
+            display:none;align-items:stretch;gap:0;
+            background:rgba(15,23,42,0.92);backdrop-filter:blur(16px);
+            border:1px solid rgba(255,255,255,0.08);border-radius:16px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow:hidden;z-index:1100;
+            max-height:35vh;
+        }
+        .rare-card.show{display:flex}
+        .rare-card-img{width:30%;min-width:140px;max-height:100%;object-fit:cover;object-position:center;background:#1e293b}
+        .rare-card-noimg{width:30%;min-width:140px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e293b,#334155);font-size:3rem;color:#475569}
+        .rare-card-info{flex:1;padding:1.5rem 2rem;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+        .rare-card-badge{display:inline-block;font-size:0.75rem;font-weight:700;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:0.2rem 0.6rem;border-radius:6px;align-self:flex-start;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem}
+        .rare-card-name{font-size:1.75rem;font-weight:800;color:#f1f5f9;line-height:1.2}
+        .rare-card-sci{font-size:1rem;color:#94a3b8;font-style:italic;margin-top:0.25rem}
+        .rare-card-loc{font-size:1rem;color:#cbd5e1;margin-top:0.75rem;display:flex;align-items:center;gap:0.4rem}
+        .rare-card-loc .pin{color:#ef4444}
+        .rare-card-meta{display:flex;gap:1.5rem;margin-top:0.5rem;font-size:0.875rem;color:#64748b}
+        @media(max-width:640px){
+            .rare-card{bottom:1rem;left:1rem;right:1rem;max-height:40vh}
+            .rare-card-img,.rare-card-noimg{width:25%;min-width:100px}
+            .rare-card-info{padding:1rem}
+            .rare-card-name{font-size:1.25rem}
+            .rare-card-sci{font-size:0.875rem}
+        }
 
         .leaflet-control-attribution{display:none!important}
 
@@ -99,7 +119,21 @@
 </div>
 
 <div class="overlay progress-bar" id="progressBar" style="width:0;"></div>
-<div class="overlay rare-alert" id="rareAlert"><div class="rare-alert-badge">Rare Sighting</div><div class="rare-alert-name" id="rareAlertName"></div><div class="rare-alert-location" id="rareAlertLocation"></div></div>
+<!-- Rare sighting info card (bottom bar, like signage) -->
+<div class="rare-card" id="rareCard">
+    <img class="rare-card-img" id="rareCardImg" src="" alt="" style="display:none">
+    <div class="rare-card-noimg" id="rareCardNoImg">&#x1F426;</div>
+    <div class="rare-card-info">
+        <div class="rare-card-badge">Rare Sighting</div>
+        <div class="rare-card-name" id="rareCardName"></div>
+        <div class="rare-card-sci" id="rareCardSci"></div>
+        <div class="rare-card-loc"><span class="pin">&#x1F4CD;</span> <span id="rareCardLoc"></span></div>
+        <div class="rare-card-meta">
+            <span id="rareCardDate"></span>
+            <span id="rareCardCount"></span>
+        </div>
+    </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/js/viewer.js?v=4"></script>
