@@ -81,16 +81,9 @@
         const tileUrl = TILE_URLS[preferences.map_format] || TILE_URLS.dark;
         if (state.tileLayer) state.map.removeLayer(state.tileLayer);
         state.tileLayer = L.tileLayer(tileUrl, { maxZoom: 18, subdomains: 'abcd' }).addTo(state.map);
-        state.tileLayer.on('tileerror', function(e) {
-            if (e.tile.getAttribute('data-retried')) return;
-            e.tile.setAttribute('data-retried', '1');
-            var delay = 3000 + Math.random() * 5000;
-            setTimeout(function() {
-                var src = e.tile.getAttribute('data-src') || e.tile.src.split('?')[0];
-                e.tile.setAttribute('data-src', src);
-                e.tile.src = src + '?_r=' + Date.now();
-            }, delay);
-        });
+        // Redraw tiles after delay to catch failures before SW was ready
+        setTimeout(function() { if (state.tileLayer) state.tileLayer.redraw(); }, 5000);
+        setTimeout(function() { if (state.tileLayer) state.tileLayer.redraw(); }, 15000);
 
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);

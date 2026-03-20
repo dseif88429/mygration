@@ -294,17 +294,9 @@ async function boot() {
     // Set map
     const fmt = S.prefs.map_format || 'street';
     S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
-    // Retry failed tiles once only
-    S.tileLayer.on('tileerror', function(e) {
-        if (e.tile.getAttribute('data-retried')) return;
-        e.tile.setAttribute('data-retried', '1');
-        var delay = 3000 + Math.random() * 5000;
-        setTimeout(function() {
-            var src = e.tile.getAttribute('data-src') || e.tile.src.split('?')[0];
-            e.tile.setAttribute('data-src', src);
-            e.tile.src = src + '?_r=' + Date.now();
-        }, delay);
-    });
+    // After initial load, redraw tiles once to catch any that failed before SW was ready
+    setTimeout(function() { if (S.tileLayer) S.tileLayer.redraw(); }, 5000);
+    setTimeout(function() { if (S.tileLayer) S.tileLayer.redraw(); }, 15000);
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 
     // Set legend title from saved preference immediately
