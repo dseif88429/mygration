@@ -30,8 +30,8 @@
 
         /* Top bar */
         .top-bar{display:flex;justify-content:space-between;align-items:center;padding:0.875rem 1.25rem}
-        .brand{display:flex;align-items:center;gap:0.5rem;font-size:1.25rem;font-weight:800;color:var(--text);text-decoration:none}
-        .brand svg{width:28px;height:28px}
+        .brand{display:flex;align-items:center;gap:0.625rem;font-size:1.5rem;font-weight:800;color:var(--text);text-decoration:none}
+        .brand svg{width:34px;height:34px}
         .top-center{display:flex;gap:0.5rem;align-items:center;position:absolute;left:50%;transform:translateX(-50%)}
         .top-right{display:flex;gap:0.5rem;align-items:center}
         .pill{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:999px;padding:0.5rem 1rem;font-size:0.8125rem;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all 0.2s;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;border:1px solid var(--border)}
@@ -42,12 +42,12 @@
 
         /* Drawer panels */
         .drawer{
-            position:absolute;top:4rem;width:380px;max-width:calc(100vw - 1rem);
-            max-height:calc(100vh - 5rem);overflow-y:auto;
+            position:absolute;top:4.5rem;width:380px;max-width:calc(100vw - 1rem);
+            max-height:calc(100vh - 10rem);overflow-y:auto;
             background:var(--glass);backdrop-filter:blur(20px);
             border:1px solid var(--border);border-radius:var(--radius);
             padding:1.5rem;transition:transform 0.3s ease,opacity 0.3s ease;
-            opacity:0;pointer-events:none;
+            opacity:0;pointer-events:none;z-index:1100;
         }
         .drawer.open{opacity:1;pointer-events:auto}
         .drawer-left{left:1rem;transform:translateX(-20px)}
@@ -341,6 +341,9 @@ function toggleDrawer(side) {
     drawer.classList.toggle('open', !isOpen);
     document.getElementById('btnSpecies').classList.toggle('active', side === 'left' && !isOpen);
     document.getElementById('btnSettings').classList.toggle('active', side === 'right' && !isOpen);
+    // Hide legend when left drawer is open (they overlap)
+    const anyOpen = document.querySelector('.drawer.open');
+    document.getElementById('legend').style.display = anyOpen ? 'none' : '';
 }
 
 // ---- Species ----
@@ -478,6 +481,7 @@ map.on('click', () => {
     document.getElementById('drawerRight').classList.remove('open');
     document.getElementById('btnSpecies').classList.remove('active');
     document.getElementById('btnSettings').classList.remove('active');
+    document.getElementById('legend').style.display = '';
 });
 
 boot();
