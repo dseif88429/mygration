@@ -242,7 +242,7 @@ const TILES = {
     dark: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', label: 'Dark' },
     satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' },
     terrain: { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', label: 'Terrain' },
-    watercolor: { url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', label: 'Watercolor' }
+    topo: { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', label: 'Topo' }
 };
 
 let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, previewMap: null };
@@ -270,9 +270,12 @@ function findBirdImage(groupName, species) {
     // Pass 2: try each species name from the group
     if (species && species.length) {
         for (const sp of species) {
+            // Exact match
             if (imgs[sp.name]) return imgs[sp.name];
-            // Partial match on species name
-            const spWords = sp.name.toLowerCase().split(/\s+/);
+        }
+        for (const sp of species) {
+            // Partial: search image keys for any word from species name (4+ chars)
+            const spWords = sp.name.toLowerCase().split(/[\s'-]+/);
             for (const sw of spWords) {
                 if (sw.length < 4) continue;
                 for (const key of keys) {
