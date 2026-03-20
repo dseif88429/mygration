@@ -404,9 +404,26 @@ function renderSpecies() {
 async function pickGroup(k) {
     S.prefs.primary_group_key = k; S.prefs.selected_species = null;
     const g = S.groups.find(x => x.group_key === k);
-    if (g) document.getElementById('legendTitle').textContent = g.group_name;
+
+    // Update legend immediately from group species (no waiting for API)
+    if (g) {
+        document.getElementById('legendTitle').textContent = g.group_name;
+        document.getElementById('legendItems').innerHTML = g.species.map(sp =>
+            '<div class="legend-item" data-species="' + sp.code + '" onclick="toggleSpecies(\'' + sp.code + '\')">' +
+            '<span class="legend-check"></span>' +
+            '<span class="legend-dot" style="background:' + sp.color + ';box-shadow:0 0 6px ' + sp.color + '"></span>' +
+            '<span class="legend-name">' + sp.name + '</span>' +
+            '<span class="legend-count">--</span></div>'
+        ).join('');
+    }
+
+    // Clear old dots from map
+    Object.values(speciesLayers).forEach(l => map.removeLayer(l));
+    Object.keys(speciesLayers).forEach(k => delete speciesLayers[k]);
+    Object.keys(speciesVisible).forEach(k => delete speciesVisible[k]);
+    sightingCounts = {};
+
     renderSpecies(); renderSubs();
-    // Save first, THEN reload sightings (save invalidates viewer cache)
     await saveNow();
     loadSightings();
 }
