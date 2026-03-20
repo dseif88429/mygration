@@ -108,13 +108,18 @@
         }
         .style-preview-popup.show { display: block; }
 
-        /* ---- Rare birds with radius slider ---- */
+        /* ---- Rare birds with radius buttons ---- */
         .rare-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .rare-toggle { display: flex; align-items: center; gap: 0.625rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
         .rare-toggle input { accent-color: var(--accent); width: 20px; height: 20px; }
-        .rare-slider-group { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 200px; }
-        .rare-slider { flex: 1; accent-color: var(--accent); height: 6px; cursor: pointer; }
-        .rare-val { font-size: 0.9375rem; font-weight: 700; color: var(--text); min-width: 65px; }
+        .rare-radius-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+        .rare-radius-btn {
+            padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+            cursor: pointer; border: 1.5px solid var(--border); background: rgba(255,255,255,0.04);
+            color: var(--text-dim); transition: all 0.15s; font-family: inherit;
+        }
+        .rare-radius-btn:hover { border-color: var(--text-muted); }
+        .rare-radius-btn.selected { border-color: var(--accent); background: rgba(59,130,246,0.1); color: var(--text); }
 
         /* ---- Rotation ---- */
         .opt-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
@@ -197,12 +202,12 @@
             <!-- Rare Birds -->
             <div class="card">
                 <div class="card-title">Rare Bird Alerts</div>
-                <div class="rare-row">
-                    <label class="rare-toggle"><input type="checkbox" id="rareToggle" onchange="save()" checked> Show rare birds</label>
-                    <div class="rare-slider-group" id="rareSliderGroup">
-                        <input type="range" class="rare-slider" id="rareRadius" min="10" max="200" step="10" value="50" oninput="updateRadiusLabel()" onchange="save()">
-                        <span class="rare-val" id="rareVal">50 km</span>
-                    </div>
+                <label class="rare-toggle"><input type="checkbox" id="rareToggle" onchange="save()" checked> Show rare birds near my location</label>
+                <div class="rare-radius-row" id="rareRadiusRow">
+                    <button class="rare-radius-btn" data-mi="5" onclick="pickRadius(8)">5 miles</button>
+                    <button class="rare-radius-btn" data-mi="25" onclick="pickRadius(40)">25 miles</button>
+                    <button class="rare-radius-btn selected" data-mi="50" onclick="pickRadius(80)">50 miles</button>
+                    <button class="rare-radius-btn" data-mi="100" onclick="pickRadius(161)">100 miles</button>
                 </div>
             </div>
 
@@ -407,13 +412,20 @@ function hideStylePreview() {
 function renderOpts() {
     document.getElementById('rotSpeed').value = S.prefs.rotation_interval_sec || 15;
     document.getElementById('rareToggle').checked = S.prefs.rare_birds_enabled !== false;
-    document.getElementById('rareRadius').value = S.prefs.rare_birds_radius_km || 50;
-    updateRadiusLabel();
+    highlightRadius(S.prefs.rare_birds_radius_km || 80);
 }
-function updateRadiusLabel() {
-    const km = document.getElementById('rareRadius').value;
-    const mi = Math.round(km * 0.621);
-    document.getElementById('rareVal').textContent = km + ' km / ' + mi + ' mi';
+function pickRadius(km) {
+    S.prefs.rare_birds_radius_km = km;
+    highlightRadius(km);
+    save();
+}
+function highlightRadius(km) {
+    // Map km to closest button
+    const map = {8: 5, 40: 25, 80: 50, 161: 100};
+    const closest = Object.keys(map).reduce((a, b) => Math.abs(b - km) < Math.abs(a - km) ? b : a);
+    document.querySelectorAll('.rare-radius-btn').forEach(btn => {
+        btn.classList.toggle('selected', parseInt(btn.dataset.mi) === map[closest]);
+    });
 }
 
 // ---- Viewer link ----
@@ -444,7 +456,7 @@ function save(flashId) {
             map_format: S.prefs.map_format,
             rotation_interval_sec: parseInt(document.getElementById('rotSpeed').value),
             rare_birds_enabled: document.getElementById('rareToggle').checked,
-            rare_birds_radius_km: parseInt(document.getElementById('rareRadius').value),
+            rare_birds_radius_km: S.prefs.rare_birds_radius_km || 80,
         });
         if (flashId) {
             const el = document.getElementById(flashId);
