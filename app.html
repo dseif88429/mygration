@@ -252,7 +252,7 @@
 
     <!-- Legend (bottom-left) -->
     <div class="legend" id="legend">
-        <div class="legend-title" id="legendTitle">Hummingbirds</div>
+        <div class="legend-title" id="legendTitle"></div>
         <div id="legendItems"></div>
     </div>
 
@@ -293,8 +293,16 @@ async function boot() {
 
     // Set map
     const fmt = S.prefs.map_format || 'street';
-    S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd' }).addTo(map);
+    S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
+    // Retry failed tiles after 5 seconds
+    S.tileLayer.on('tileerror', function(e) {
+        setTimeout(function() { e.tile.src = e.tile.src; }, 5000);
+    });
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
+
+    // Set legend title from saved preference immediately
+    const currentGroup = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
+    if (currentGroup) document.getElementById('legendTitle').textContent = currentGroup.group_name;
 
     renderSpecies(); renderSubs(); renderLoc(); renderStyles(); renderOpts(); renderLink();
     loadSightings();
@@ -304,7 +312,7 @@ async function boot() {
 async function loadSightings() {
     if (!S.token) return;
     try {
-        const res = await fetch('/api/mygration/viewer/' + S.token.token + '/content');
+        const res = await fetch('/api/mygration/viewer/' + S.token.token + '/content?_=' + Date.now());
         const data = await res.json();
         if (!data.success || !data.sightings?.length) return;
 
@@ -388,11 +396,14 @@ function renderSpecies() {
     document.getElementById('dataNotice').classList.toggle('show', S.prefs.primary_group_key !== 'hummingbirds');
 }
 
-function pickGroup(k) {
+async function pickGroup(k) {
     S.prefs.primary_group_key = k; S.prefs.selected_species = null;
     const g = S.groups.find(x => x.group_key === k);
     if (g) document.getElementById('legendTitle').textContent = g.group_name;
-    renderSpecies(); renderSubs(); save(); loadSightings();
+    renderSpecies(); renderSubs();
+    // Save first, THEN reload sightings (save invalidates viewer cache)
+    await saveNow();
+    loadSightings();
 }
 
 function renderSubs() {
@@ -480,6 +491,19 @@ function copyLink() {
 }
 
 // ---- Save ----
+async function saveNow() {
+    clearTimeout(S.saveTimer);
+    await API.updatePreferences({
+        primary_group_key: S.prefs.primary_group_key, selected_species: S.prefs.selected_species,
+        location_zip: S.prefs.location_zip, location_lat: S.prefs.location_lat,
+        location_lng: S.prefs.location_lng, location_label: S.prefs.location_label,
+        map_format: S.prefs.map_format,
+        rotation_interval_sec: parseInt(document.getElementById('rotSpeed').value),
+        rare_birds_enabled: document.getElementById('rareToggle').checked,
+        rare_birds_radius_km: S.prefs.rare_birds_radius_km || 80,
+    });
+}
+
 function save() {
     clearTimeout(S.saveTimer);
     S.saveTimer = setTimeout(async () => {

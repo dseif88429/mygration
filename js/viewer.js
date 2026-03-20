@@ -81,6 +81,7 @@
         const tileUrl = TILE_URLS[preferences.map_format] || TILE_URLS.dark;
         if (state.tileLayer) state.map.removeLayer(state.tileLayer);
         state.tileLayer = L.tileLayer(tileUrl, { maxZoom: 18, subdomains: 'abcd' }).addTo(state.map);
+        state.tileLayer.on('tileerror', function(e) { setTimeout(function() { e.tile.src = e.tile.src; }, 5000); });
 
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);
