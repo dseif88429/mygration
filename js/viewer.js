@@ -100,6 +100,10 @@
             dtEl.textContent = 'Data as of ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         }
 
+        // Big sighting counter
+        const counterEl = document.getElementById('counterNum');
+        if (counterEl) counterEl.textContent = (sightings?.length || 0).toLocaleString();
+
         // Build views
         const lat = preferences.location_lat || 39.74, lng = preferences.location_lng || -104.99;
         state.views = [
@@ -187,12 +191,14 @@
                 radius: 20, fillColor: '#ef4444', fillOpacity: 0.9, color: '#fff', weight: 3, interactive: false
             }).addTo(state.map);
             showRareCard(view.rare);
+            var sc = document.getElementById('sightingCounter'); if (sc) sc.style.display = 'none';
         } else {
             document.getElementById('viewTitle').textContent = (state.content?.species_info?.group_name || 'Bird') + ' Sightings';
             // Restore regular dots, remove rare marker
             if (state.rareMarker) { state.rareMarker.remove(); state.rareMarker = null; }
             if (!state.map.hasLayer(state.markerLayer)) state.markerLayer.addTo(state.map);
             hideRareCard();
+            var sc = document.getElementById('sightingCounter'); if (sc) sc.style.display = '';
         }
     }
 

@@ -3,7 +3,7 @@
  * Cache-first strategy: once a tile is fetched, it's served from cache forever.
  * Tiles are keyed by path (ignoring query params like cache-bust strings).
  */
-const CACHE_NAME = 'mygration-tiles-v1';
+const CACHE_NAME = 'mygration-tiles-v2';
 const MAX_ENTRIES = 5000;
 
 // Only cache tile URLs from these providers
@@ -63,7 +63,14 @@ self.addEventListener('fetch', event => {
 });
 
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', () => self.clients.claim());
+self.addEventListener('activate', event => {
+    // Delete old cache versions
+    event.waitUntil(
+        caches.keys().then(names => Promise.all(
+            names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n))
+        )).then(() => self.clients.claim())
+    );
+});
 
 // Handle messages from the page
 self.addEventListener('message', event => {
