@@ -240,15 +240,9 @@
                 <label class="form-label">Email</label>
                 <input class="form-input" type="email" id="email" placeholder="jane@example.com" required autocomplete="email">
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input class="form-input" type="text" id="username" placeholder="janebirder" required autocomplete="username" pattern="[a-z0-9_.\-]+">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Zip Code</label>
-                    <input class="form-input" type="text" id="zip_code" placeholder="80202" required pattern="[0-9]{5}" autocomplete="postal-code">
-                </div>
+            <div class="form-group">
+                <label class="form-label">Zip Code <span style="color:var(--text-muted);text-transform:none;letter-spacing:0;">(centers your maps)</span></label>
+                <input class="form-input" type="text" id="zip_code" placeholder="80202" required pattern="[0-9]{5}" autocomplete="postal-code" style="max-width:140px;">
             </div>
             <div class="form-group">
                 <label class="form-label">Password</label>
@@ -345,7 +339,6 @@ async function handleSignup(e) {
     const body = {
         full_name: document.getElementById('full_name').value.trim(),
         email: document.getElementById('email').value.trim().toLowerCase(),
-        username: document.getElementById('username').value.trim().toLowerCase(),
         password: document.getElementById('password').value,
         zip_code: document.getElementById('zip_code').value.trim()
     };

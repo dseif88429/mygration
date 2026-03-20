@@ -15,7 +15,7 @@
     };
 
     const state = {
-        token: null, map: null, tileLayer: null, markerLayer: null,
+        token: null, isDemo: false, map: null, tileLayer: null, markerLayer: null,
         content: null, contentHash: null,
         views: [], viewIndex: 0, rotationTimer: null, pollTimer: null
     };
@@ -23,6 +23,7 @@
     function init() {
         const params = new URLSearchParams(window.location.search);
         state.token = params.get('t');
+        state.isDemo = (state.token === 'demo');
         if (!state.token) { showError('No display token provided. Use a valid viewer link.'); return; }
 
         state.map = L.map('map', { center: [39, -98.5], zoom: 4, zoomControl: false, attributionControl: false, fadeAnimation: true, zoomAnimation: true });
@@ -33,10 +34,29 @@
 
     async function fetchContent() {
         try {
-            const res = await fetch(API_BASE + '/viewer/' + state.token + '/content');
+            // Demo mode uses the public demo endpoint
+            const url = state.isDemo
+                ? API_BASE + '/demo/sightings'
+                : API_BASE + '/viewer/' + state.token + '/content';
+            const res = await fetch(url);
             if (!res.ok) { if (res.status === 404) showError('Invalid display token.'); return; }
             const data = await res.json();
             if (!data.success) return;
+
+            // Demo mode: transform demo response into viewer format
+            if (state.isDemo && !data.preferences) {
+                data.preferences = {
+                    location_lat: 39.75, location_lng: -105.0, location_label: 'Denver, CO',
+                    map_format: 'dark', rotation_interval_sec: 12, rare_birds_enabled: false,
+                    primary_group_key: 'hummingbirds'
+                };
+                data.species_info = {
+                    group_name: 'Hummingbirds', dot_color: '#10b981',
+                    species: data.species || []
+                };
+                data.rare_sightings = [];
+            }
+
             const hash = (data.sightings?.length || 0) + ':' + (data.preferences?.primary_group_key || '');
             if (hash === state.contentHash) return;
             state.contentHash = hash;

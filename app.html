@@ -6,206 +6,276 @@
     <title>Dashboard - Mygration</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <style>
-        .preview-map { width: 100%; aspect-ratio: 16/9; border-radius: var(--radius-sm); overflow: hidden; }
-        .section-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-        .section-title .badge { font-size: 0.6875rem; padding: 0.15rem 0.5rem; border-radius: 999px; background: rgba(59,130,246,0.15); color: var(--accent); }
-        .settings-section { margin-bottom: 2rem; }
-        .viewer-link-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; margin-top: 0.75rem; }
-        .viewer-link-box .link-text { font-family: monospace; font-size: 0.75rem; color: var(--accent); word-break: break-all; margin-bottom: 0.75rem; }
-        .viewer-link-box .link-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .save-indicator { font-size: 0.75rem; color: var(--success); opacity: 0; transition: opacity 0.3s; }
-        .save-indicator.show { opacity: 1; }
-        .user-menu { position: relative; }
-        .user-menu-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.375rem 0.75rem; color: var(--text-primary); cursor: pointer; font-size: 0.8125rem; }
-        .user-menu-dropdown { display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 160px; box-shadow: var(--shadow-lg); z-index: 10; }
-        .user-menu-dropdown.open { display: block; }
-        .user-menu-dropdown a { display: block; padding: 0.625rem 1rem; font-size: 0.8125rem; color: var(--text-secondary); transition: background 0.2s; }
-        .user-menu-dropdown a:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --glass: rgba(11, 17, 32, 0.8);
+            --glass-border: rgba(255,255,255,0.08);
+            --glass-hover: rgba(255,255,255,0.04);
+            --accent: #3b82f6; --accent-hover: #2563eb;
+            --success: #10b981; --danger: #ef4444;
+            --text: #f1f5f9; --text-dim: #94a3b8; --text-muted: #64748b;
+            --radius: 16px; --radius-sm: 10px;
+        }
+        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; background: #0b1120; color: var(--text); }
+        a { color: var(--accent); text-decoration: none; }
+        #map { position: fixed; inset: 0; z-index: 0; }
+        .leaflet-control-attribution, .leaflet-control-zoom { display: none !important; }
+
+        /* UI layer */
+        .ui-layer { position: fixed; inset: 0; z-index: 1000; pointer-events: none; overflow-y: auto; }
+        .ui-layer > * { pointer-events: auto; }
+
+        /* Top bar */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; }
+        .brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 700; color: var(--text); }
+        .brand svg { width: 24px; height: 24px; flex-shrink: 0; }
+        .top-right { display: flex; gap: 0.5rem; align-items: center; }
+        .btn-glass { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 999px; padding: 0.4rem 0.875rem; font-size: 0.75rem; font-weight: 500; color: var(--text-dim); cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .btn-glass:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+        /* Panels */
+        .panel {
+            background: var(--glass); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: var(--radius);
+            padding: 1.25rem;
+        }
+        .panel-title { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 600; }
+
+        /* Layout */
+        .dashboard-layout {
+            display: flex; flex-direction: column; gap: 0.75rem;
+            padding: 0 1.25rem 1.25rem; max-width: 1000px; margin: 0 auto;
+        }
+        .row { display: grid; gap: 0.75rem; }
+        .row-2 { grid-template-columns: 1fr 1fr; }
+        .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 700px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
+
+        /* Species picker */
+        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; }
+        .sp-btn {
+            background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border);
+            border-radius: var(--radius-sm); padding: 0.625rem 0.5rem; text-align: center;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .sp-btn:hover { background: rgba(255,255,255,0.08); }
+        .sp-btn.selected { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+        .sp-btn .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-bottom: 0.35rem; }
+        .sp-btn .name { font-size: 0.6875rem; font-weight: 600; display: block; }
+        .sp-btn .count { font-size: 0.5625rem; color: var(--text-muted); }
+
+        /* Sub-species */
+        .sub-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; margin-top: 0.5rem; }
+        @media (max-width: 500px) { .sub-list { grid-template-columns: 1fr; } }
+        .sub-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: background 0.15s; }
+        .sub-item:hover { background: var(--glass-hover); }
+        .sub-item input { accent-color: var(--accent); width: 14px; height: 14px; }
+        .sub-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+        /* Map format */
+        .format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+        .fmt-btn { background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .fmt-btn:hover { border-color: var(--text-muted); }
+        .fmt-btn.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
+        .fmt-swatch { width: 100%; aspect-ratio: 16/9; border-radius: 4px; margin-bottom: 0.35rem; }
+        .fmt-name { font-size: 0.625rem; font-weight: 600; }
+
+        /* Viewer link */
+        .viewer-url { font-family: monospace; font-size: 0.6875rem; color: var(--accent); word-break: break-all; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 0.5rem 0.625rem; margin-bottom: 0.625rem; }
+        .link-btns { display: flex; gap: 0.4rem; }
+        .link-btn { padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.6875rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; text-decoration: none; display: inline-block; }
+        .link-btn-primary { background: var(--accent); color: #fff; }
+        .link-btn-primary:hover { background: var(--accent-hover); }
+        .link-btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--glass-border); }
+        .link-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* Form elements */
+        .form-input, .form-select {
+            width: 100%; padding: 0.5rem 0.625rem;
+            background: rgba(255,255,255,0.06); color: var(--text);
+            border: 1px solid var(--glass-border); border-radius: 6px;
+            font-size: 0.8125rem; outline: none; font-family: inherit;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--accent); }
+        .form-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 0.2rem; display: block; font-weight: 500; }
+        .save-flash { font-size: 0.625rem; color: var(--success); opacity: 0; transition: opacity 0.3s; margin-left: 0.5rem; }
+        .save-flash.show { opacity: 1; }
     </style>
 </head>
 <body>
-<nav class="navbar">
-    <div class="navbar-inner">
-        <a href="/app.html" class="navbar-brand">
-            <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#3b82f6" stroke-width="2" fill="none"/><path d="M8 18c2-4 6-8 12-10M10 22c3-3 7-6 14-7" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/><circle cx="20" cy="10" r="2" fill="#10b981"/><circle cx="24" cy="15" r="1.5" fill="#f59e0b"/><circle cx="14" cy="14" r="1.5" fill="#ec4899"/></svg>
+<div id="map"></div>
+<div class="ui-layer">
+    <div class="top-bar">
+        <a href="/" class="brand">
+            <svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" stroke="#3b82f6" stroke-width="1.5" fill="none" opacity="0.6"/><path d="M6 16c2-3.5 5.5-7 11-9" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/><path d="M8 20c2.5-2.5 6-5 12-6" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><circle cx="17" cy="9" r="2" fill="#10b981" opacity="0.9"/><circle cx="12" cy="13" r="1.5" fill="#ec4899" opacity="0.8"/><circle cx="20" cy="14" r="1.5" fill="#f59e0b" opacity="0.8"/></svg>
             Mygration
         </a>
-        <div class="user-menu">
-            <button class="user-menu-btn" onclick="this.nextElementSibling.classList.toggle('open')" id="userMenuBtn">Account</button>
-            <div class="user-menu-dropdown"><a href="#" onclick="handleLogout()">Log Out</a></div>
+        <div class="top-right">
+            <span class="btn-glass" id="userLabel" style="cursor:default;">Loading...</span>
+            <button class="btn-glass" onclick="handleLogout()">Log out</button>
         </div>
     </div>
-</nav>
-<div class="dashboard">
-    <div class="container">
-        <div class="dashboard-header"><h2>Your Migration Tracker</h2><p class="text-muted text-sm">Configure your display and start watching.</p></div>
-        <div class="dashboard-grid">
-            <div>
-                <!-- Species Group -->
-                <div class="card settings-section">
-                    <div class="section-title">Species Group <span class="save-indicator" id="speciesSaved">Saved</span></div>
-                    <div class="species-picker" id="speciesPicker"></div>
-                    <div id="subspeciesSection" class="hidden">
-                        <div class="section-title mt-3">Sub-species <span class="badge">Select which to show</span></div>
-                        <label class="subspecies-item mb-1"><input type="checkbox" id="selectAllSpecies" onchange="toggleAllSubspecies(this.checked)" checked><span style="font-weight:600;">Select All</span></label>
-                        <div class="subspecies-list" id="subspeciesList"></div>
+
+    <div class="dashboard-layout">
+        <!-- Viewer Link (most important, top) -->
+        <div class="panel">
+            <div class="panel-title">Your Viewer Link</div>
+            <div class="viewer-url" id="viewerUrl">Loading...</div>
+            <div class="link-btns">
+                <button class="link-btn link-btn-primary" onclick="copyLink()">Copy Link</button>
+                <a class="link-btn link-btn-secondary" id="viewerOpenBtn" href="#" target="_blank">Open Viewer</a>
+            </div>
+        </div>
+
+        <div class="row row-2">
+            <!-- Species -->
+            <div class="panel">
+                <div class="panel-title">Species Group <span class="save-flash" id="speciesSaved">Saved</span></div>
+                <div class="species-grid" id="speciesPicker"></div>
+                <div id="subSection" style="display:none;">
+                    <div style="margin-top:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+                        <div class="panel-title" style="margin:0;">Sub-species</div>
+                        <label class="sub-item" style="padding:0;"><input type="checkbox" id="selAll" onchange="toggleAll(this.checked)" checked><span style="font-size:0.6875rem;">All</span></label>
                     </div>
-                </div>
-                <!-- Location -->
-                <div class="card settings-section">
-                    <div class="section-title">Your Location <span class="save-indicator" id="locationSaved">Saved</span></div>
-                    <div class="form-group">
-                        <label class="form-label">Zip Code</label>
-                        <div style="display:flex;gap:0.5rem;"><input class="form-input" type="text" id="zipInput" placeholder="80202" pattern="[0-9]{5}" maxlength="5" style="max-width:140px;"><button class="btn btn-secondary btn-sm" onclick="updateLocation()">Update</button></div>
-                        <div class="form-hint" id="locationLabel"></div>
-                    </div>
-                </div>
-                <!-- Map Format -->
-                <div class="card settings-section">
-                    <div class="section-title">Map Style <span class="save-indicator" id="formatSaved">Saved</span></div>
-                    <div class="format-grid" id="formatPicker">
-                        <div class="format-option selected" data-format="dark" onclick="selectFormat('dark')"><div class="format-preview" style="background:#1a1a2e;"></div><div class="format-name">Dark</div></div>
-                        <div class="format-option" data-format="satellite" onclick="selectFormat('satellite')"><div class="format-preview" style="background:linear-gradient(135deg,#1a3a1a,#2a4a3a);"></div><div class="format-name">Satellite</div></div>
-                        <div class="format-option" data-format="terrain" onclick="selectFormat('terrain')"><div class="format-preview" style="background:linear-gradient(135deg,#d4c5a9,#8fbc8f);"></div><div class="format-name">Terrain</div></div>
-                        <div class="format-option" data-format="watercolor" onclick="selectFormat('watercolor')"><div class="format-preview" style="background:linear-gradient(135deg,#e8d5b7,#b8cfd8);"></div><div class="format-name">Watercolor</div></div>
-                    </div>
-                </div>
-                <!-- Display Options -->
-                <div class="card settings-section">
-                    <div class="section-title">Display Options</div>
-                    <div class="form-group">
-                        <label class="form-label">Rotation Speed (seconds per view)</label>
-                        <select class="form-select" id="rotationSpeed" onchange="savePreferences()" style="max-width:200px;">
-                            <option value="10">10 seconds</option><option value="15" selected>15 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option><option value="60">60 seconds</option>
-                        </select>
-                    </div>
-                    <label class="subspecies-item" style="max-width:300px;"><input type="checkbox" id="rareBirds" onchange="savePreferences()" checked><span>Show rare bird sightings</span></label>
+                    <div class="sub-list" id="subList"></div>
                 </div>
             </div>
-            <!-- Sidebar -->
-            <div>
-                <div class="card" style="position:sticky;top:80px;">
-                    <div class="section-title">Your Viewer Link</div>
-                    <p class="text-sm text-muted mb-2">Open this link on any device to view your migration display. No login needed.</p>
-                    <div class="viewer-link-box">
-                        <div class="link-text" id="viewerUrl">Loading...</div>
-                        <div class="link-actions">
-                            <button class="btn btn-primary btn-sm" onclick="copyViewerLink()">Copy Link</button>
-                            <a class="btn btn-secondary btn-sm" id="viewerOpenBtn" href="#" target="_blank">Open Viewer</a>
+
+            <!-- Settings -->
+            <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                <!-- Location -->
+                <div class="panel">
+                    <div class="panel-title">Location <span class="save-flash" id="locSaved">Saved</span></div>
+                    <div style="display:flex; gap:0.5rem; align-items:end;">
+                        <div style="flex:0 0 auto;">
+                            <div class="form-label">Zip Code</div>
+                            <input class="form-input" type="text" id="zipInput" style="width:100px;" maxlength="5" pattern="[0-9]{5}">
                         </div>
+                        <button class="link-btn link-btn-secondary" onclick="updateLocation()" style="margin-bottom:1px;">Update</button>
                     </div>
-                    <div class="mt-3">
-                        <div class="section-title">Quick Preview</div>
-                        <p class="text-sm text-muted">Your map centered on your location with your selected species.</p>
-                        <div id="dashPreviewMap" class="preview-map mt-2" style="min-height:200px;"></div>
+                    <div style="font-size:0.6875rem; color:var(--text-muted); margin-top:0.35rem;" id="locLabel"></div>
+                </div>
+
+                <!-- Map Style -->
+                <div class="panel">
+                    <div class="panel-title">Map Style <span class="save-flash" id="fmtSaved">Saved</span></div>
+                    <div class="format-grid" id="fmtPicker">
+                        <div class="fmt-btn selected" data-fmt="dark" onclick="pickFmt('dark')"><div class="fmt-swatch" style="background:#1a1a2e;"></div><div class="fmt-name">Dark</div></div>
+                        <div class="fmt-btn" data-fmt="satellite" onclick="pickFmt('satellite')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#1a3a1a,#2a4a3a);"></div><div class="fmt-name">Satellite</div></div>
+                        <div class="fmt-btn" data-fmt="terrain" onclick="pickFmt('terrain')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#d4c5a9,#8fbc8f);"></div><div class="fmt-name">Terrain</div></div>
+                        <div class="fmt-btn" data-fmt="watercolor" onclick="pickFmt('watercolor')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#e8d5b7,#b8cfd8);"></div><div class="fmt-name">Watercolor</div></div>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="panel">
+                    <div class="panel-title">Display Options</div>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+                        <div>
+                            <div class="form-label">Rotation</div>
+                            <select class="form-select" id="rotSpeed" onchange="save()" style="width:120px;">
+                                <option value="10">10 sec</option><option value="15" selected>15 sec</option><option value="20">20 sec</option><option value="30">30 sec</option><option value="60">60 sec</option>
+                            </select>
+                        </div>
+                        <label class="sub-item" style="padding:0.25rem 0;"><input type="checkbox" id="rareToggle" onchange="save()" checked><span style="font-size:0.75rem;">Rare birds</span></label>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/js/api.js"></script>
 <script>
-let state = { user: null, prefs: null, groups: [], displayToken: null, dashPreviewMap: null, tileLayer: null, saveTimeout: null };
-const TILE_URLS = {
+const TILES = {
     dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
     satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     terrain: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     watercolor: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'
 };
+let S = { prefs: null, groups: [], token: null, tileLayer: null, saveTimer: null };
+const bgMap = L.map('map', { center: [39.74, -105], zoom: 7, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, touchZoom: false });
 
-async function init() {
-    const [meRes, groupsRes] = await Promise.all([API.getMe(), API.getSpeciesGroups()]);
-    if (!meRes || !meRes.success) return;
-    state.user = meRes.user; state.prefs = meRes.preferences; state.groups = groupsRes?.groups || []; state.displayToken = meRes.display_token;
-    document.getElementById('userMenuBtn').textContent = state.user.full_name || 'Account';
-    renderSpeciesPicker(); renderSubspecies(); renderLocation(); renderFormat(); renderDisplayOptions(); renderViewerLink(); initPreviewMap();
+async function boot() {
+    const [me, gr] = await Promise.all([API.getMe(), API.getSpeciesGroups()]);
+    if (!me || !me.success) { window.location.href = '/login.html'; return; }
+    S.prefs = me.preferences; S.groups = gr?.groups || []; S.token = me.display_token;
+    document.getElementById('userLabel').textContent = me.user.full_name || me.user.email;
+
+    // Background map
+    const lat = S.prefs.location_lat || 39.74, lng = S.prefs.location_lng || -105;
+    bgMap.setView([lat, lng], 7);
+    S.tileLayer = L.tileLayer(TILES[S.prefs.map_format || 'dark'], { maxZoom: 18, subdomains: 'abcd' }).addTo(bgMap);
+
+    renderSpecies(); renderSubs(); renderLoc(); renderFmt(); renderOpts(); renderLink();
 }
 
-function renderSpeciesPicker() {
-    document.getElementById('speciesPicker').innerHTML = state.groups.map(g =>
-        '<div class="species-option ' + (g.group_key === state.prefs.primary_group_key ? 'selected' : '') + '" data-key="' + g.group_key + '" onclick="selectGroup(\'' + g.group_key + '\')">' +
-        '<div class="dot" style="background:' + g.dot_color + '"></div><div class="name">' + g.group_name + '</div><div class="count">' + g.species_count + ' species</div></div>'
+function renderSpecies() {
+    document.getElementById('speciesPicker').innerHTML = S.groups.map(g =>
+        '<div class="sp-btn ' + (g.group_key === S.prefs.primary_group_key ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
+        '<span class="dot" style="background:' + g.dot_color + '"></span><span class="name">' + g.group_name + '</span><span class="count">' + g.species_count + '</span></div>'
     ).join('');
 }
+function pickGroup(k) { S.prefs.primary_group_key = k; S.prefs.selected_species = null; renderSpecies(); renderSubs(); save('speciesSaved'); }
 
-function selectGroup(key) { state.prefs.primary_group_key = key; state.prefs.selected_species = null; renderSpeciesPicker(); renderSubspecies(); savePreferences('speciesSaved'); }
-
-function renderSubspecies() {
-    const group = state.groups.find(g => g.group_key === state.prefs.primary_group_key);
-    if (!group) return;
-    document.getElementById('subspeciesSection').classList.remove('hidden');
-    const selected = state.prefs.selected_species;
-    document.getElementById('subspeciesList').innerHTML = group.species.map(sp =>
-        '<label class="subspecies-item"><input type="checkbox" value="' + sp.code + '" ' + (!selected || selected.includes(sp.code) ? 'checked' : '') + ' onchange="updateSubspeciesSelection()"><span class="subspecies-dot" style="background:' + sp.color + '"></span><span>' + sp.name + '</span></label>'
+function renderSubs() {
+    const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
+    if (!g) return;
+    document.getElementById('subSection').style.display = '';
+    const sel = S.prefs.selected_species;
+    document.getElementById('subList').innerHTML = g.species.map(sp =>
+        '<label class="sub-item"><input type="checkbox" value="' + sp.code + '" ' + (!sel || sel.includes(sp.code) ? 'checked' : '') + ' onchange="updateSubs()"><span class="sub-dot" style="background:' + sp.color + '"></span>' + sp.name + '</label>'
     ).join('');
-    document.getElementById('selectAllSpecies').checked = !selected;
+    document.getElementById('selAll').checked = !sel;
+}
+function toggleAll(c) { document.querySelectorAll('#subList input').forEach(cb => cb.checked = c); updateSubs(); }
+function updateSubs() {
+    const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
+    const checked = Array.from(document.querySelectorAll('#subList input:checked')).map(cb => cb.value);
+    S.prefs.selected_species = checked.length === g.species.length ? null : checked;
+    document.getElementById('selAll').checked = !S.prefs.selected_species;
+    save('speciesSaved');
 }
 
-function toggleAllSubspecies(checked) { document.querySelectorAll('#subspeciesList input[type="checkbox"]').forEach(cb => cb.checked = checked); updateSubspeciesSelection(); }
-
-function updateSubspeciesSelection() {
-    const group = state.groups.find(g => g.group_key === state.prefs.primary_group_key);
-    const checked = Array.from(document.querySelectorAll('#subspeciesList input[type="checkbox"]:checked')).map(cb => cb.value);
-    state.prefs.selected_species = checked.length === group.species.length ? null : checked;
-    document.getElementById('selectAllSpecies').checked = !state.prefs.selected_species;
-    savePreferences('speciesSaved');
-}
-
-function renderLocation() { document.getElementById('zipInput').value = state.prefs.location_zip || ''; document.getElementById('locationLabel').textContent = state.prefs.location_label || ''; }
-
+function renderLoc() { document.getElementById('zipInput').value = S.prefs.location_zip || ''; document.getElementById('locLabel').textContent = S.prefs.location_label || ''; }
 async function updateLocation() {
     const zip = document.getElementById('zipInput').value.trim();
     if (!/^\d{5}$/.test(zip)) return;
-    const res = await API.geocode(zip);
-    if (res?.success) {
-        Object.assign(state.prefs, { location_zip: zip, location_lat: res.lat, location_lng: res.lng, location_label: res.label });
-        document.getElementById('locationLabel').textContent = res.label;
-        savePreferences('locationSaved');
-        if (state.dashPreviewMap) state.dashPreviewMap.setView([res.lat, res.lng], 8);
-    }
+    const r = await API.geocode(zip);
+    if (r?.success) { Object.assign(S.prefs, { location_zip: zip, location_lat: r.lat, location_lng: r.lng, location_label: r.label }); document.getElementById('locLabel').textContent = r.label; bgMap.setView([r.lat, r.lng], 7); save('locSaved'); }
 }
 
-function renderFormat() { document.querySelectorAll('.format-option').forEach(el => el.classList.toggle('selected', el.dataset.format === state.prefs.map_format)); }
-function selectFormat(f) { state.prefs.map_format = f; renderFormat(); savePreferences('formatSaved'); if (state.tileLayer) state.tileLayer.setUrl(TILE_URLS[f]); }
-function renderDisplayOptions() { document.getElementById('rotationSpeed').value = state.prefs.rotation_interval_sec || 15; document.getElementById('rareBirds').checked = state.prefs.rare_birds_enabled !== false; }
+function renderFmt() { document.querySelectorAll('.fmt-btn').forEach(el => el.classList.toggle('selected', el.dataset.fmt === S.prefs.map_format)); }
+function pickFmt(f) { S.prefs.map_format = f; renderFmt(); if (S.tileLayer) S.tileLayer.setUrl(TILES[f]); save('fmtSaved'); }
 
-function renderViewerLink() {
-    if (!state.displayToken) return;
-    const url = window.location.origin + '/viewer.html?t=' + state.displayToken.token;
+function renderOpts() { document.getElementById('rotSpeed').value = S.prefs.rotation_interval_sec || 15; document.getElementById('rareToggle').checked = S.prefs.rare_birds_enabled !== false; }
+
+function renderLink() {
+    if (!S.token) return;
+    const url = location.origin + '/viewer.html?t=' + S.token.token;
     document.getElementById('viewerUrl').textContent = url;
     document.getElementById('viewerOpenBtn').href = url;
 }
-
-function copyViewerLink() {
+function copyLink() {
     navigator.clipboard.writeText(document.getElementById('viewerUrl').textContent).then(() => {
-        const btn = document.querySelector('[onclick="copyViewerLink()"]'); btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy Link', 2000);
+        const b = document.querySelector('[onclick="copyLink()"]'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Link', 2000);
     });
 }
 
-function initPreviewMap() {
-    const lat = state.prefs.location_lat || 39.74, lng = state.prefs.location_lng || -104.99;
-    state.dashPreviewMap = L.map('dashPreviewMap', { center: [lat, lng], zoom: 7, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, touchZoom: false });
-    state.tileLayer = L.tileLayer(TILE_URLS[state.prefs.map_format || 'dark'], { maxZoom: 18, subdomains: 'abcd' }).addTo(state.dashPreviewMap);
-    L.circleMarker([lat, lng], { radius: 6, fillColor: '#3b82f6', fillOpacity: 1, color: '#fff', weight: 2 }).addTo(state.dashPreviewMap);
-}
-
-function savePreferences(indicatorId) {
-    clearTimeout(state.saveTimeout);
-    state.saveTimeout = setTimeout(async () => {
-        await API.updatePreferences({ primary_group_key: state.prefs.primary_group_key, selected_species: state.prefs.selected_species, location_zip: state.prefs.location_zip, location_lat: state.prefs.location_lat, location_lng: state.prefs.location_lng, location_label: state.prefs.location_label, map_format: state.prefs.map_format, rotation_interval_sec: parseInt(document.getElementById('rotationSpeed').value), rare_birds_enabled: document.getElementById('rareBirds').checked });
-        if (indicatorId) { const el = document.getElementById(indicatorId); if (el) { el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500); } }
-    }, 500);
+function save(flashId) {
+    clearTimeout(S.saveTimer);
+    S.saveTimer = setTimeout(async () => {
+        await API.updatePreferences({ primary_group_key: S.prefs.primary_group_key, selected_species: S.prefs.selected_species, location_zip: S.prefs.location_zip, location_lat: S.prefs.location_lat, location_lng: S.prefs.location_lng, location_label: S.prefs.location_label, map_format: S.prefs.map_format, rotation_interval_sec: parseInt(document.getElementById('rotSpeed').value), rare_birds_enabled: document.getElementById('rareToggle').checked });
+        if (flashId) { const el = document.getElementById(flashId); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500); }
+    }, 400);
 }
 
 async function handleLogout() { await API.logout(); window.location.href = '/'; }
-document.addEventListener('click', e => { if (!e.target.closest('.user-menu')) document.querySelector('.user-menu-dropdown')?.classList.remove('open'); });
-init();
+boot();
 </script>
 </body>
 </html>
