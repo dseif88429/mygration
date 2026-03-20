@@ -74,7 +74,7 @@
         .sp-card:not(.selected) .sp-card-badge { display: none; }
 
         /* ---- Data availability notice ---- */
-        .data-notice { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.875rem; color: #fbbf24; margin-top: 0.75rem; display: none; }
+        .data-notice { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.875rem; color: #fbbf24; margin-top: 0.75rem; margin-bottom: 0.75rem; display: none; }
         .data-notice.show { display: block; }
 
         /* ---- Sub-species checkboxes ---- */
@@ -164,7 +164,8 @@
                 <div class="card-title">Species Group <span class="saved-badge" id="spSaved">Saved</span></div>
                 <div class="species-grid" id="speciesGrid"></div>
                 <div class="data-notice" id="dataNotice">This group's migration data will be available within a few hours. Hummingbird data is available now.</div>
-                <div id="subSection" style="display:none;">
+                <div id="subSection" style="display:none; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--border);">
+                    <div class="card-title" style="margin-bottom:0.5rem;">Sub-species</div>
                     <div class="sub-all"><input type="checkbox" id="selAll" onchange="toggleAll(this.checked)" checked> Select All</div>
                     <div class="sub-grid" id="subGrid"></div>
                 </div>
@@ -253,7 +254,13 @@ async function boot() {
 function renderSpecies() {
     const grid = document.getElementById('speciesGrid');
     grid.innerHTML = S.groups.map(g => {
-        const img = S.birdImages[g.group_name] || S.birdImages[g.group_name + 's'] || '';
+        // Try multiple name variations to find a matching bird image
+        const gn = g.group_name;
+        const img = S.birdImages[gn] || S.birdImages[gn + 's'] ||
+                    S.birdImages[gn.replace(/s$/, '')] ||
+                    S.birdImages[gn.replace(/ & .*/, '')] ||
+                    // Try first species in the group
+                    (g.species.length ? (S.birdImages[g.species[0].name] || '') : '');
         const sel = g.group_key === S.prefs.primary_group_key;
         return '<div class="sp-card ' + (sel ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
             '<div class="sp-card-badge">Active</div>' +
