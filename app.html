@@ -294,9 +294,14 @@ async function boot() {
     // Set map
     const fmt = S.prefs.map_format || 'street';
     S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
-    // Retry failed tiles after 5 seconds
+    // Retry failed tiles with staggered delays and cache bust
     S.tileLayer.on('tileerror', function(e) {
-        setTimeout(function() { e.tile.src = e.tile.src; }, 5000);
+        var delay = 3000 + Math.random() * 7000;
+        setTimeout(function() {
+            var src = e.tile.getAttribute('data-src') || e.tile.src;
+            e.tile.setAttribute('data-src', src);
+            e.tile.src = src + (src.includes('?') ? '&' : '?') + '_r=' + Date.now();
+        }, delay);
     });
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 

@@ -81,7 +81,14 @@
         const tileUrl = TILE_URLS[preferences.map_format] || TILE_URLS.dark;
         if (state.tileLayer) state.map.removeLayer(state.tileLayer);
         state.tileLayer = L.tileLayer(tileUrl, { maxZoom: 18, subdomains: 'abcd' }).addTo(state.map);
-        state.tileLayer.on('tileerror', function(e) { setTimeout(function() { e.tile.src = e.tile.src; }, 5000); });
+        state.tileLayer.on('tileerror', function(e) {
+            var delay = 3000 + Math.random() * 7000;
+            setTimeout(function() {
+                var src = e.tile.getAttribute('data-src') || e.tile.src;
+                e.tile.setAttribute('data-src', src);
+                e.tile.src = src + (src.includes('?') ? '&' : '?') + '_r=' + Date.now();
+            }, delay);
+        });
 
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);
