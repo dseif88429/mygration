@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mygration - Real-Time Bird Migration Tracking</title>
+    <meta name="description" content="Track bird migration in real-time on stunning interactive maps. Choose your species, set your location, and watch migration unfold. 100% free.">
+    <meta property="og:title" content="Mygration - Real-Time Bird Migration Tracking">
+    <meta property="og:description" content="Track bird migration in real-time on stunning interactive maps. 100% free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.mygration.live">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 8px currentColor; } 50% { box-shadow: 0 0 20px currentColor; } }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fade-in-up 0.6s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+        .hero-map-bg { position: absolute; inset: 0; overflow: hidden; opacity: 0.15; }
+        .hero-map-bg .dot { position: absolute; border-radius: 50%; animation: pulse-glow 3s ease-in-out infinite; }
+        .social-proof { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; }
+        .avatar-stack { display: flex; }
+        .avatar-stack .avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--bg-primary); margin-left: -8px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; font-size: 0.625rem; color: var(--text-muted); }
+        .avatar-stack .avatar:first-child { margin-left: 0; }
+        .social-text { font-size: 0.8125rem; color: var(--text-muted); }
+        .comparison { max-width: 600px; margin: 0 auto; }
+        .comparison-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+        .comparison-row:last-child { border-bottom: none; }
+        .check { color: var(--success); font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="navbar-inner">
+        <a href="/" class="navbar-brand">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" stroke="#3b82f6" stroke-width="2" fill="none"/>
+                <path d="M8 18c2-4 6-8 12-10M10 22c3-3 7-6 14-7" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+                <circle cx="20" cy="10" r="2" fill="#10b981"/><circle cx="24" cy="15" r="1.5" fill="#f59e0b"/><circle cx="14" cy="14" r="1.5" fill="#ec4899"/>
+            </svg>
+            Mygration
+        </a>
+        <button class="navbar-toggle" onclick="document.querySelector('.navbar-links').classList.toggle('open')" aria-label="Menu">&#9776;</button>
+        <div class="navbar-links">
+            <a href="#features">Features</a>
+            <a href="#species">Species</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="/login.html" class="btn btn-secondary btn-sm">Log In</a>
+            <a href="#signup" class="btn btn-primary btn-sm">Get Started Free</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero" id="hero">
+    <div class="hero-map-bg" id="heroMapBg"></div>
+    <div class="hero-content">
+        <div class="hero-badge animate-in">
+            <span style="font-size:1rem">&#x1F426;</span> 100% Free &mdash; No Credit Card
+        </div>
+        <h1 class="animate-in delay-1">Watch Bird Migration<br><span class="gradient-text">Come Alive</span></h1>
+        <p class="subtitle animate-in delay-2">Track hummingbirds, eagles, finches, and more on stunning interactive maps. Real-time eBird data, centered on <em>your</em> location.</p>
+        <div class="hero-buttons animate-in delay-3">
+            <a href="#signup" class="btn btn-primary btn-lg">Start Tracking &rarr;</a>
+            <a href="#features" class="btn btn-secondary btn-lg">See How It Works</a>
+        </div>
+        <div class="social-proof animate-in delay-4">
+            <div class="avatar-stack">
+                <div class="avatar">JT</div><div class="avatar">ML</div><div class="avatar">KR</div><div class="avatar">DS</div>
+            </div>
+            <span class="social-text">Powered by eBird &mdash; Cornell Lab of Ornithology</span>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Everything You Need to Track Migration</h2>
+            <p>Real-time data from thousands of birders across North America, beautifully visualized on your screen.</p>
+        </div>
+        <div class="features-grid">
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(59,130,246,0.1); color: var(--accent);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <h3>Interactive Maps</h3>
+                <p>Smooth animated transitions between continental, regional, and local views. Choose from 4 map styles.</p>
+            </div>
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(16,185,129,0.1); color: var(--hummingbird);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <h3>Updated Every 4 Hours</h3>
+                <p>Fresh sighting data pulled automatically from eBird's database of millions of observations.</p>
+            </div>
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(236,72,153,0.1); color: var(--finch);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <h3>Your Location</h3>
+                <p>Enter your zip code and maps center on you. See what's migrating through your area right now.</p>
+            </div>
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(168,85,247,0.1); color: var(--owl);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 8v4M12 16h.01"/></svg>
+                </div>
+                <h3>Rare Bird Alerts</h3>
+                <p>Get notified about rare and notable sightings near your location. Never miss an unusual visitor.</p>
+            </div>
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(249,115,22,0.1); color: var(--eagle);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+                </div>
+                <h3>TV Display Mode</h3>
+                <p>Full-screen mode designed for TVs and tablets. Auto-rotating views make a beautiful ambient display.</p>
+            </div>
+            <div class="card feature-card">
+                <div class="card-icon" style="background: rgba(245,158,11,0.1); color: var(--warbler);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/></svg>
+                </div>
+                <h3>Pick Your Species</h3>
+                <p>Choose from hummingbirds, eagles, finches, owls, and more. Track all sub-species or just your favorites.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="species" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <h2>Choose Your Species</h2>
+            <p>Select a primary species group and optionally pick individual sub-species to track.</p>
+        </div>
+        <div class="species-grid">
+            <div class="species-card"><div class="species-dot" style="background: var(--hummingbird); color: var(--hummingbird);"></div><h4>Hummingbirds</h4><p class="species-count">8 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--eagle); color: var(--eagle);"></div><h4>Eagles & Hawks</h4><p class="species-count">5 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--finch); color: var(--finch);"></div><h4>Finches</h4><p class="species-count">6 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--owl); color: var(--owl);"></div><h4>Owls</h4><p class="species-count">6 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--warbler); color: var(--warbler);"></div><h4>Warblers</h4><p class="species-count">7 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--woodpecker); color: var(--woodpecker);"></div><h4>Woodpeckers</h4><p class="species-count">6 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: var(--sparrow); color: var(--sparrow);"></div><h4>Sparrows</h4><p class="species-count">6 species tracked</p></div>
+            <div class="species-card"><div class="species-dot" style="background: #eab308; color: #eab308;"></div><h4>Tanagers</h4><p class="species-count">5 species tracked</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <h2>Up and Running in 60 Seconds</h2>
+            <p>No downloads, no installs. Just sign up and start watching.</p>
+        </div>
+        <div class="steps">
+            <div class="step"><div class="step-number">1</div><h3>Create Your Account</h3><p>Enter your email, pick a password, and tell us your zip code. That's it.</p></div>
+            <div class="step"><div class="step-number">2</div><h3>Pick Your Birds</h3><p>Choose a species group and select which sub-species you want to track on your maps.</p></div>
+            <div class="step"><div class="step-number">3</div><h3>Watch Migration Unfold</h3><p>Open your viewer link on any device &mdash; phone, tablet, or TV. Maps rotate automatically.</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" style="background: var(--bg-secondary);">
+    <div class="container">
+        <div class="section-header">
+            <h2>All This, Completely Free</h2>
+            <p>No hidden fees, no premium tier bait-and-switch. Every feature is included.</p>
+        </div>
+        <div class="comparison">
+            <div class="comparison-row"><span>Interactive migration maps</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>4 map styles (Dark, Satellite, Terrain, Watercolor)</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>8 species groups, 49+ sub-species</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>Custom location (zip code)</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>TV / tablet display mode</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>Rare bird sightings</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>Auto-updates every 4 hours</span> <span class="check">&#10003;</span></div>
+            <div class="comparison-row"><span>Share viewer link with anyone</span> <span class="check">&#10003;</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="signup">
+    <div class="container">
+        <div style="display: grid; gap: 3rem; align-items: center; grid-template-columns: 1fr;">
+            <div class="auth-card" style="max-width: 480px; margin: 0 auto; width: 100%;">
+                <h2>Create Your Free Account</h2>
+                <p class="auth-subtitle">Start tracking bird migration in under a minute.</p>
+                <form id="signupForm" onsubmit="return handleSignup(event)">
+                    <div class="form-group"><label class="form-label" for="full_name">Full Name</label><input class="form-input" type="text" id="full_name" name="full_name" placeholder="Jane Smith" required autocomplete="name"></div>
+                    <div class="form-group"><label class="form-label" for="email">Email</label><input class="form-input" type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email"></div>
+                    <div class="form-group"><label class="form-label" for="username">Username</label><input class="form-input" type="text" id="username" name="username" placeholder="janebirder" required autocomplete="username" pattern="[a-z0-9_.\-]+" title="Lowercase letters, numbers, underscores, dots, hyphens"></div>
+                    <div class="form-group"><label class="form-label" for="password">Password</label><input class="form-input" type="password" id="password" name="password" placeholder="8+ characters" required minlength="8" autocomplete="new-password"></div>
+                    <div class="form-group"><label class="form-label" for="zip_code">Zip Code <span style="color: var(--text-muted);">(for map centering)</span></label><input class="form-input" type="text" id="zip_code" name="zip_code" placeholder="80202" required pattern="[0-9]{5}" title="5-digit US zip code" autocomplete="postal-code"></div>
+                    <div id="signupError" class="form-error mb-2" style="display:none;"></div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" id="signupBtn">Create Account &rarr;</button>
+                    <p class="text-center text-sm mt-2">Already have an account? <a href="/login.html">Log in</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container"><p>Mygration &copy; 2026 &mdash; Bird sighting data provided by <a href="https://ebird.org" target="_blank" rel="noopener">eBird</a> / Cornell Lab of Ornithology</p></div>
+</footer>
+
+<script>
+(function() {
+    const bg = document.getElementById('heroMapBg');
+    if (!bg) return;
+    const colors = ['#10b981','#f59e0b','#ec4899','#3b82f6','#a855f7','#f97316','#dc2626'];
+    for (let i = 0; i < 60; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        const size = 4 + Math.random() * 6;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        dot.style.cssText = `width:${size}px;height:${size}px;background:${color};color:${color};left:${5+Math.random()*90}%;top:${10+Math.random()*80}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s;`;
+        bg.appendChild(dot);
+    }
+})();
+
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); document.querySelector('.navbar-links')?.classList.remove('open'); }
+    });
+});
+
+async function handleSignup(e) {
+    e.preventDefault();
+    const btn = document.getElementById('signupBtn');
+    const errEl = document.getElementById('signupError');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Creating account...';
+    const data = { full_name: document.getElementById('full_name').value.trim(), email: document.getElementById('email').value.trim().toLowerCase(), username: document.getElementById('username').value.trim().toLowerCase(), password: document.getElementById('password').value, zip_code: document.getElementById('zip_code').value.trim() };
+    try {
+        const res = await fetch('/api/mygration/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' });
+        const result = await res.json();
+        if (result.success) { window.location.href = result.redirect || '/app.html'; }
+        else { const msg = Object.values(result.errors || {}).join('. ') || result.error || 'Signup failed.'; errEl.textContent = msg; errEl.style.display = 'block'; }
+    } catch (err) { errEl.textContent = 'Network error. Please check your connection.'; errEl.style.display = 'block'; }
+    finally { btn.disabled = false; btn.innerHTML = 'Create Account &rarr;'; }
+}
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.animation = 'fade-in-up 0.5s ease forwards'; observer.unobserve(entry.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.feature-card, .species-card, .step').forEach(el => { el.style.opacity = '0'; observer.observe(el); });
+</script>
+</body>
+</html>
