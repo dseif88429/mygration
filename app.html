@@ -503,9 +503,8 @@ function highlightRadius(km) {
 function renderLink() {
     if (!S.token) return;
     const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
-    const fullUrl = location.origin + '/viewer.html?t=' + S.token.token;
     document.getElementById('viewerUrl').textContent = shortUrl;
-    document.getElementById('viewerFullBtn').href = fullUrl;
+    updateLiveViewLink();
 }
 function copyLink() {
     const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
@@ -526,6 +525,7 @@ async function saveNow() {
         rare_birds_enabled: document.getElementById('rareToggle').checked,
         rare_birds_radius_km: S.prefs.rare_birds_radius_km || 80,
     });
+    updateLiveViewLink();
 }
 
 function save() {
@@ -545,6 +545,10 @@ function save() {
 
 function getDotSize() { return parseInt(document.getElementById('dotSize')?.value || 4); }
 function changeDotSize() { loadSightings(); }
+function updateLiveViewLink() {
+    if (!S.token) return;
+    document.getElementById('viewerFullBtn').href = location.origin + '/viewer.html?t=' + S.token.token + '&fresh=' + Date.now();
+}
 function flash(id) { const el = document.getElementById(id); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500); }
 async function handleLogout() { await API.logout(); window.location.href = '/'; }
 

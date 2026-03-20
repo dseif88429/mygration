@@ -24,6 +24,7 @@
         const params = new URLSearchParams(window.location.search);
         state.token = params.get('t');
         state.isDemo = (state.token === 'demo');
+        state.forceFresh = !!params.get('fresh');
         if (!state.token) { showError('No display token provided. Use a valid viewer link.'); return; }
 
         state.map = L.map('map', { center: [39, -98.5], zoom: 4, zoomControl: false, attributionControl: false, fadeAnimation: true, zoomAnimation: true });
@@ -59,7 +60,8 @@
             }
 
             const hash = (data.sightings?.length || 0) + ':' + (data.preferences?.primary_group_key || '');
-            if (hash === state.contentHash) return;
+            if (hash === state.contentHash && !state.forceFresh) return;
+            state.forceFresh = false;
             state.contentHash = hash;
             state.content = data;
             applyContent();
