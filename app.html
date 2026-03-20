@@ -148,9 +148,9 @@
         .legend-name{flex:1}
         .legend-count{font-size:0.75rem;color:var(--text-muted);font-variant-numeric:tabular-nums}
 
-        /* Hide legend & viewer bar when any drawer is open */
-        .drawer.open ~ .legend,
-        .drawer.open ~ .viewer-bar { opacity:0;pointer-events:none;transition:opacity 0.2s }
+        /* Legend/viewer hide state (toggled by JS) */
+        .legend.hidden-by-drawer, .viewer-bar.hidden-by-drawer { opacity:0;pointer-events:none;transition:opacity 0.2s }
+        .legend, .viewer-bar { transition:opacity 0.2s }
 
         /* Mobile */
         @media(max-width:700px){
@@ -355,9 +355,13 @@ function toggleDrawer(side) {
     drawer.classList.toggle('open', !isOpen);
     document.getElementById('btnSpecies').classList.toggle('active', side === 'left' && !isOpen);
     document.getElementById('btnSettings').classList.toggle('active', side === 'right' && !isOpen);
-    // Hide legend when left drawer is open (they overlap)
+    updateOverlayVisibility();
+}
+
+function updateOverlayVisibility() {
     const anyOpen = document.querySelector('.drawer.open');
-    document.getElementById('legend').style.display = anyOpen ? 'none' : '';
+    document.getElementById('legend').classList.toggle('hidden-by-drawer', !!anyOpen);
+    document.getElementById('viewerBar').classList.toggle('hidden-by-drawer', !!anyOpen);
 }
 
 // ---- Species ----
@@ -497,7 +501,7 @@ map.on('click', () => {
     document.getElementById('drawerRight').classList.remove('open');
     document.getElementById('btnSpecies').classList.remove('active');
     document.getElementById('btnSettings').classList.remove('active');
-    document.getElementById('legend').style.display = '';
+    updateOverlayVisibility();
 });
 
 boot();
