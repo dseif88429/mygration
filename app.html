@@ -241,6 +241,37 @@ const TILES = {
 
 let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, previewMap: null };
 
+function findBirdImage(groupName, species) {
+    const imgs = S.birdImages;
+    // 1. Exact group name match
+    if (imgs[groupName]) return imgs[groupName];
+    // 2. Try singular (Finches -> Finch, Owls -> Owl, etc.)
+    const singular = groupName.replace(/s$/, '').replace(/es$/, '');
+    // 3. Try first word only (Eagles & Hawks -> Eagle)
+    const firstWord = groupName.split(/[\s&,]/)[0].replace(/s$/, '');
+    // 4. Search all image keys for partial match
+    const lowerGroup = groupName.toLowerCase();
+    const lowerSingular = singular.toLowerCase();
+    const lowerFirst = firstWord.toLowerCase();
+    for (const key of Object.keys(imgs)) {
+        const lk = key.toLowerCase();
+        if (lk === lowerGroup || lk === lowerSingular || lk === lowerFirst) return imgs[key];
+    }
+    // 5. Fuzzy: any image key that contains the first word
+    if (lowerFirst.length >= 4) {
+        for (const key of Object.keys(imgs)) {
+            if (key.toLowerCase().includes(lowerFirst)) return imgs[key];
+        }
+    }
+    // 6. Try first species in the group
+    if (species && species.length) {
+        for (const sp of species) {
+            if (imgs[sp.name]) return imgs[sp.name];
+        }
+    }
+    return '';
+}
+
 async function boot() {
     const [me, gr, imgs] = await Promise.all([API.getMe(), API.getSpeciesGroups(), API.get('/bird-images')]);
     if (!me || !me.success) { window.location.href = '/login.html'; return; }
@@ -255,12 +286,7 @@ function renderSpecies() {
     const grid = document.getElementById('speciesGrid');
     grid.innerHTML = S.groups.map(g => {
         // Try multiple name variations to find a matching bird image
-        const gn = g.group_name;
-        const img = S.birdImages[gn] || S.birdImages[gn + 's'] ||
-                    S.birdImages[gn.replace(/s$/, '')] ||
-                    S.birdImages[gn.replace(/ & .*/, '')] ||
-                    // Try first species in the group
-                    (g.species.length ? (S.birdImages[g.species[0].name] || '') : '');
+        const img = findBirdImage(g.group_name, g.species);
         const sel = g.group_key === S.prefs.primary_group_key;
         return '<div class="sp-card ' + (sel ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
             '<div class="sp-card-badge">Active</div>' +
