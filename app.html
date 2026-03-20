@@ -268,10 +268,10 @@
 <script src="/js/api.js?v=2"></script>
 <script>
 const TILES = {
-    street: { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', label: 'Street' },
+    street: { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', label: 'Street' },
     dark: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', label: 'Dark' },
     satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' },
-    voyager: { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', label: 'Voyager' }
+    positron: { url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', label: 'Light' }
 };
 
 let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, tileLayer: null };
@@ -294,15 +294,7 @@ async function boot() {
     // Set map
     const fmt = S.prefs.map_format || 'street';
     S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
-    // After initial load, replace tile layer entirely to fill grey patches
-    function refreshTiles() {
-        if (!S.tileLayer) return;
-        var url = S.tileLayer._url;
-        map.removeLayer(S.tileLayer);
-        S.tileLayer = L.tileLayer(url, { maxZoom: 18, subdomains: 'abcd' }).addTo(map);
-    }
-    setTimeout(refreshTiles, 6000);
-    setTimeout(refreshTiles, 20000);
+    // Tile layer is cached by Service Worker -- no manual refresh needed
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 
     // Set legend title from saved preference immediately

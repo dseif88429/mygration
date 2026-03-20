@@ -8,10 +8,10 @@
     const POLL_INTERVAL = 5 * 60 * 1000;
     const API_BASE = '/api/mygration';
     const TILE_URLS = {
-        street: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        street: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
         satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        voyager: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+        positron: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
     };
 
     const state = {
@@ -83,9 +83,7 @@
         const tileUrl = TILE_URLS[preferences.map_format] || TILE_URLS.dark;
         if (state.tileLayer) state.map.removeLayer(state.tileLayer);
         state.tileLayer = L.tileLayer(tileUrl, { maxZoom: 18, subdomains: 'abcd' }).addTo(state.map);
-        // Redraw tiles after delay to catch failures before SW was ready
-        setTimeout(function() { if (state.tileLayer) state.tileLayer.redraw(); }, 5000);
-        setTimeout(function() { if (state.tileLayer) state.tileLayer.redraw(); }, 15000);
+        // Tiles cached by Service Worker -- no manual refresh needed
 
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);
