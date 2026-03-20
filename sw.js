@@ -48,15 +48,14 @@ self.addEventListener('fetch', event => {
             if (cached) return cached; // Cache hit -- instant, no network
 
             try {
-                const response = await fetch(event.request);
+                // Bypass browser HTTP cache to avoid serving cached 403/429 failures
+                const response = await fetch(event.request.url, { cache: 'no-cache' });
                 if (response.ok) {
-                    // Store with normalized key
                     cache.put(key, response.clone());
-                    evictIfNeeded(cache); // async, don't await
+                    evictIfNeeded(cache);
                 }
                 return response;
             } catch (err) {
-                // Network failed, return empty transparent tile
                 return new Response('', { status: 408 });
             }
         })
