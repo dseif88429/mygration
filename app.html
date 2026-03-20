@@ -239,10 +239,10 @@
 <script src="/js/api.js"></script>
 <script>
 const TILES = {
+    street: { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', label: 'Street' },
     dark: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', label: 'Dark' },
-    satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' },
-    terrain: { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', label: 'Terrain' },
-    topo: { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', label: 'Topo' }
+    positron: { url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', label: 'Positron' },
+    voyager: { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', label: 'Voyager' }
 };
 
 let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, previewMap: null };

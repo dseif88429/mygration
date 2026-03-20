@@ -8,10 +8,10 @@
     const POLL_INTERVAL = 5 * 60 * 1000;
     const API_BASE = '/api/mygration';
     const TILE_URLS = {
+        street: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
         dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        terrain: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-        topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+        positron: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        voyager: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
     };
 
     const state = {
