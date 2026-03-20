@@ -11,176 +11,213 @@
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --glass: rgba(11, 17, 32, 0.8);
-            --glass-border: rgba(255,255,255,0.08);
-            --glass-hover: rgba(255,255,255,0.04);
-            --accent: #3b82f6; --accent-hover: #2563eb;
-            --success: #10b981; --danger: #ef4444;
-            --text: #f1f5f9; --text-dim: #94a3b8; --text-muted: #64748b;
+            --bg: #0b1120; --bg-card: rgba(20, 30, 50, 0.92);
+            --border: rgba(255,255,255,0.08); --border-active: #3b82f6;
+            --accent: #3b82f6; --accent-hover: #2563eb; --success: #10b981; --danger: #ef4444;
+            --text: #f1f5f9; --text-dim: #cbd5e1; --text-muted: #94a3b8;
             --radius: 16px; --radius-sm: 10px;
         }
-        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Inter', -apple-system, sans-serif; background: #0b1120; color: var(--text); }
+        html { font-size: 16px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
         a { color: var(--accent); text-decoration: none; }
-        #map { position: fixed; inset: 0; z-index: 0; }
+
+        /* ---- Navbar ---- */
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
+        .nav-brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem; font-weight: 800; color: var(--text); text-decoration: none; }
+        .nav-brand svg { width: 30px; height: 30px; }
+        .nav-right { display: flex; gap: 0.75rem; align-items: center; }
+        .nav-user { font-size: 0.9375rem; color: var(--text-dim); }
+        .nav-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; color: var(--text-muted); font-size: 0.875rem; cursor: pointer; font-family: inherit; }
+        .nav-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+        /* ---- Layout ---- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .page-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .page-sub { font-size: 1rem; color: var(--text-muted); margin-bottom: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        /* ---- Cards ---- */
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-title { font-size: 0.8125rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .saved-badge { font-size: 0.75rem; color: var(--success); font-weight: 600; text-transform: none; letter-spacing: 0; opacity: 0; transition: opacity 0.3s; }
+        .saved-badge.show { opacity: 1; }
+
+        /* ---- Viewer link (prominent) ---- */
+        .viewer-card { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(16,185,129,0.08)); border-color: rgba(59,130,246,0.2); }
+        .viewer-url { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--accent); word-break: break-all; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 0.875rem 1rem; margin-bottom: 1rem; }
+        .viewer-btns { display: flex; gap: 0.5rem; }
+        .btn { padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); font-size: 0.9375rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; font-family: inherit; }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--border); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        /* ---- Species group cards with images ---- */
+        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem; }
+        .sp-card {
+            border: 2px solid var(--border); border-radius: var(--radius-sm);
+            overflow: hidden; cursor: pointer; transition: all 0.2s; position: relative;
+            background: rgba(0,0,0,0.3);
+        }
+        .sp-card:hover { border-color: var(--text-muted); transform: translateY(-2px); }
+        .sp-card.selected { border-color: var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.15); }
+        .sp-card-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; opacity: 0.85; transition: opacity 0.2s; }
+        .sp-card:hover .sp-card-img { opacity: 1; }
+        .sp-card-img-placeholder { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .sp-card-info { padding: 0.625rem 0.75rem; }
+        .sp-card-name { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.15rem; }
+        .sp-card-count { font-size: 0.75rem; color: var(--text-muted); }
+        .sp-card-dot { position: absolute; top: 0.5rem; right: 0.5rem; width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(0,0,0,0.5); }
+        .sp-card-badge { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(0,0,0,0.7); color: var(--success); font-size: 0.5625rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; text-transform: uppercase; }
+        .sp-card.selected .sp-card-badge { display: block; }
+        .sp-card:not(.selected) .sp-card-badge { display: none; }
+
+        /* ---- Data availability notice ---- */
+        .data-notice { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); border-radius: var(--radius-sm); padding: 0.75rem 1rem; font-size: 0.875rem; color: #fbbf24; margin-top: 0.75rem; display: none; }
+        .data-notice.show { display: block; }
+
+        /* ---- Sub-species checkboxes ---- */
+        .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem; margin-top: 0.75rem; }
+        @media (max-width: 600px) { .sub-grid { grid-template-columns: 1fr; } }
+        .sub-item { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.625rem; border-radius: 8px; cursor: pointer; transition: background 0.15s; font-size: 0.9375rem; }
+        .sub-item:hover { background: rgba(255,255,255,0.04); }
+        .sub-item input { accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer; }
+        .sub-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .sub-all { font-size: 0.875rem; font-weight: 600; color: var(--text-dim); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+        .sub-all input { accent-color: var(--accent); width: 18px; height: 18px; }
+
+        /* ---- Map style picker with previews ---- */
+        .style-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
+        @media (max-width: 600px) { .style-grid { grid-template-columns: repeat(2, 1fr); } }
+        .style-card {
+            border: 2px solid var(--border); border-radius: var(--radius-sm);
+            overflow: hidden; cursor: pointer; transition: all 0.2s;
+        }
+        .style-card:hover { border-color: var(--text-muted); }
+        .style-card.selected { border-color: var(--accent); }
+        .style-preview { width: 100%; aspect-ratio: 16/9; }
+        .style-label { padding: 0.5rem; text-align: center; font-size: 0.875rem; font-weight: 600; }
+
+        /* ---- Map style hover preview ---- */
+        .style-preview-popup {
+            display: none; position: fixed; z-index: 9999;
+            width: 400px; height: 250px; border-radius: var(--radius);
+            border: 1px solid var(--border); overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5); pointer-events: none;
+        }
+        .style-preview-popup.show { display: block; }
+
+        /* ---- Rare birds with radius slider ---- */
+        .rare-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .rare-toggle { display: flex; align-items: center; gap: 0.625rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .rare-toggle input { accent-color: var(--accent); width: 20px; height: 20px; }
+        .rare-slider-group { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 200px; }
+        .rare-slider { flex: 1; accent-color: var(--accent); height: 6px; cursor: pointer; }
+        .rare-val { font-size: 0.9375rem; font-weight: 700; color: var(--text); min-width: 65px; }
+
+        /* ---- Rotation ---- */
+        .opt-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+        .opt-label { font-size: 0.875rem; color: var(--text-dim); font-weight: 600; }
+        .opt-select { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.625rem 0.75rem; font-size: 0.9375rem; font-family: inherit; cursor: pointer; }
+
+        /* ---- Form inputs ---- */
+        .input { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.625rem 0.75rem; font-size: 1rem; font-family: inherit; outline: none; }
+        .input:focus { border-color: var(--accent); }
+        .loc-row { display: flex; gap: 0.75rem; align-items: end; }
+        .loc-label { font-size: 0.9375rem; color: var(--text-dim); margin-top: 0.5rem; }
+
+        /* ---- Leaflet ---- */
         .leaflet-control-attribution, .leaflet-control-zoom { display: none !important; }
-
-        /* UI layer */
-        .ui-layer { position: fixed; inset: 0; z-index: 1000; pointer-events: none; overflow-y: auto; }
-        .ui-layer > * { pointer-events: auto; }
-
-        /* Top bar */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; }
-        .brand { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 700; color: var(--text); }
-        .brand svg { width: 24px; height: 24px; flex-shrink: 0; }
-        .top-right { display: flex; gap: 0.5rem; align-items: center; }
-        .btn-glass { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 999px; padding: 0.4rem 0.875rem; font-size: 0.75rem; font-weight: 500; color: var(--text-dim); cursor: pointer; transition: all 0.2s; text-decoration: none; }
-        .btn-glass:hover { background: rgba(255,255,255,0.1); color: var(--text); }
-
-        /* Panels */
-        .panel {
-            background: var(--glass); backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border); border-radius: var(--radius);
-            padding: 1.25rem;
-        }
-        .panel-title { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 600; }
-
-        /* Layout */
-        .dashboard-layout {
-            display: flex; flex-direction: column; gap: 0.75rem;
-            padding: 0 1.25rem 1.25rem; max-width: 1000px; margin: 0 auto;
-        }
-        .row { display: grid; gap: 0.75rem; }
-        .row-2 { grid-template-columns: 1fr 1fr; }
-        .row-3 { grid-template-columns: 1fr 1fr 1fr; }
-        @media (max-width: 700px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
-
-        /* Species picker */
-        .species-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; }
-        .sp-btn {
-            background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border);
-            border-radius: var(--radius-sm); padding: 0.625rem 0.5rem; text-align: center;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .sp-btn:hover { background: rgba(255,255,255,0.08); }
-        .sp-btn.selected { border-color: var(--accent); background: rgba(59,130,246,0.1); }
-        .sp-btn .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-bottom: 0.35rem; }
-        .sp-btn .name { font-size: 0.6875rem; font-weight: 600; display: block; }
-        .sp-btn .count { font-size: 0.5625rem; color: var(--text-muted); }
-
-        /* Sub-species */
-        .sub-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; margin-top: 0.5rem; }
-        @media (max-width: 500px) { .sub-list { grid-template-columns: 1fr; } }
-        .sub-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.75rem; cursor: pointer; transition: background 0.15s; }
-        .sub-item:hover { background: var(--glass-hover); }
-        .sub-item input { accent-color: var(--accent); width: 14px; height: 14px; }
-        .sub-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-
-        /* Map format */
-        .format-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
-        .fmt-btn { background: rgba(255,255,255,0.04); border: 1.5px solid var(--glass-border); border-radius: var(--radius-sm); padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .fmt-btn:hover { border-color: var(--text-muted); }
-        .fmt-btn.selected { border-color: var(--accent); background: rgba(59,130,246,0.08); }
-        .fmt-swatch { width: 100%; aspect-ratio: 16/9; border-radius: 4px; margin-bottom: 0.35rem; }
-        .fmt-name { font-size: 0.625rem; font-weight: 600; }
-
-        /* Viewer link */
-        .viewer-url { font-family: monospace; font-size: 0.6875rem; color: var(--accent); word-break: break-all; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 0.5rem 0.625rem; margin-bottom: 0.625rem; }
-        .link-btns { display: flex; gap: 0.4rem; }
-        .link-btn { padding: 0.4rem 0.75rem; border-radius: 6px; font-size: 0.6875rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; text-decoration: none; display: inline-block; }
-        .link-btn-primary { background: var(--accent); color: #fff; }
-        .link-btn-primary:hover { background: var(--accent-hover); }
-        .link-btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-dim); border: 1px solid var(--glass-border); }
-        .link-btn-secondary:hover { background: rgba(255,255,255,0.1); }
-
-        /* Form elements */
-        .form-input, .form-select {
-            width: 100%; padding: 0.5rem 0.625rem;
-            background: rgba(255,255,255,0.06); color: var(--text);
-            border: 1px solid var(--glass-border); border-radius: 6px;
-            font-size: 0.8125rem; outline: none; font-family: inherit;
-        }
-        .form-input:focus, .form-select:focus { border-color: var(--accent); }
-        .form-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 0.2rem; display: block; font-weight: 500; }
-        .save-flash { font-size: 0.625rem; color: var(--success); opacity: 0; transition: opacity 0.3s; margin-left: 0.5rem; }
-        .save-flash.show { opacity: 1; }
     </style>
 </head>
 <body>
-<div id="map"></div>
-<div class="ui-layer">
-    <div class="top-bar">
-        <a href="/" class="brand">
-            <svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" stroke="#3b82f6" stroke-width="1.5" fill="none" opacity="0.6"/><path d="M6 16c2-3.5 5.5-7 11-9" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/><path d="M8 20c2.5-2.5 6-5 12-6" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><circle cx="17" cy="9" r="2" fill="#10b981" opacity="0.9"/><circle cx="12" cy="13" r="1.5" fill="#ec4899" opacity="0.8"/><circle cx="20" cy="14" r="1.5" fill="#f59e0b" opacity="0.8"/></svg>
-            Mygration
-        </a>
-        <div class="top-right">
-            <span class="btn-glass" id="userLabel" style="cursor:default;">Loading...</span>
-            <button class="btn-glass" onclick="handleLogout()">Log out</button>
+<nav class="nav">
+    <a href="/" class="nav-brand">
+        <svg viewBox="0 0 34 34" fill="none"><circle cx="17" cy="17" r="15" stroke="#3b82f6" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M7 20c3-5 7-9 14-11" stroke="#10b981" stroke-width="2" stroke-linecap="round" opacity="0.7"/><path d="M9 25c3-3 8-7 16-8" stroke="#10b981" stroke-width="2" stroke-linecap="round" opacity="0.45"/><circle cx="21" cy="11" r="2.5" fill="#10b981" opacity="0.9"/><circle cx="14" cy="16" r="2" fill="#ec4899" opacity="0.8"/><circle cx="25" cy="17" r="2" fill="#f59e0b" opacity="0.8"/></svg>
+        Mygration
+    </a>
+    <div class="nav-right">
+        <span class="nav-user" id="userLabel"></span>
+        <button class="nav-btn" onclick="handleLogout()">Log out</button>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title">Your Migration Tracker</h1>
+    <p class="page-sub">Configure your display, then open the viewer on any screen.</p>
+
+    <!-- Viewer Link -->
+    <div class="card viewer-card">
+        <div class="card-title">Your Viewer Link</div>
+        <div class="viewer-url" id="viewerUrl">Loading...</div>
+        <div class="viewer-btns">
+            <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
+            <a class="btn btn-secondary" id="viewerOpenBtn" href="#" target="_blank">Open Viewer</a>
         </div>
     </div>
 
-    <div class="dashboard-layout">
-        <!-- Viewer Link (most important, top) -->
-        <div class="panel">
-            <div class="panel-title">Your Viewer Link</div>
-            <div class="viewer-url" id="viewerUrl">Loading...</div>
-            <div class="link-btns">
-                <button class="link-btn link-btn-primary" onclick="copyLink()">Copy Link</button>
-                <a class="link-btn link-btn-secondary" id="viewerOpenBtn" href="#" target="_blank">Open Viewer</a>
+    <div class="grid-2">
+        <div>
+            <!-- Species Group -->
+            <div class="card">
+                <div class="card-title">Species Group <span class="saved-badge" id="spSaved">Saved</span></div>
+                <div class="species-grid" id="speciesGrid"></div>
+                <div class="data-notice" id="dataNotice">This group's migration data will be available within a few hours. Hummingbird data is available now.</div>
+                <div id="subSection" style="display:none;">
+                    <div class="sub-all"><input type="checkbox" id="selAll" onchange="toggleAll(this.checked)" checked> Select All</div>
+                    <div class="sub-grid" id="subGrid"></div>
+                </div>
             </div>
         </div>
 
-        <div class="row row-2">
-            <!-- Species -->
-            <div class="panel">
-                <div class="panel-title">Species Group <span class="save-flash" id="speciesSaved">Saved</span></div>
-                <div class="species-grid" id="speciesPicker"></div>
-                <div id="subSection" style="display:none;">
-                    <div style="margin-top:0.75rem; display:flex; align-items:center; gap:0.5rem;">
-                        <div class="panel-title" style="margin:0;">Sub-species</div>
-                        <label class="sub-item" style="padding:0;"><input type="checkbox" id="selAll" onchange="toggleAll(this.checked)" checked><span style="font-size:0.6875rem;">All</span></label>
+        <div>
+            <!-- Location -->
+            <div class="card">
+                <div class="card-title">Your Location <span class="saved-badge" id="locSaved">Saved</span></div>
+                <div class="loc-row">
+                    <div>
+                        <span class="opt-label">Zip Code</span>
+                        <div style="display:flex;gap:0.5rem;margin-top:0.375rem;">
+                            <input class="input" type="text" id="zipInput" style="width:120px;" maxlength="5">
+                            <button class="btn btn-secondary" onclick="updateLoc()">Update</button>
+                        </div>
                     </div>
-                    <div class="sub-list" id="subList"></div>
+                </div>
+                <div class="loc-label" id="locLabel"></div>
+            </div>
+
+            <!-- Map Style -->
+            <div class="card">
+                <div class="card-title">Map Style <span class="saved-badge" id="fmtSaved">Saved</span></div>
+                <div class="style-grid" id="styleGrid"></div>
+            </div>
+
+            <!-- Rare Birds -->
+            <div class="card">
+                <div class="card-title">Rare Bird Alerts</div>
+                <div class="rare-row">
+                    <label class="rare-toggle"><input type="checkbox" id="rareToggle" onchange="save()" checked> Show rare birds</label>
+                    <div class="rare-slider-group" id="rareSliderGroup">
+                        <input type="range" class="rare-slider" id="rareRadius" min="10" max="200" step="10" value="50" oninput="updateRadiusLabel()" onchange="save()">
+                        <span class="rare-val" id="rareVal">50 km</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Settings -->
-            <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                <!-- Location -->
-                <div class="panel">
-                    <div class="panel-title">Location <span class="save-flash" id="locSaved">Saved</span></div>
-                    <div style="display:flex; gap:0.5rem; align-items:end;">
-                        <div style="flex:0 0 auto;">
-                            <div class="form-label">Zip Code</div>
-                            <input class="form-input" type="text" id="zipInput" style="width:100px;" maxlength="5" pattern="[0-9]{5}">
-                        </div>
-                        <button class="link-btn link-btn-secondary" onclick="updateLocation()" style="margin-bottom:1px;">Update</button>
-                    </div>
-                    <div style="font-size:0.6875rem; color:var(--text-muted); margin-top:0.35rem;" id="locLabel"></div>
-                </div>
-
-                <!-- Map Style -->
-                <div class="panel">
-                    <div class="panel-title">Map Style <span class="save-flash" id="fmtSaved">Saved</span></div>
-                    <div class="format-grid" id="fmtPicker">
-                        <div class="fmt-btn selected" data-fmt="dark" onclick="pickFmt('dark')"><div class="fmt-swatch" style="background:#1a1a2e;"></div><div class="fmt-name">Dark</div></div>
-                        <div class="fmt-btn" data-fmt="satellite" onclick="pickFmt('satellite')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#1a3a1a,#2a4a3a);"></div><div class="fmt-name">Satellite</div></div>
-                        <div class="fmt-btn" data-fmt="terrain" onclick="pickFmt('terrain')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#d4c5a9,#8fbc8f);"></div><div class="fmt-name">Terrain</div></div>
-                        <div class="fmt-btn" data-fmt="watercolor" onclick="pickFmt('watercolor')"><div class="fmt-swatch" style="background:linear-gradient(135deg,#e8d5b7,#b8cfd8);"></div><div class="fmt-name">Watercolor</div></div>
-                    </div>
-                </div>
-
-                <!-- Options -->
-                <div class="panel">
-                    <div class="panel-title">Display Options</div>
-                    <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
-                        <div>
-                            <div class="form-label">Rotation</div>
-                            <select class="form-select" id="rotSpeed" onchange="save()" style="width:120px;">
-                                <option value="10">10 sec</option><option value="15" selected>15 sec</option><option value="20">20 sec</option><option value="30">30 sec</option><option value="60">60 sec</option>
-                            </select>
-                        </div>
-                        <label class="sub-item" style="padding:0.25rem 0;"><input type="checkbox" id="rareToggle" onchange="save()" checked><span style="font-size:0.75rem;">Rare birds</span></label>
+            <!-- Display Options -->
+            <div class="card">
+                <div class="card-title">Display Options</div>
+                <div class="opt-row">
+                    <div>
+                        <span class="opt-label">Rotation Speed</span>
+                        <select class="opt-select" id="rotSpeed" onchange="save()" style="margin-top:0.25rem;display:block;">
+                            <option value="10">10 seconds</option>
+                            <option value="15" selected>15 seconds</option>
+                            <option value="20">20 seconds</option>
+                            <option value="30">30 seconds</option>
+                            <option value="60">60 seconds</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -188,72 +225,159 @@
     </div>
 </div>
 
+<!-- Map style hover preview -->
+<div class="style-preview-popup" id="stylePopup"></div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="/js/api.js"></script>
 <script>
 const TILES = {
-    dark: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    terrain: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    watercolor: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg'
+    dark: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', label: 'Dark' },
+    satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' },
+    terrain: { url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', label: 'Terrain' },
+    watercolor: { url: 'https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', label: 'Watercolor' }
 };
-let S = { prefs: null, groups: [], token: null, tileLayer: null, saveTimer: null };
-const bgMap = L.map('map', { center: [39.74, -105], zoom: 7, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, touchZoom: false });
+
+let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, previewMap: null };
 
 async function boot() {
-    const [me, gr] = await Promise.all([API.getMe(), API.getSpeciesGroups()]);
+    const [me, gr, imgs] = await Promise.all([API.getMe(), API.getSpeciesGroups(), API.get('/bird-images')]);
     if (!me || !me.success) { window.location.href = '/login.html'; return; }
     S.prefs = me.preferences; S.groups = gr?.groups || []; S.token = me.display_token;
+    S.birdImages = imgs?.images || {};
     document.getElementById('userLabel').textContent = me.user.full_name || me.user.email;
-
-    // Background map
-    const lat = S.prefs.location_lat || 39.74, lng = S.prefs.location_lng || -105;
-    bgMap.setView([lat, lng], 7);
-    S.tileLayer = L.tileLayer(TILES[S.prefs.map_format || 'dark'], { maxZoom: 18, subdomains: 'abcd' }).addTo(bgMap);
-
-    renderSpecies(); renderSubs(); renderLoc(); renderFmt(); renderOpts(); renderLink();
+    renderSpecies(); renderSubs(); renderLoc(); renderStyles(); renderOpts(); renderLink();
 }
 
+// ---- Species group cards with images ----
 function renderSpecies() {
-    document.getElementById('speciesPicker').innerHTML = S.groups.map(g =>
-        '<div class="sp-btn ' + (g.group_key === S.prefs.primary_group_key ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
-        '<span class="dot" style="background:' + g.dot_color + '"></span><span class="name">' + g.group_name + '</span><span class="count">' + g.species_count + '</span></div>'
-    ).join('');
-}
-function pickGroup(k) { S.prefs.primary_group_key = k; S.prefs.selected_species = null; renderSpecies(); renderSubs(); save('speciesSaved'); }
+    const grid = document.getElementById('speciesGrid');
+    grid.innerHTML = S.groups.map(g => {
+        const img = S.birdImages[g.group_name] || S.birdImages[g.group_name + 's'] || '';
+        const sel = g.group_key === S.prefs.primary_group_key;
+        return '<div class="sp-card ' + (sel ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
+            '<div class="sp-card-badge">Active</div>' +
+            '<div class="sp-card-dot" style="background:' + g.dot_color + '"></div>' +
+            (img ? '<img class="sp-card-img" src="' + img + '" alt="' + g.group_name + '" loading="lazy">' :
+                   '<div class="sp-card-img-placeholder" style="background:linear-gradient(135deg,' + g.dot_color + '22,' + g.dot_color + '08)"><span style="opacity:0.3">&#x1F426;</span></div>') +
+            '<div class="sp-card-info"><div class="sp-card-name">' + g.group_name + '</div><div class="sp-card-count">' + g.species_count + ' species</div></div></div>';
+    }).join('');
 
+    // Show data notice for non-hummingbird groups
+    const notice = document.getElementById('dataNotice');
+    notice.classList.toggle('show', S.prefs.primary_group_key !== 'hummingbirds');
+}
+
+function pickGroup(k) {
+    S.prefs.primary_group_key = k;
+    S.prefs.selected_species = null;
+    renderSpecies(); renderSubs(); save('spSaved');
+}
+
+// ---- Sub-species ----
 function renderSubs() {
     const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
     if (!g) return;
     document.getElementById('subSection').style.display = '';
     const sel = S.prefs.selected_species;
-    document.getElementById('subList').innerHTML = g.species.map(sp =>
-        '<label class="sub-item"><input type="checkbox" value="' + sp.code + '" ' + (!sel || sel.includes(sp.code) ? 'checked' : '') + ' onchange="updateSubs()"><span class="sub-dot" style="background:' + sp.color + '"></span>' + sp.name + '</label>'
+    document.getElementById('subGrid').innerHTML = g.species.map(sp =>
+        '<label class="sub-item"><input type="checkbox" value="' + sp.code + '" ' +
+        (!sel || sel.includes(sp.code) ? 'checked' : '') +
+        ' onchange="updateSubs()"><span class="sub-dot" style="background:' + sp.color + '"></span>' + sp.name + '</label>'
     ).join('');
     document.getElementById('selAll').checked = !sel;
 }
-function toggleAll(c) { document.querySelectorAll('#subList input').forEach(cb => cb.checked = c); updateSubs(); }
+
+function toggleAll(c) { document.querySelectorAll('#subGrid input').forEach(cb => cb.checked = c); updateSubs(); }
 function updateSubs() {
     const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
-    const checked = Array.from(document.querySelectorAll('#subList input:checked')).map(cb => cb.value);
+    const checked = Array.from(document.querySelectorAll('#subGrid input:checked')).map(cb => cb.value);
     S.prefs.selected_species = checked.length === g.species.length ? null : checked;
     document.getElementById('selAll').checked = !S.prefs.selected_species;
-    save('speciesSaved');
+    save('spSaved');
 }
 
-function renderLoc() { document.getElementById('zipInput').value = S.prefs.location_zip || ''; document.getElementById('locLabel').textContent = S.prefs.location_label || ''; }
-async function updateLocation() {
+// ---- Location ----
+function renderLoc() {
+    document.getElementById('zipInput').value = S.prefs.location_zip || '';
+    document.getElementById('locLabel').textContent = S.prefs.location_label || '';
+}
+async function updateLoc() {
     const zip = document.getElementById('zipInput').value.trim();
     if (!/^\d{5}$/.test(zip)) return;
     const r = await API.geocode(zip);
-    if (r?.success) { Object.assign(S.prefs, { location_zip: zip, location_lat: r.lat, location_lng: r.lng, location_label: r.label }); document.getElementById('locLabel').textContent = r.label; bgMap.setView([r.lat, r.lng], 7); save('locSaved'); }
+    if (r?.success) {
+        Object.assign(S.prefs, { location_zip: zip, location_lat: r.lat, location_lng: r.lng, location_label: r.label });
+        document.getElementById('locLabel').textContent = r.label;
+        save('locSaved');
+    }
 }
 
-function renderFmt() { document.querySelectorAll('.fmt-btn').forEach(el => el.classList.toggle('selected', el.dataset.fmt === S.prefs.map_format)); }
-function pickFmt(f) { S.prefs.map_format = f; renderFmt(); if (S.tileLayer) S.tileLayer.setUrl(TILES[f]); save('fmtSaved'); }
+// ---- Map styles with live preview ----
+function renderStyles() {
+    const grid = document.getElementById('styleGrid');
+    grid.innerHTML = Object.entries(TILES).map(([key, t]) =>
+        '<div class="style-card ' + (key === S.prefs.map_format ? 'selected' : '') + '" ' +
+        'onclick="pickStyle(\'' + key + '\')" ' +
+        'onmouseenter="showStylePreview(event,\'' + key + '\')" onmouseleave="hideStylePreview()">' +
+        '<div class="style-preview" id="sp_' + key + '"></div>' +
+        '<div class="style-label">' + t.label + '</div></div>'
+    ).join('');
 
-function renderOpts() { document.getElementById('rotSpeed').value = S.prefs.rotation_interval_sec || 15; document.getElementById('rareToggle').checked = S.prefs.rare_birds_enabled !== false; }
+    // Render mini maps in each card
+    setTimeout(() => {
+        const lat = S.prefs.location_lat || 39.75, lng = S.prefs.location_lng || -105;
+        Object.entries(TILES).forEach(([key, t]) => {
+            const el = document.getElementById('sp_' + key);
+            if (!el || el._leaflet) return;
+            const m = L.map(el, { center: [lat, lng], zoom: 6, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, touchZoom: false, keyboard: false });
+            L.tileLayer(t.url, { maxZoom: 18, subdomains: 'abcd' }).addTo(m);
+            el._leaflet = m;
+        });
+    }, 100);
+}
 
+function pickStyle(k) {
+    S.prefs.map_format = k;
+    document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    save('fmtSaved');
+}
+
+// Hover preview: bigger map popup
+let previewMap = null;
+function showStylePreview(e, key) {
+    if (window.innerWidth < 900) return; // skip on mobile
+    const popup = document.getElementById('stylePopup');
+    const rect = e.currentTarget.getBoundingClientRect();
+    popup.style.left = rect.left + 'px';
+    popup.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+    popup.classList.add('show');
+
+    if (previewMap) { previewMap.remove(); previewMap = null; }
+    const lat = S.prefs.location_lat || 39.75, lng = S.prefs.location_lng || -105;
+    previewMap = L.map(popup, { center: [lat, lng], zoom: 7, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false });
+    L.tileLayer(TILES[key].url, { maxZoom: 18, subdomains: 'abcd' }).addTo(previewMap);
+}
+function hideStylePreview() {
+    document.getElementById('stylePopup').classList.remove('show');
+    if (previewMap) { previewMap.remove(); previewMap = null; }
+}
+
+// ---- Display options ----
+function renderOpts() {
+    document.getElementById('rotSpeed').value = S.prefs.rotation_interval_sec || 15;
+    document.getElementById('rareToggle').checked = S.prefs.rare_birds_enabled !== false;
+    document.getElementById('rareRadius').value = S.prefs.rare_birds_radius_km || 50;
+    updateRadiusLabel();
+}
+function updateRadiusLabel() {
+    const km = document.getElementById('rareRadius').value;
+    const mi = Math.round(km * 0.621);
+    document.getElementById('rareVal').textContent = km + ' km / ' + mi + ' mi';
+}
+
+// ---- Viewer link ----
 function renderLink() {
     if (!S.token) return;
     const url = location.origin + '/viewer.html?t=' + S.token.token;
@@ -262,19 +386,36 @@ function renderLink() {
 }
 function copyLink() {
     navigator.clipboard.writeText(document.getElementById('viewerUrl').textContent).then(() => {
-        const b = document.querySelector('[onclick="copyLink()"]'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Link', 2000);
+        const b = document.querySelector('[onclick="copyLink()"]');
+        b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Link', 2000);
     });
 }
 
+// ---- Save ----
 function save(flashId) {
     clearTimeout(S.saveTimer);
     S.saveTimer = setTimeout(async () => {
-        await API.updatePreferences({ primary_group_key: S.prefs.primary_group_key, selected_species: S.prefs.selected_species, location_zip: S.prefs.location_zip, location_lat: S.prefs.location_lat, location_lng: S.prefs.location_lng, location_label: S.prefs.location_label, map_format: S.prefs.map_format, rotation_interval_sec: parseInt(document.getElementById('rotSpeed').value), rare_birds_enabled: document.getElementById('rareToggle').checked });
-        if (flashId) { const el = document.getElementById(flashId); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500); }
+        await API.updatePreferences({
+            primary_group_key: S.prefs.primary_group_key,
+            selected_species: S.prefs.selected_species,
+            location_zip: S.prefs.location_zip,
+            location_lat: S.prefs.location_lat,
+            location_lng: S.prefs.location_lng,
+            location_label: S.prefs.location_label,
+            map_format: S.prefs.map_format,
+            rotation_interval_sec: parseInt(document.getElementById('rotSpeed').value),
+            rare_birds_enabled: document.getElementById('rareToggle').checked,
+            rare_birds_radius_km: parseInt(document.getElementById('rareRadius').value),
+        });
+        if (flashId) {
+            const el = document.getElementById(flashId);
+            el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500);
+        }
     }, 400);
 }
 
 async function handleLogout() { await API.logout(); window.location.href = '/'; }
+
 boot();
 </script>
 </body>
