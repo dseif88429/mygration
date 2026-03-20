@@ -230,12 +230,21 @@
 
         <div class="drawer-section">
             <div class="drawer-label">Display</div>
-            <div style="display:flex;align-items:center;gap:0.75rem">
-                <span style="font-size:0.8125rem;color:var(--text-dim)">Rotation</span>
-                <select class="opt-select" id="rotSpeed" onchange="save()">
-                    <option value="10">10 sec</option><option value="15" selected>15 sec</option>
-                    <option value="20">20 sec</option><option value="30">30 sec</option><option value="60">60 sec</option>
-                </select>
+            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+                <div>
+                    <span style="font-size:0.8125rem;color:var(--text-dim)">Rotation</span>
+                    <select class="opt-select" id="rotSpeed" onchange="save()" style="margin-left:0.375rem">
+                        <option value="10">10 sec</option><option value="15" selected>15 sec</option>
+                        <option value="20">20 sec</option><option value="30">30 sec</option><option value="60">60 sec</option>
+                    </select>
+                </div>
+                <div>
+                    <span style="font-size:0.8125rem;color:var(--text-dim)">Dot Size</span>
+                    <select class="opt-select" id="dotSize" onchange="changeDotSize()" style="margin-left:0.375rem">
+                        <option value="2">Small</option><option value="4" selected>Medium</option>
+                        <option value="6">Large</option><option value="9">X-Large</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -308,7 +317,7 @@ async function loadSightings() {
         species.forEach(sp => {
             const layer = L.layerGroup();
             data.sightings.filter(s => s.sc === sp.code).forEach(s => {
-                L.circleMarker([s.la, s.ln], { radius: 4, fillColor: sp.color, fillOpacity: 0.8, color: sp.color, weight: 0, interactive: false }).addTo(layer);
+                L.circleMarker([s.la, s.ln], { radius: getDotSize(), fillColor: sp.color, fillOpacity: 0.8, color: sp.color, weight: 0, interactive: false }).addTo(layer);
             });
             speciesLayers[sp.code] = layer;
             speciesVisible[sp.code] = true;
@@ -476,6 +485,8 @@ function save() {
     }, 400);
 }
 
+function getDotSize() { return parseInt(document.getElementById('dotSize')?.value || 4); }
+function changeDotSize() { loadSightings(); }
 function flash(id) { const el = document.getElementById(id); el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1500); }
 async function handleLogout() { await API.logout(); window.location.href = '/'; }
 
