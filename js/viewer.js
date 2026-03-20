@@ -87,7 +87,7 @@
 
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);
-        document.getElementById('viewTitle').textContent = (species_info?.group_name || 'Bird') + ' Migration';
+        document.getElementById('viewTitle').textContent = (species_info?.group_name || 'Bird') + ' Sightings';
         const lgName = document.getElementById('legendGroupName');
         if (lgName) lgName.textContent = species_info?.group_name || 'Species';
 
@@ -119,7 +119,8 @@
     }
 
     // Scale dot size based on zoom level
-    function dotRadius() {
+    function dotRadius(isRare) {
+        if (isRare) return 20;
         const z = state.map ? state.map.getZoom() : 4;
         if (z <= 3) return 2;
         if (z <= 5) return 3;
@@ -177,9 +178,18 @@
         if (view.rare) {
             document.getElementById('viewTitle').textContent = 'Rare Bird Sighting';
             document.getElementById('viewBadge').textContent = view.rare.common_name;
+            // Hide regular dots, show only the rare bird marker
+            state.markerLayer.remove();
+            if (state.rareMarker) { state.rareMarker.remove(); }
+            state.rareMarker = L.circleMarker([view.rare.lat, view.rare.lng], {
+                radius: 20, fillColor: '#ef4444', fillOpacity: 0.9, color: '#fff', weight: 3, interactive: false
+            }).addTo(state.map);
             showRareCard(view.rare);
         } else {
-            document.getElementById('viewTitle').textContent = (state.content?.species_info?.group_name || 'Bird') + ' Migration';
+            document.getElementById('viewTitle').textContent = (state.content?.species_info?.group_name || 'Bird') + ' Sightings';
+            // Restore regular dots, remove rare marker
+            if (state.rareMarker) { state.rareMarker.remove(); state.rareMarker = null; }
+            if (!state.map.hasLayer(state.markerLayer)) state.markerLayer.addTo(state.map);
             hideRareCard();
         }
     }
