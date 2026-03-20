@@ -85,6 +85,15 @@
         plotSightings(sightings, species_info);
         buildLegend(species_info, sightings);
         document.getElementById('viewTitle').textContent = (species_info?.group_name || 'Bird') + ' Migration';
+        const lgName = document.getElementById('legendGroupName');
+        if (lgName) lgName.textContent = species_info?.group_name || 'Species';
+
+        // Data timestamp
+        const dtEl = document.getElementById('dataTime');
+        if (dtEl) {
+            const now = new Date();
+            dtEl.textContent = 'Data as of ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
 
         // Build views
         const lat = preferences.location_lat || 39.74, lng = preferences.location_lng || -104.99;

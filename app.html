@@ -388,7 +388,12 @@ function renderSpecies() {
     document.getElementById('dataNotice').classList.toggle('show', S.prefs.primary_group_key !== 'hummingbirds');
 }
 
-function pickGroup(k) { S.prefs.primary_group_key = k; S.prefs.selected_species = null; renderSpecies(); renderSubs(); save(); loadSightings(); }
+function pickGroup(k) {
+    S.prefs.primary_group_key = k; S.prefs.selected_species = null;
+    const g = S.groups.find(x => x.group_key === k);
+    if (g) document.getElementById('legendTitle').textContent = g.group_name;
+    renderSpecies(); renderSubs(); save(); loadSightings();
+}
 
 function renderSubs() {
     const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key); if (!g) return;
