@@ -243,30 +243,36 @@ let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null,
 
 function findBirdImage(groupName, species) {
     const imgs = S.birdImages;
-    // 1. Exact group name match
-    if (imgs[groupName]) return imgs[groupName];
-    // 2. Try singular (Finches -> Finch, Owls -> Owl, etc.)
-    const singular = groupName.replace(/s$/, '').replace(/es$/, '');
-    // 3. Try first word only (Eagles & Hawks -> Eagle)
-    const firstWord = groupName.split(/[\s&,]/)[0].replace(/s$/, '');
-    // 4. Search all image keys for partial match
-    const lowerGroup = groupName.toLowerCase();
-    const lowerSingular = singular.toLowerCase();
-    const lowerFirst = firstWord.toLowerCase();
-    for (const key of Object.keys(imgs)) {
-        const lk = key.toLowerCase();
-        if (lk === lowerGroup || lk === lowerSingular || lk === lowerFirst) return imgs[key];
-    }
-    // 5. Fuzzy: any image key that contains the first word
-    if (lowerFirst.length >= 4) {
-        for (const key of Object.keys(imgs)) {
-            if (key.toLowerCase().includes(lowerFirst)) return imgs[key];
+    if (!imgs || !Object.keys(imgs).length) return '';
+
+    // Build search terms from group name: "Eagles & Hawks" -> ["eagles","hawks","eagle","hawk"]
+    const words = groupName.toLowerCase().split(/[\s&,]+/).filter(w => w.length > 2);
+    const stems = [];
+    words.forEach(w => { stems.push(w); stems.push(w.replace(/s$/, '')); stems.push(w.replace(/es$/, '')); });
+
+    // Search all image keys
+    const keys = Object.keys(imgs);
+
+    // Pass 1: any image key contains one of our stems
+    for (const stem of stems) {
+        if (stem.length < 3) continue;
+        for (const key of keys) {
+            if (key.toLowerCase().includes(stem)) return imgs[key];
         }
     }
-    // 6. Try first species in the group
+
+    // Pass 2: try each species name from the group
     if (species && species.length) {
         for (const sp of species) {
             if (imgs[sp.name]) return imgs[sp.name];
+            // Partial match on species name
+            const spWords = sp.name.toLowerCase().split(/\s+/);
+            for (const sw of spWords) {
+                if (sw.length < 4) continue;
+                for (const key of keys) {
+                    if (key.toLowerCase().includes(sw)) return imgs[key];
+                }
+            }
         }
     }
     return '';
