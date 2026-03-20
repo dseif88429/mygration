@@ -79,9 +79,16 @@
             padding: 0.75rem 1rem;
         }
         .legend-title { font-size: 0.5625rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.4rem; font-weight: 600; }
-        .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6875rem; color: var(--text-dim); padding: 0.15rem 0; }
-        .legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-        .legend-count { margin-left: auto; font-size: 0.625rem; color: var(--text-muted); padding-left: 0.75rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-dim); padding: 0.3rem 0.35rem; cursor: pointer; border-radius: 6px; transition: all 0.15s; user-select: none; }
+        .legend-item:hover { background: rgba(255,255,255,0.06); }
+        .legend-item.off { opacity: 0.35; }
+        .legend-item.off .legend-dot { box-shadow: none; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; transition: box-shadow 0.2s; }
+        .legend-check { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 0.5rem; flex-shrink: 0; transition: all 0.15s; }
+        .legend-item:not(.off) .legend-check { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); }
+        .legend-item:not(.off) .legend-check::after { content: '\2713'; color: var(--text); }
+        .legend-name { flex: 1; }
+        .legend-count { font-size: 0.625rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
         /* ---- Welcome card (bottom-right on desktop, bottom-center on mobile) ---- */
         .welcome-card {
@@ -273,37 +280,73 @@ const map = L.map('map', {
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     maxZoom: 18, subdomains: 'abcd'
 }).addTo(map);
-const markers = L.layerGroup().addTo(map);
+
+// Per-species marker layers for toggling
+const speciesLayers = {};
+const speciesVisible = {};
+let allSightings = [];
+let allSpecies = [];
+let sightingCounts = {};
+
+// ---- Toggle species on/off ----
+function toggleSpecies(code) {
+    if (speciesVisible[code]) {
+        map.removeLayer(speciesLayers[code]);
+        speciesVisible[code] = false;
+    } else {
+        map.addLayer(speciesLayers[code]);
+        speciesVisible[code] = true;
+    }
+    // Update legend item styling
+    const el = document.querySelector('[data-species="' + code + '"]');
+    if (el) el.classList.toggle('off', !speciesVisible[code]);
+    // Update visible count in stats
+    let visCount = 0;
+    Object.keys(speciesVisible).forEach(k => { if (speciesVisible[k]) visCount += (sightingCounts[k] || 0); });
+    document.getElementById('statCount').textContent = visCount.toLocaleString();
+}
 
 // ---- Load real data ----
 fetch('/api/mygration/demo/sightings')
     .then(r => r.json())
     .then(data => {
         if (!data.success) return;
+        allSightings = data.sightings;
+        allSpecies = data.species || [];
 
-        // Plot sightings
-        data.sightings.forEach(s => {
-            L.circleMarker([s.la, s.ln], {
-                radius: 3.5, fillColor: SC[s.sc] || '#3b82f6',
-                fillOpacity: 0.75, color: SC[s.sc] || '#3b82f6',
-                weight: 0, interactive: false
-            }).addTo(markers);
+        // Count per species
+        allSightings.forEach(s => { sightingCounts[s.sc] = (sightingCounts[s.sc] || 0) + 1; });
+
+        // Create a layer group per species and plot markers
+        allSpecies.forEach(sp => {
+            const layer = L.layerGroup();
+            const spSightings = allSightings.filter(s => s.sc === sp.code);
+            spSightings.forEach(s => {
+                L.circleMarker([s.la, s.ln], {
+                    radius: 3.5, fillColor: sp.color, fillOpacity: 0.75,
+                    color: sp.color, weight: 0, interactive: false
+                }).addTo(layer);
+            });
+            speciesLayers[sp.code] = layer;
+            speciesVisible[sp.code] = true;
+            layer.addTo(map);
         });
 
         // Stats
         document.getElementById('statCount').textContent = data.stats.total_sightings.toLocaleString();
 
-        // Legend
+        // Interactive legend
         const legendEl = document.getElementById('legendItems');
-        const counts = {};
-        data.sightings.forEach(s => { counts[s.sc] = (counts[s.sc] || 0) + 1; });
-        legendEl.innerHTML = (data.species || [])
-            .filter(sp => counts[sp.code] > 0)
-            .sort((a, b) => (counts[b.code] || 0) - (counts[a.code] || 0))
-            .map(sp =>
-                '<div class="legend-item"><span class="legend-dot" style="background:' + sp.color + '"></span>' +
-                sp.name + '<span class="legend-count">' + (counts[sp.code] || 0) + '</span></div>'
-            ).join('');
+        const sorted = allSpecies
+            .filter(sp => sightingCounts[sp.code] > 0)
+            .sort((a, b) => (sightingCounts[b.code] || 0) - (sightingCounts[a.code] || 0));
+        legendEl.innerHTML = sorted.map(sp =>
+            '<div class="legend-item" data-species="' + sp.code + '" onclick="toggleSpecies(\'' + sp.code + '\')">' +
+            '<span class="legend-check"></span>' +
+            '<span class="legend-dot" style="background:' + sp.color + ';box-shadow:0 0 6px ' + sp.color + '"></span>' +
+            '<span class="legend-name">' + sp.name + '</span>' +
+            '<span class="legend-count">' + (sightingCounts[sp.code] || 0) + '</span></div>'
+        ).join('');
     })
     .catch(() => {});
 
