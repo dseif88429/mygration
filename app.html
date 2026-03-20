@@ -294,9 +294,15 @@ async function boot() {
     // Set map
     const fmt = S.prefs.map_format || 'street';
     S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
-    // After initial load, redraw tiles once to catch any that failed before SW was ready
-    setTimeout(function() { if (S.tileLayer) S.tileLayer.redraw(); }, 5000);
-    setTimeout(function() { if (S.tileLayer) S.tileLayer.redraw(); }, 15000);
+    // After initial load, replace tile layer entirely to fill grey patches
+    function refreshTiles() {
+        if (!S.tileLayer) return;
+        var url = S.tileLayer._url;
+        map.removeLayer(S.tileLayer);
+        S.tileLayer = L.tileLayer(url, { maxZoom: 18, subdomains: 'abcd' }).addTo(map);
+    }
+    setTimeout(refreshTiles, 6000);
+    setTimeout(refreshTiles, 20000);
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 
     // Set legend title from saved preference immediately
