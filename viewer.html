@@ -87,6 +87,38 @@
             .rare-card-sci{font-size:0.875rem}
         }
 
+        /* Nav arrows */
+        .nav-arrows{position:absolute;top:50%;z-index:1100;transform:translateY(-50%);pointer-events:auto}
+        .nav-arrow{
+            width:48px;height:48px;border-radius:50%;
+            background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,0.1);
+            color:#f1f5f9;font-size:1.25rem;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            transition:all 0.2s;opacity:0.5;
+        }
+        .nav-arrow:hover{opacity:1;background:rgba(15,23,42,0.9);transform:scale(1.1)}
+        .nav-left{left:1rem}
+        .nav-right{right:1rem}
+
+        /* View dots (pagination indicator) */
+        .view-dots{
+            position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);
+            z-index:1100;display:flex;gap:0.5rem;align-items:center;
+            background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,0.08);border-radius:999px;
+            padding:0.4rem 0.75rem;pointer-events:auto;
+        }
+        .view-dot{
+            width:8px;height:8px;border-radius:50%;
+            background:rgba(255,255,255,0.2);cursor:pointer;
+            transition:all 0.2s;
+        }
+        .view-dot.active{background:#3b82f6;box-shadow:0 0 6px rgba(59,130,246,0.5)}
+        .view-dot.rare{background:rgba(239,68,68,0.3)}
+        .view-dot.rare.active{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
+        .view-dot:hover{transform:scale(1.3)}
+
         .leaflet-control-attribution{display:none!important}
 
         @media(max-width:640px){
@@ -138,6 +170,13 @@
     <span class="data-time" id="dataTime"></span>
     <span>Mygration</span>
 </div>
+
+<!-- Nav arrows -->
+<div class="nav-arrows nav-left overlay"><button class="nav-arrow" onclick="navPrev()" title="Previous view">&#9664;</button></div>
+<div class="nav-arrows nav-right overlay"><button class="nav-arrow" onclick="navNext()" title="Next view">&#9654;</button></div>
+
+<!-- View dots -->
+<div class="view-dots overlay" id="viewDots"></div>
 
 <div class="overlay progress-bar" id="progressBar" style="width:0;"></div>
 <!-- Rare sighting info card (bottom bar, like signage) -->

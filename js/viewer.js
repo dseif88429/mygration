@@ -118,6 +118,7 @@
 
         stopRotation();
         state.viewIndex = 0;
+        buildViewDots();
         showView(0);
         scheduleNextView(preferences.rotation_interval_sec || 15);
     }
@@ -173,12 +174,46 @@
         ).join('');
     }
 
+    function buildViewDots() {
+        var dotsEl = document.getElementById('viewDots');
+        if (!dotsEl || !state.views.length) return;
+        dotsEl.innerHTML = state.views.map(function(v, i) {
+            return '<span class="view-dot' + (v.rare ? ' rare' : '') + (i === state.viewIndex ? ' active' : '') + '" onclick="navTo(' + i + ')" title="' + (v.name || '') + '"></span>';
+        }).join('');
+    }
+
+    function updateActiveDot() {
+        document.querySelectorAll('.view-dot').forEach(function(d, i) {
+            d.classList.toggle('active', i === state.viewIndex);
+        });
+    }
+
+    // Expose nav functions globally for onclick
+    window.navPrev = function() {
+        stopRotation();
+        var idx = (state.viewIndex - 1 + state.views.length) % state.views.length;
+        showView(idx);
+        scheduleNextView(state.content?.preferences?.rotation_interval_sec || 15);
+    };
+    window.navNext = function() {
+        stopRotation();
+        var idx = (state.viewIndex + 1) % state.views.length;
+        showView(idx);
+        scheduleNextView(state.content?.preferences?.rotation_interval_sec || 15);
+    };
+    window.navTo = function(idx) {
+        stopRotation();
+        showView(idx);
+        scheduleNextView(state.content?.preferences?.rotation_interval_sec || 15);
+    };
+
     function showView(index) {
         if (index >= state.views.length) index = 0;
         state.viewIndex = index;
         const view = state.views[index];
         document.getElementById('viewBadge').textContent = view.name;
         state.map.flyTo(view.center, view.zoom, { duration: 2, easeLinearity: 0.25 });
+        updateActiveDot();
         if (view.rare) {
             document.getElementById('viewTitle').textContent = 'Rare Bird Sighting';
             document.getElementById('viewBadge').textContent = view.rare.common_name;
