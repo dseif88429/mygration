@@ -1,0 +1,27 @@
+{
+  "name": "Mygration - Live Bird Migration Maps",
+  "short_name": "Mygration",
+  "description": "Watch thousands of birds migrate across North America in real-time on a beautiful interactive map.",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/img/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
