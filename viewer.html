@@ -39,7 +39,7 @@
         .counter-label{font-size:0.9375rem;color:#94a3b8;font-weight:500;margin-top:0.25rem}
 
         /* Legend */
-        .legend{bottom:6.5rem;right:1.25rem;background:rgba(11,17,32,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.25rem;min-width:200px}
+        .legend{bottom:3.5rem;right:1.25rem;background:rgba(11,17,32,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.25rem;min-width:200px}
         .legend h4{font-size:0.9375rem;font-weight:700;margin-bottom:0.125rem}
         .legend-period{font-size:0.6875rem;color:#64748b;margin-bottom:0.5rem}
         .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;padding:0.25rem 0}
@@ -121,27 +121,26 @@
         .view-dot.rare.active{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
         .view-dot:hover{transform:scale(1.3)}
 
-        /* Sponsored by badge (lower-right) */
+        /* Sponsored by badge (to the left of legend) */
         .sponsored-badge{
-            position:absolute;bottom:3rem;right:1.25rem;z-index:1100;pointer-events:auto;
+            position:absolute;bottom:3.5rem;right:16rem;z-index:1100;pointer-events:auto;
             background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
-            border-radius:12px;padding:0.5rem 0.875rem;
-            display:flex;align-items:center;gap:0.5rem;
+            border-radius:14px;padding:0.625rem 1rem;
+            display:flex;align-items:center;gap:0.625rem;
             text-decoration:none;color:#333;
             box-shadow:0 2px 12px rgba(0,0,0,0.25);
             transition:transform 0.2s,box-shadow 0.2s;
         }
         .sponsored-badge:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(0,0,0,0.35)}
-        .sponsored-label{font-size:0.625rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;line-height:1}
-        .sponsored-logo{height:22px;width:auto}
-        .sponsored-text{display:flex;flex-direction:column;gap:0.125rem}
-        .sponsored-name{font-size:0.75rem;font-weight:700;color:#2d5016;line-height:1.1}
+        .sponsored-label{font-size:0.6875rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;line-height:1}
+        .sponsored-logo{height:44px;width:auto}
+        .sponsored-text{display:flex;flex-direction:column;gap:0.15rem}
+        .sponsored-name{font-size:0.875rem;font-weight:700;color:#2d5016;line-height:1.1}
 
-        /* Powered by (bottom-center) */
+        /* Powered by (under the brand logo, top-left) */
         .powered-by{
-            position:absolute;bottom:0.5rem;left:50%;transform:translateX(-50%);z-index:1100;
             pointer-events:auto;
-            font-size:0.6875rem;color:rgba(148,163,184,0.7);
+            font-size:0.625rem;color:rgba(148,163,184,0.6);
             text-decoration:none;font-weight:500;
             transition:color 0.2s;
         }
@@ -156,10 +155,10 @@
             .title-pill{font-size:1rem;padding:0.5rem 1.5rem}
             .view-badge{font-size:0.8125rem}
             .legend{display:none}
-            .sponsored-badge{bottom:3rem;right:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
-            .sponsored-logo{height:18px}
+            .sponsored-badge{bottom:3rem;right:auto;left:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
+            .sponsored-logo{height:30px}
             .sponsored-label{font-size:0.5625rem}
-            .sponsored-name{font-size:0.6875rem}
+            .sponsored-name{font-size:0.75rem}
         }
     </style>
 </head>
@@ -169,10 +168,13 @@
 
 <!-- Top bar: brand left, settings right -->
 <div class="overlay top-bar">
-    <a href="/app.html" class="brand">
-        <img src="/img/logo-68.png" alt="Mygration" width="30" height="30">
-        Mygration
-    </a>
+    <div style="display:flex;flex-direction:column;gap:0.2rem;">
+        <a href="/app.html" class="brand">
+            <img src="/img/logo-68.png" alt="Mygration" width="30" height="30">
+            Mygration
+        </a>
+        <a href="https://axisdigital.ai" target="_blank" rel="noopener" class="powered-by" style="padding-left:0.5rem;">Powered by axisdigital.ai</a>
+    </div>
     <a href="/app.html" class="settings-btn">Settings</a>
 </div>
 
@@ -210,9 +212,6 @@
         <span class="sponsored-name">Wild Birds Unlimited</span>
     </div>
 </a>
-
-<!-- Powered by Axis Digital -->
-<a href="https://axisdigital.ai" target="_blank" rel="noopener" class="powered-by">Powered by axisdigital.ai</a>
 
 <!-- Nav arrows -->
 <div class="nav-arrows nav-left overlay"><button class="nav-arrow" onclick="navPrev()" title="Previous view">&#9664;</button></div>
