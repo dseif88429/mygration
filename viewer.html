@@ -39,7 +39,7 @@
         .counter-label{font-size:0.9375rem;color:#94a3b8;font-weight:500;margin-top:0.25rem}
 
         /* Legend */
-        .legend{bottom:3.5rem;right:1.25rem;background:rgba(11,17,32,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.25rem;min-width:200px}
+        .legend{bottom:6.5rem;right:1.25rem;background:rgba(11,17,32,0.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.25rem;min-width:200px}
         .legend h4{font-size:0.9375rem;font-weight:700;margin-bottom:0.125rem}
         .legend-period{font-size:0.6875rem;color:#64748b;margin-bottom:0.5rem}
         .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;padding:0.25rem 0}
@@ -121,6 +121,32 @@
         .view-dot.rare.active{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
         .view-dot:hover{transform:scale(1.3)}
 
+        /* Sponsored by badge (lower-right) */
+        .sponsored-badge{
+            position:absolute;bottom:3rem;right:1.25rem;z-index:1100;pointer-events:auto;
+            background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
+            border-radius:12px;padding:0.5rem 0.875rem;
+            display:flex;align-items:center;gap:0.5rem;
+            text-decoration:none;color:#333;
+            box-shadow:0 2px 12px rgba(0,0,0,0.25);
+            transition:transform 0.2s,box-shadow 0.2s;
+        }
+        .sponsored-badge:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(0,0,0,0.35)}
+        .sponsored-label{font-size:0.625rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;line-height:1}
+        .sponsored-logo{height:22px;width:auto}
+        .sponsored-text{display:flex;flex-direction:column;gap:0.125rem}
+        .sponsored-name{font-size:0.75rem;font-weight:700;color:#2d5016;line-height:1.1}
+
+        /* Powered by (bottom-center) */
+        .powered-by{
+            position:absolute;bottom:0.5rem;left:50%;transform:translateX(-50%);z-index:1100;
+            pointer-events:auto;
+            font-size:0.6875rem;color:rgba(148,163,184,0.7);
+            text-decoration:none;font-weight:500;
+            transition:color 0.2s;
+        }
+        .powered-by:hover{color:#f1f5f9}
+
         .leaflet-control-attribution{display:none!important}
 
         @media(max-width:640px){
@@ -129,8 +155,11 @@
             .center-stack{top:4rem}
             .title-pill{font-size:1rem;padding:0.5rem 1.5rem}
             .view-badge{font-size:0.8125rem}
-            .legend{bottom:3rem;right:0.75rem;padding:0.75rem 1rem;min-width:160px}
-            .legend-item{font-size:0.8125rem}
+            .legend{display:none}
+            .sponsored-badge{bottom:3rem;right:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
+            .sponsored-logo{height:18px}
+            .sponsored-label{font-size:0.5625rem}
+            .sponsored-name{font-size:0.6875rem}
         }
     </style>
 </head>
@@ -172,6 +201,18 @@
     <span class="data-time" id="dataTime"></span>
     <span>Mygration</span>
 </div>
+
+<!-- Sponsored by WBU -->
+<a href="https://www.wildbirdscolorado.com" target="_blank" rel="noopener" class="sponsored-badge">
+    <img src="https://www.wbu.com/wp-content/uploads/2016/04/logo.png" alt="Wild Birds Unlimited" class="sponsored-logo">
+    <div class="sponsored-text">
+        <span class="sponsored-label">Sponsored by</span>
+        <span class="sponsored-name">Wild Birds Unlimited</span>
+    </div>
+</a>
+
+<!-- Powered by Axis Digital -->
+<a href="https://axisdigital.ai" target="_blank" rel="noopener" class="powered-by">Powered by axisdigital.ai</a>
 
 <!-- Nav arrows -->
 <div class="nav-arrows nav-left overlay"><button class="nav-arrow" onclick="navPrev()" title="Previous view">&#9664;</button></div>
