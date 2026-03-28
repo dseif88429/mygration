@@ -152,6 +152,23 @@
         .legend-name{flex:1}
         .legend-count{font-size:0.75rem;color:var(--text-muted);font-variant-numeric:tabular-nums}
 
+        /* Sponsored by badge (bottom-right) */
+        .sponsored-badge{
+            position:absolute;bottom:1.25rem;right:1.25rem;z-index:1100;pointer-events:auto;
+            background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
+            border-radius:14px;padding:0.625rem 1rem;
+            display:flex;align-items:center;gap:0.625rem;
+            text-decoration:none;color:#333;
+            box-shadow:0 2px 12px rgba(0,0,0,0.25);
+            transition:transform 0.2s,box-shadow 0.2s;
+        }
+        .sponsored-badge:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(0,0,0,0.35)}
+        .sponsored-label{font-size:0.6875rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;line-height:1}
+        .sponsored-logo{height:44px;width:auto}
+        .sponsored-text{display:flex;flex-direction:column;gap:0.15rem}
+        .sponsored-name{font-size:0.875rem;font-weight:700;color:#2d5016;line-height:1.1}
+        .sponsored-locations{font-size:0.625rem;font-weight:500;color:#666;line-height:1;letter-spacing:0.02em}
+
         /* Legend/viewer hide state (toggled by JS) */
         .legend.hidden-by-drawer, .viewer-bar.hidden-by-drawer { opacity:0;pointer-events:none;transition:opacity 0.2s }
         .legend, .viewer-bar { transition:opacity 0.2s }
@@ -167,6 +184,11 @@
             .legend{bottom:4.5rem;left:0.75rem;min-width:180px;padding:0.75rem}
             .viewer-bar{left:0.75rem;right:0.75rem;transform:none}
             .viewer-bar .vb-url{display:none}
+            .sponsored-badge{bottom:4.5rem;right:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
+            .sponsored-logo{height:30px}
+            .sponsored-label{font-size:0.5625rem}
+            .sponsored-name{font-size:0.75rem}
+            .sponsored-locations{font-size:0.5rem}
         }
 
         /* Spinner */
@@ -266,6 +288,16 @@
         <button class="vb-btn vb-copy" onclick="copyLink()">Copy Link</button>
         <a class="vb-btn vb-full" id="viewerFullBtn" href="#" target="_blank">Live View</a>
     </div>
+
+    <!-- Sponsored by WBU -->
+    <a href="https://www.wildbirdscolorado.com" target="_blank" rel="noopener" class="sponsored-badge">
+        <img src="https://www.wbu.com/wp-content/uploads/2016/04/logo.png" alt="Wild Birds Unlimited" class="sponsored-logo">
+        <div class="sponsored-text">
+            <span class="sponsored-label">Sponsored by</span>
+            <span class="sponsored-name">Wild Birds Unlimited</span>
+            <span class="sponsored-locations">Denver &bull; Arvada &bull; Highlands Ranch &bull; Aurora</span>
+        </div>
+    </a>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
