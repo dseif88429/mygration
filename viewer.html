@@ -30,9 +30,9 @@
         .title-pill{background:linear-gradient(135deg,rgba(59,130,246,0.25),rgba(16,185,129,0.2));backdrop-filter:blur(12px);border:1px solid rgba(59,130,246,0.3);border-radius:999px;padding:0.625rem 2rem;font-size:1.25rem;font-weight:800;letter-spacing:-0.01em}
         .view-badge{background:rgba(15,23,42,0.8);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:999px;padding:0.4rem 1.25rem;font-size:0.9375rem;font-weight:600;color:#cbd5e1}
 
-        /* Big sighting counter (bottom-left, above legend) */
+        /* Big sighting counter (bottom-left, above sponsored badge) */
         .sighting-counter{
-            position:absolute;bottom:3.5rem;left:1.25rem;z-index:1000;pointer-events:none;
+            position:absolute;bottom:8rem;left:1.25rem;z-index:1000;pointer-events:none;
         }
         .counter-num{font-size:3.5rem;font-weight:800;line-height:1;letter-spacing:-0.02em;
             background:linear-gradient(135deg,#3b82f6,#10b981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -121,9 +121,9 @@
         .view-dot.rare.active{background:#ef4444;box-shadow:0 0 6px rgba(239,68,68,0.5)}
         .view-dot:hover{transform:scale(1.3)}
 
-        /* Sponsored by badge (to the left of legend) */
+        /* Sponsored by badge (bottom-left) */
         .sponsored-badge{
-            position:absolute;bottom:3.5rem;right:16rem;z-index:1100;pointer-events:auto;
+            position:absolute;bottom:3.5rem;left:1.25rem;z-index:1100;pointer-events:auto;
             background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);
             border-radius:14px;padding:0.625rem 1rem;
             display:flex;align-items:center;gap:0.625rem;
@@ -136,12 +136,13 @@
         .sponsored-logo{height:44px;width:auto}
         .sponsored-text{display:flex;flex-direction:column;gap:0.15rem}
         .sponsored-name{font-size:0.875rem;font-weight:700;color:#2d5016;line-height:1.1}
+        .sponsored-locations{font-size:0.625rem;font-weight:500;color:#666;line-height:1;letter-spacing:0.02em}
 
         /* Powered by (under the brand logo, top-left) */
         .powered-by{
             pointer-events:auto;
-            font-size:0.625rem;color:rgba(148,163,184,0.6);
-            text-decoration:none;font-weight:500;
+            font-size:0.8125rem;color:rgba(148,163,184,0.7);
+            text-decoration:none;font-weight:600;
             transition:color 0.2s;
         }
         .powered-by:hover{color:#f1f5f9}
@@ -155,7 +156,7 @@
             .title-pill{font-size:1rem;padding:0.5rem 1.5rem}
             .view-badge{font-size:0.8125rem}
             .legend{display:none}
-            .sponsored-badge{bottom:3rem;right:auto;left:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
+            .sponsored-badge{bottom:3rem;left:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
             .sponsored-logo{height:30px}
             .sponsored-label{font-size:0.5625rem}
             .sponsored-name{font-size:0.75rem}
@@ -210,6 +211,7 @@
     <div class="sponsored-text">
         <span class="sponsored-label">Sponsored by</span>
         <span class="sponsored-name">Wild Birds Unlimited</span>
+        <span class="sponsored-locations">Denver &bull; Arvada &bull; Highlands Ranch &bull; Aurora</span>
     </div>
 </a>
 
