@@ -210,6 +210,7 @@
             <button class="pill" id="btnSettings" onclick="toggleDrawer('right')">Settings</button>
         </div>
         <div class="top-right">
+            <a href="/admin.html" class="pill" id="adminBtn" style="display:none">Admin</a>
             <span class="pill" id="userLabel" style="cursor:default"></span>
             <button class="pill" onclick="handleLogout()">Log out</button>
         </div>
@@ -325,6 +326,7 @@ async function boot() {
     S.prefs = me.preferences; S.groups = gr?.groups || []; S.token = me.display_token;
     S.birdImages = imgs?.images || {};
     document.getElementById('userLabel').textContent = me.user.full_name || '';
+    if (me.user.is_admin) document.getElementById('adminBtn').style.display = '';
 
     // Set map
     const fmt = S.prefs.map_format || 'street';

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Mygration</title>
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+        /* Top bar */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.5rem; background: rgba(15,23,42,0.95); border-bottom: 1px solid #1e293b; position: sticky; top: 0; z-index: 10; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .logo img { width: 32px; height: 32px; border-radius: 50%; }
+        .logo span { font-size: 1.125rem; font-weight: 700; color: #f1f5f9; }
+        .pill { padding: 0.375rem 0.875rem; border-radius: 20px; border: 1px solid #334155; background: rgba(51,65,85,0.5); color: #cbd5e1; font-size: 0.8125rem; cursor: pointer; text-decoration: none; }
+        .pill:hover { background: rgba(71,85,105,0.5); color: #f1f5f9; }
+        .nav-links { display: flex; gap: 0.5rem; }
+
+        /* Content */
+        .content { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
+
+        /* Stats */
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 0.875rem; text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #f1f5f9; }
+        .stat-value.green { color: #4ade80; }
+        .stat-value.blue { color: #60a5fa; }
+        .stat-value.amber { color: #fbbf24; }
+        .stat-label { font-size: 0.6875rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.125rem; }
+
+        /* Panels */
+        .panels-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem; }
+        @media (max-width: 768px) { .panels-row { grid-template-columns: 1fr; } }
+        .panel { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 1rem; }
+        .panel-title { font-size: 0.8125rem; font-weight: 600; color: #f1f5f9; margin-bottom: 0.75rem; }
+        .group-bar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; font-size: 0.8125rem; }
+        .group-bar-label { color: #94a3b8; min-width: 90px; text-transform: capitalize; }
+        .group-bar-fill { height: 16px; background: #3b82f6; border-radius: 3px; min-width: 3px; opacity: 0.7; }
+        .group-bar-count { color: #cbd5e1; font-size: 0.75rem; font-weight: 600; }
+        .signup-row { display: flex; justify-content: space-between; padding: 0.2rem 0; font-size: 0.8125rem; color: #94a3b8; }
+        .signup-count { color: #f1f5f9; font-weight: 600; }
+        .health-row { display: flex; justify-content: space-between; padding: 0.3rem 0; font-size: 0.8125rem; border-bottom: 1px solid #1e293b; }
+        .health-label { color: #94a3b8; }
+        .health-value { color: #f1f5f9; font-weight: 500; }
+
+        /* Section */
+        .section-title { font-size: 0.875rem; font-weight: 600; color: #f1f5f9; margin: 1.25rem 0 0.5rem; }
+
+        /* Table */
+        .table-wrap { background: #1e293b; border: 1px solid #334155; border-radius: 8px; overflow-x: auto; margin-bottom: 1.5rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+        th { background: #0f172a; padding: 0.5rem 0.75rem; text-align: left; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; border-bottom: 1px solid #334155; white-space: nowrap; }
+        td { padding: 0.4rem 0.75rem; border-bottom: 1px solid rgba(51,65,85,0.5); color: #cbd5e1; white-space: nowrap; }
+        tr:hover td { background: rgba(30,41,59,0.5); }
+        .name { color: #f1f5f9; font-weight: 500; }
+        .sub { font-size: 0.6875rem; color: #64748b; }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.6875rem; font-weight: 600; }
+        .badge-green { background: rgba(74,222,128,0.15); color: #4ade80; }
+        .badge-red { background: rgba(248,113,113,0.15); color: #f87171; }
+        .badge-blue { background: rgba(96,165,250,0.15); color: #60a5fa; }
+        .badge-gray { background: rgba(148,163,184,0.15); color: #94a3b8; }
+
+        /* Activity dot */
+        .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; }
+        .dot-online { background: #4ade80; }
+        .dot-recent { background: #fbbf24; }
+        .dot-offline { background: #475569; }
+
+        .loading { text-align: center; padding: 3rem; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="/" class="logo">
+            <img src="/images/logo.png" alt="Mygration">
+            <span>Mygration</span>
+        </a>
+        <div class="nav-links">
+            <a href="/app.html" class="pill">Map</a>
+            <a href="#" class="pill" onclick="handleLogout()">Log out</a>
+        </div>
+    </div>
+
+    <div class="content" id="content">
+        <div class="loading" id="loading">Loading admin data...</div>
+    </div>
+
+    <script>
+    async function loadAdmin() {
+        try {
+            const resp = await fetch('/api/mygration/admin/data');
+            if (resp.status === 401) { window.location.href = '/login.html'; return; }
+            if (resp.status === 403) { document.getElementById('loading').textContent = 'Admin access required.'; return; }
+            const d = await resp.json();
+            if (!d.success) { document.getElementById('loading').textContent = d.error || 'Failed to load'; return; }
+            render(d);
+        } catch(e) {
+            document.getElementById('loading').textContent = 'Error: ' + e.message;
+        }
+    }
+
+    function render(d) {
+        const s = d.stats, ds = d.display_stats, sh = d.sightings_health;
+        let h = '';
+
+        // Stats
+        h += '<div class="stats-row">';
+        h += stat(s.total_users, 'Total Users');
+        h += stat(s.active_24h, 'Active 24h', 'green');
+        h += stat(s.active_7d, 'Active 7d', 'blue');
+        h += stat(s.active_30d, 'Active 30d');
+        h += stat(ds.total_displays, 'Displays');
+        h += stat(ds.active_displays, 'Online Now', 'green');
+        h += '</div>';
+
+        // Panels
+        h += '<div class="panels-row">';
+
+        // Species groups
+        h += '<div class="panel"><div class="panel-title">Species Group Popularity</div>';
+        const maxC = d.group_popularity.length ? d.group_popularity[0].user_count : 1;
+        d.group_popularity.forEach(g => {
+            const pct = Math.round(g.user_count / maxC * 100);
+            h += `<div class="group-bar"><span class="group-bar-label">${esc(g.primary_group_key)}</span><div class="group-bar-fill" style="width:${pct}%"></div><span class="group-bar-count">${g.user_count}</span></div>`;
+        });
+        h += '</div>';
+
+        // Signups + health
+        h += '<div>';
+        h += '<div class="panel" style="margin-bottom:0.75rem;"><div class="panel-title">Recent Signups (30d)</div>';
+        (d.signups || []).slice(0, 10).forEach(s => {
+            h += `<div class="signup-row"><span>${s.signup_date}</span><span class="signup-count">${s.count}</span></div>`;
+        });
+        if (!d.signups || !d.signups.length) h += '<div style="color:#64748b; font-size:0.8125rem;">None</div>';
+        h += '</div>';
+
+        h += '<div class="panel"><div class="panel-title">eBird Data Health</div>';
+        h += healthRow('Total Sightings', sh.total ? Number(sh.total).toLocaleString() : '0');
+        h += healthRow('Latest Observation', sh.latest_date || 'N/A');
+        h += healthRow('Last Fetch', sh.last_fetch ? sh.last_fetch.replace('T', ' ').slice(0, 16) : 'N/A');
+        h += '</div></div></div>';
+
+        // Users table
+        h += '<div class="section-title">All Users</div>';
+        h += '<div class="table-wrap"><table><thead><tr>';
+        h += '<th>User</th><th>Email</th><th>Location</th><th>Species</th><th>Displays</th><th>Signed Up</th><th>Last Login</th><th>Last Viewer</th><th>Status</th>';
+        h += '</tr></thead><tbody>';
+        (d.users || []).forEach(u => {
+            const ll = u.last_login ? u.last_login.replace('T', ' ').slice(0, 16) : '<span class="sub">Never</span>';
+            const lv = u.last_viewer_activity ? u.last_viewer_activity.replace('T', ' ').slice(0, 16) : '<span class="sub">-</span>';
+            h += '<tr>';
+            h += `<td><span class="name">${esc(u.full_name || u.username)}</span><br><span class="sub">${esc(u.username)}</span></td>`;
+            h += `<td class="sub">${esc(u.email)}</td>`;
+            h += `<td>${u.location_label ? esc(u.location_label) : '<span class="sub">Not set</span>'}${u.location_zip ? ' <span class="sub">(' + esc(u.location_zip) + ')</span>' : ''}</td>`;
+            h += `<td><span class="badge badge-blue">${esc(u.primary_group_key)}</span></td>`;
+            h += `<td style="text-align:center;">${u.token_count}</td>`;
+            h += `<td>${u.created_at ? u.created_at.slice(0, 10) : ''}</td>`;
+            h += `<td>${ll}</td>`;
+            h += `<td>${lv}</td>`;
+            h += `<td>${u.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Inactive</span>'}</td>`;
+            h += '</tr>';
+        });
+        h += '</tbody></table></div>';
+
+        // Tokens table
+        h += '<div class="section-title">Display Tokens</div>';
+        h += '<div class="table-wrap"><table><thead><tr>';
+        h += '<th>User</th><th>Label</th><th>Short Code</th><th>Status</th><th>Created</th><th>Last Seen</th><th></th>';
+        h += '</tr></thead><tbody>';
+        (d.tokens || []).forEach(t => {
+            const ls = t.last_seen_at ? t.last_seen_at.replace('T', ' ').slice(0, 16) : '<span class="sub">Never</span>';
+            let dotClass = 'dot-offline';
+            if (t.last_seen_at) {
+                const diff = (Date.now() - new Date(t.last_seen_at).getTime()) / 60000;
+                if (diff < 10) dotClass = 'dot-online';
+                else if (diff < 1440) dotClass = 'dot-recent';
+            }
+            h += '<tr>';
+            h += `<td class="name">${esc(t.full_name || t.username)}</td>`;
+            h += `<td>${esc(t.label)}</td>`;
+            h += `<td>${t.short_code ? '<a href="/v/' + t.short_code + '" target="_blank" style="color:#60a5fa; font-family:monospace;">' + t.short_code + '</a>' : '<span class="sub">-</span>'}</td>`;
+            h += `<td>${t.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Disabled</span>'}</td>`;
+            h += `<td>${t.created_at ? t.created_at.slice(0, 10) : ''}</td>`;
+            h += `<td>${ls}</td>`;
+            h += `<td><span class="dot ${dotClass}"></span></td>`;
+            h += '</tr>';
+        });
+        if (!d.tokens || !d.tokens.length) h += '<tr><td colspan="7" style="text-align:center; color:#64748b; padding:1.5rem;">No display tokens yet</td></tr>';
+        h += '</tbody></table></div>';
+
+        document.getElementById('content').innerHTML = h;
+    }
+
+    function stat(val, label, color) {
+        return `<div class="stat-card"><div class="stat-value${color ? ' ' + color : ''}">${val || 0}</div><div class="stat-label">${label}</div></div>`;
+    }
+    function healthRow(label, val) {
+        return `<div class="health-row"><span class="health-label">${label}</span><span class="health-value">${val}</span></div>`;
+    }
+    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    async function handleLogout() {
+        await fetch('/api/mygration/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+    }
+
+    loadAdmin();
+    </script>
+</body>
+</html>
