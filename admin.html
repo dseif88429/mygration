@@ -133,7 +133,7 @@
         h += '<div>';
         h += '<div class="panel" style="margin-bottom:0.75rem;"><div class="panel-title">Recent Signups (30d)</div>';
         (d.signups || []).slice(0, 10).forEach(s => {
-            h += `<div class="signup-row"><span>${s.signup_date}</span><span class="signup-count">${s.count}</span></div>`;
+            h += `<div class="signup-row"><span>${toMTDate(s.signup_date)}</span><span class="signup-count">${s.count}</span></div>`;
         });
         if (!d.signups || !d.signups.length) h += '<div style="color:#64748b; font-size:0.8125rem;">None</div>';
         h += '</div>';
@@ -150,15 +150,15 @@
         h += '<th>User</th><th>Email</th><th>Location</th><th>Species</th><th>Displays</th><th>Signed Up</th><th>Last Login</th><th>Last Viewer</th><th>Status</th>';
         h += '</tr></thead><tbody>';
         (d.users || []).forEach(u => {
-            const ll = u.last_login ? u.last_login.replace('T', ' ').slice(0, 16) : '<span class="sub">Never</span>';
-            const lv = u.last_viewer_activity ? u.last_viewer_activity.replace('T', ' ').slice(0, 16) : '<span class="sub">-</span>';
+            const ll = u.last_login ? toMT(u.last_login) : '<span class="sub">Never</span>';
+            const lv = u.last_viewer_activity ? toMT(u.last_viewer_activity) : '<span class="sub">-</span>';
             h += '<tr>';
             h += `<td><span class="name">${esc(u.full_name || u.username)}</span><br><span class="sub">${esc(u.username)}</span></td>`;
             h += `<td class="sub">${esc(u.email)}</td>`;
             h += `<td>${u.location_label ? esc(u.location_label) : '<span class="sub">Not set</span>'}${u.location_zip ? ' <span class="sub">(' + esc(u.location_zip) + ')</span>' : ''}</td>`;
             h += `<td><span class="badge badge-blue">${esc(u.primary_group_key)}</span></td>`;
             h += `<td style="text-align:center;">${u.token_count}</td>`;
-            h += `<td>${u.created_at ? u.created_at.slice(0, 10) : ''}</td>`;
+            h += `<td>${u.created_at ? toMTDate(u.created_at) : ''}</td>`;
             h += `<td>${ll}</td>`;
             h += `<td>${lv}</td>`;
             h += `<td>${u.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-red">Inactive</span>'}</td>`;
@@ -172,10 +172,10 @@
         h += '<th>User</th><th>Label</th><th>Short Code</th><th>Status</th><th>Created</th><th>Last Seen</th><th></th>';
         h += '</tr></thead><tbody>';
         (d.tokens || []).forEach(t => {
-            const ls = t.last_seen_at ? t.last_seen_at.replace('T', ' ').slice(0, 16) : '<span class="sub">Never</span>';
+            const ls = t.last_seen_at ? toMT(t.last_seen_at) : '<span class="sub">Never</span>';
             let dotClass = 'dot-offline';
             if (t.last_seen_at) {
-                const diff = (Date.now() - new Date(t.last_seen_at).getTime()) / 60000;
+                const diff = (Date.now() - new Date(t.last_seen_at.replace(' ', 'T') + 'Z').getTime()) / 60000;
                 if (diff < 10) dotClass = 'dot-online';
                 else if (diff < 1440) dotClass = 'dot-recent';
             }
@@ -184,7 +184,7 @@
             h += `<td>${esc(t.label)}</td>`;
             h += `<td>${t.short_code ? '<a href="/v/' + t.short_code + '" target="_blank" style="color:#60a5fa; font-family:monospace;">' + t.short_code + '</a>' : '<span class="sub">-</span>'}</td>`;
             h += `<td>${t.is_active ? '<span class="badge badge-green">Active</span>' : '<span class="badge badge-gray">Disabled</span>'}</td>`;
-            h += `<td>${t.created_at ? t.created_at.slice(0, 10) : ''}</td>`;
+            h += `<td>${t.created_at ? toMTDate(t.created_at) : ''}</td>`;
             h += `<td>${ls}</td>`;
             h += `<td><span class="dot ${dotClass}"></span></td>`;
             h += '</tr>';
@@ -202,6 +202,20 @@
         return `<div class="health-row"><span class="health-label">${label}</span><span class="health-value">${val}</span></div>`;
     }
     function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    // Convert UTC datetime string to Mountain time display
+    function toMT(utcStr) {
+        if (!utcStr) return null;
+        const d = new Date(utcStr.replace(' ', 'T') + 'Z');
+        if (isNaN(d)) return utcStr;
+        return d.toLocaleString('sv-SE', { timeZone: 'America/Denver' }).slice(0, 16);
+    }
+    function toMTDate(utcStr) {
+        if (!utcStr) return null;
+        const d = new Date(utcStr.replace(' ', 'T') + (utcStr.includes('T') || utcStr.includes(' ') ? 'Z' : 'T12:00:00Z'));
+        if (isNaN(d)) return utcStr;
+        return d.toLocaleDateString('sv-SE', { timeZone: 'America/Denver' });
+    }
 
     async function handleLogout() {
         await fetch('/api/mygration/logout', { method: 'POST' });
