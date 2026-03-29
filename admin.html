@@ -141,7 +141,7 @@
         h += '<div class="panel"><div class="panel-title">eBird Data Health</div>';
         h += healthRow('Total Sightings', sh.total ? Number(sh.total).toLocaleString() : '0');
         h += healthRow('Latest Observation', sh.latest_date || 'N/A');
-        h += healthRow('Last Fetch', sh.last_fetch ? sh.last_fetch.replace('T', ' ').slice(0, 16) : 'N/A');
+        h += healthRow('Last Fetch', sh.last_fetch ? toMT(sh.last_fetch) : 'N/A');
         h += '</div></div></div>';
 
         // Users table
