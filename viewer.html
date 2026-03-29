@@ -138,14 +138,11 @@
         .sponsored-name{font-size:0.875rem;font-weight:700;color:#2d5016;line-height:1.1}
         .sponsored-locations{font-size:0.625rem;font-weight:500;color:#666;line-height:1;letter-spacing:0.02em}
 
-        /* Powered by (under the brand logo, top-left) */
+        /* Powered by (inside brand pill) */
         .powered-by{
-            pointer-events:auto;
-            font-size:0.8125rem;color:rgba(148,163,184,0.7);
-            text-decoration:none;font-weight:600;
-            transition:color 0.2s;
+            font-size:0.5625rem;color:rgba(148,163,184,0.6);
+            font-weight:500;letter-spacing:0.02em;
         }
-        .powered-by:hover{color:#f1f5f9}
 
         .leaflet-control-attribution{display:none!important}
 
@@ -169,13 +166,13 @@
 
 <!-- Top bar: brand left, settings right -->
 <div class="overlay top-bar">
-    <div style="display:flex;flex-direction:column;gap:0.2rem;">
-        <a href="/app.html" class="brand">
-            <img src="/img/logo-68.png" alt="Mygration" width="30" height="30">
-            Mygration
-        </a>
-        <span class="powered-by" style="padding-left:0.5rem;">Powered by axisdigital.ai</span>
-    </div>
+    <a href="/app.html" class="brand">
+        <img src="/img/logo-68.png" alt="Mygration" width="30" height="30">
+        <span style="display:flex;flex-direction:column;line-height:1;">
+            <span>Mygration</span>
+            <span class="powered-by">Powered by axisdigital.ai</span>
+        </span>
+    </a>
     <a href="/app.html" class="settings-btn">Settings</a>
 </div>
 
