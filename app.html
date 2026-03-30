@@ -253,7 +253,7 @@
         </div>
         <div class="top-right">
             <a href="/admin.html" class="pill" id="adminBtn" style="display:none">Admin</a>
-            <span class="pill" id="userLabel" style="cursor:default"></span>
+            <span class="pill" id="userLabel" style="cursor:default;line-height:1.2;justify-content:center"></span>
             <button class="pill" onclick="handleLogout()">Log out</button>
         </div>
     </div>
@@ -669,9 +669,22 @@ function renderLink() {
     updateLiveViewLink();
 }
 function copyLink() {
+    if (!S.token) return;
     const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
     navigator.clipboard.writeText(shortUrl).then(() => {
-        const b = document.querySelector('[onclick="copyLink()"]'); b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Link', 2000);
+        // Flash "Copied!" on all copy buttons
+        document.querySelectorAll('[onclick="copyLink()"]').forEach(b => {
+            const orig = b.textContent;
+            b.textContent = 'Copied!';
+            setTimeout(() => b.textContent = orig, 2000);
+        });
+    }).catch(() => {
+        // Fallback for older browsers / insecure context
+        const ta = document.createElement('textarea');
+        ta.value = shortUrl; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
     });
 }
 
