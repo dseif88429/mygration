@@ -671,15 +671,25 @@ function renderLink() {
 function copyLink() {
     if (!S.token) return;
     const shortUrl = location.origin + '/v/' + (S.token.short_code || S.token.token);
+
+    // Use native share sheet on mobile if available
+    if (navigator.share) {
+        navigator.share({
+            title: 'Mygration - Live Bird Migration',
+            text: 'Watch real-time bird migration on an interactive map',
+            url: shortUrl
+        }).catch(() => {}); // user cancelled
+        return;
+    }
+
+    // Desktop fallback: copy to clipboard
     navigator.clipboard.writeText(shortUrl).then(() => {
-        // Flash "Copied!" on all copy buttons
         document.querySelectorAll('[onclick="copyLink()"]').forEach(b => {
             const orig = b.textContent;
             b.textContent = 'Copied!';
             setTimeout(() => b.textContent = orig, 2000);
         });
     }).catch(() => {
-        // Fallback for older browsers / insecure context
         const ta = document.createElement('textarea');
         ta.value = shortUrl; ta.style.position = 'fixed'; ta.style.opacity = '0';
         document.body.appendChild(ta); ta.select();
