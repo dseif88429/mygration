@@ -58,7 +58,7 @@
         .drawer-left.open{transform:translateX(0)}
         .drawer-right{right:1rem;transform:translateX(20px)}
         .drawer-right.open{transform:translateX(0)}
-        .drawer-title{font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}
+        .drawer-title{font-size:1rem;font-weight:700;margin-bottom:0;display:flex;justify-content:space-between;align-items:center}
         .drawer-close{background:none;border:none;color:var(--text-muted);font-size:1.25rem;cursor:pointer;padding:0.25rem;border-radius:6px;line-height:1}
         .drawer-close:hover{color:var(--text);background:rgba(255,255,255,0.06)}
         .drawer-section{margin-bottom:1.25rem}
@@ -191,8 +191,9 @@
         .mobile-nav-btn.active{color:var(--accent)}
         .mobile-nav-icon{font-size:1.25rem;line-height:1}
 
-        /* Drawer drag handle */
-        .drawer-handle{display:none;width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);margin:0 auto 0.75rem}
+        /* Drawer header (sticky) */
+        .drawer-header{position:sticky;top:0;z-index:3;background:var(--glass);padding-bottom:0.75rem;margin-bottom:0.75rem;border-bottom:1px solid var(--border)}
+        .drawer-handle{display:none;width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);margin:0 auto 0.5rem}
 
         /* Drawer backdrop */
         .drawer-backdrop{display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,0.4)}
@@ -202,8 +203,8 @@
         @media(max-width:700px){
             .drawer{
                 width:100%;left:0;right:0;top:auto;bottom:0;
-                max-height:75vh;border-radius:var(--radius) var(--radius) 0 0;
-                padding-bottom:calc(1rem + env(safe-area-inset-bottom, 0px));
+                max-height:80vh;border-radius:var(--radius) var(--radius) 0 0;
+                padding-bottom:calc(4.5rem + env(safe-area-inset-bottom, 0px));
                 transform:translateY(100%);
             }
             .drawer.open{transform:translateY(0)}
@@ -262,8 +263,10 @@
 
     <!-- LEFT DRAWER: Species -->
     <div class="drawer drawer-left" id="drawerLeft">
-        <div class="drawer-handle"></div>
-        <div class="drawer-title">Species Group <button class="drawer-close" onclick="toggleDrawer('left')">&times;</button></div>
+        <div class="drawer-header">
+            <div class="drawer-handle"></div>
+            <div class="drawer-title">Species Group <button class="drawer-close" onclick="toggleDrawer('left')">&times;</button></div>
+        </div>
         <div class="sp-grid" id="speciesGrid"></div>
         <div class="data-notice" id="dataNotice">Migration data for this group will be available soon. Hummingbird data is live now.</div>
         <div id="subSection" style="display:none">
@@ -274,8 +277,10 @@
 
     <!-- RIGHT DRAWER: Settings -->
     <div class="drawer drawer-right" id="drawerRight">
-        <div class="drawer-handle"></div>
-        <div class="drawer-title">Settings <button class="drawer-close" onclick="toggleDrawer('right')">&times;</button></div>
+        <div class="drawer-header">
+            <div class="drawer-handle"></div>
+            <div class="drawer-title">Settings <button class="drawer-close" onclick="toggleDrawer('right')">&times;</button></div>
+        </div>
 
         <div class="drawer-section">
             <div class="drawer-label">Location <span class="saved" id="locSaved">Saved</span></div>
