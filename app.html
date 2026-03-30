@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mygration</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png?v=3">
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico?v=3">
@@ -173,22 +173,63 @@
         .legend.hidden-by-drawer, .viewer-bar.hidden-by-drawer { opacity:0;pointer-events:none;transition:opacity 0.2s }
         .legend, .viewer-bar { transition:opacity 0.2s }
 
+        /* Mobile bottom nav */
+        .mobile-nav{
+            display:none;position:fixed;bottom:0;left:0;right:0;z-index:1200;
+            background:rgba(15,23,42,0.95);backdrop-filter:blur(16px);
+            border-top:1px solid var(--border);
+            padding:0.5rem 0.75rem;padding-bottom:calc(0.5rem + env(safe-area-inset-bottom, 0px));
+        }
+        .mobile-nav-inner{display:flex;justify-content:space-around;align-items:center;gap:0.25rem}
+        .mobile-nav-btn{
+            display:flex;flex-direction:column;align-items:center;gap:0.2rem;
+            background:none;border:none;color:var(--text-muted);font-size:0.625rem;font-weight:600;
+            font-family:inherit;cursor:pointer;padding:0.375rem 0.75rem;border-radius:8px;
+            transition:all 0.15s;min-width:60px;
+        }
+        .mobile-nav-btn:hover,.mobile-nav-btn.active{color:var(--text);background:rgba(255,255,255,0.06)}
+        .mobile-nav-btn.active{color:var(--accent)}
+        .mobile-nav-icon{font-size:1.25rem;line-height:1}
+
+        /* Drawer drag handle */
+        .drawer-handle{display:none;width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.2);margin:0 auto 0.75rem}
+
+        /* Drawer backdrop */
+        .drawer-backdrop{display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,0.4)}
+        .drawer-backdrop.show{display:block}
+
         /* Mobile */
         @media(max-width:700px){
-            .drawer{width:calc(100vw - 1rem);top:auto;bottom:0;max-height:70vh;border-radius:var(--radius) var(--radius) 0 0}
-            .drawer-left{left:0.5rem;transform:translateY(20px)}
-            .drawer-left.open{transform:translateY(0)}
-            .drawer-right{right:0.5rem;transform:translateY(20px)}
-            .drawer-right.open{transform:translateY(0)}
+            .drawer{
+                width:100%;left:0;right:0;top:auto;bottom:0;
+                max-height:75vh;border-radius:var(--radius) var(--radius) 0 0;
+                padding-bottom:calc(1rem + env(safe-area-inset-bottom, 0px));
+                transform:translateY(100%);
+            }
+            .drawer.open{transform:translateY(0)}
+            .drawer-handle{display:block}
+            .top-bar{padding-top:calc(0.875rem + env(safe-area-inset-top, 0px))}
             .top-center{display:none}
-            .legend{bottom:4.5rem;left:0.75rem;min-width:180px;padding:0.75rem}
-            .viewer-bar{left:0.75rem;right:0.75rem;transform:none}
-            .viewer-bar .vb-url{display:none}
-            .sponsored-badge{bottom:4.5rem;right:0.75rem;padding:0.4rem 0.625rem;border-radius:10px}
-            .sponsored-logo{height:30px}
-            .sponsored-label{font-size:0.5625rem}
-            .sponsored-name{font-size:0.75rem}
-            .sponsored-locations{font-size:0.5rem}
+            .mobile-nav{display:block}
+            .legend{display:none}
+            .viewer-bar{display:none}
+            .sponsored-badge{bottom:calc(4rem + env(safe-area-inset-bottom, 0px));right:0.75rem;padding:0.35rem 0.5rem;border-radius:10px;gap:0.4rem}
+            .sponsored-logo{height:24px}
+            .sponsored-label{display:none}
+            .sponsored-name{font-size:0.6875rem}
+            .sponsored-locations{display:none}
+            .top-right .pill{font-size:0.75rem;padding:0.4rem 0.75rem}
+            .brand{font-size:1.25rem;padding:0.4rem 1rem 0.4rem 0.5rem}
+            .brand img{width:28px;height:28px}
+            .sp-grid{gap:0.375rem}
+            .sp-card-info{padding:0.375rem 0.5rem}
+            .sp-card-name{font-size:0.6875rem}
+            .drawer-section{margin-bottom:1rem}
+        }
+
+        @media(prefers-reduced-motion:reduce){
+            .drawer{transition:none}
+            .spinner{animation-duration:1.5s}
         }
 
         /* Spinner */
@@ -216,8 +257,12 @@
         </div>
     </div>
 
+    <!-- Drawer backdrop (mobile) -->
+    <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawers()"></div>
+
     <!-- LEFT DRAWER: Species -->
     <div class="drawer drawer-left" id="drawerLeft">
+        <div class="drawer-handle"></div>
         <div class="drawer-title">Species Group <button class="drawer-close" onclick="toggleDrawer('left')">&times;</button></div>
         <div class="sp-grid" id="speciesGrid"></div>
         <div class="data-notice" id="dataNotice">Migration data for this group will be available soon. Hummingbird data is live now.</div>
@@ -229,6 +274,7 @@
 
     <!-- RIGHT DRAWER: Settings -->
     <div class="drawer drawer-right" id="drawerRight">
+        <div class="drawer-handle"></div>
         <div class="drawer-title">Settings <button class="drawer-close" onclick="toggleDrawer('right')">&times;</button></div>
 
         <div class="drawer-section">
@@ -299,6 +345,28 @@
             <span class="sponsored-locations">Denver &bull; Arvada &bull; Highlands Ranch &bull; Aurora</span>
         </div>
     </a>
+</div>
+
+<!-- Mobile bottom nav -->
+<div class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav-inner">
+        <button class="mobile-nav-btn" id="navBtnSpecies" onclick="toggleDrawer('left')">
+            <span class="mobile-nav-icon">&#x1F426;</span>
+            Species
+        </button>
+        <button class="mobile-nav-btn" id="navBtnSettings" onclick="toggleDrawer('right')">
+            <span class="mobile-nav-icon">&#x2699;</span>
+            Settings
+        </button>
+        <button class="mobile-nav-btn" id="navBtnViewer" onclick="openViewer()">
+            <span class="mobile-nav-icon">&#x1F4FA;</span>
+            Live View
+        </button>
+        <button class="mobile-nav-btn" onclick="copyLink()">
+            <span class="mobile-nav-icon">&#x1F517;</span>
+            Share
+        </button>
+    </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -395,16 +463,76 @@ function toggleDrawer(side) {
     const isOpen = drawer.classList.contains('open');
     other.classList.remove('open');
     drawer.classList.toggle('open', !isOpen);
-    document.getElementById('btnSpecies').classList.toggle('active', side === 'left' && !isOpen);
-    document.getElementById('btnSettings').classList.toggle('active', side === 'right' && !isOpen);
+    const btnSpecies = document.getElementById('btnSpecies');
+    const btnSettings = document.getElementById('btnSettings');
+    if (btnSpecies) btnSpecies.classList.toggle('active', side === 'left' && !isOpen);
+    if (btnSettings) btnSettings.classList.toggle('active', side === 'right' && !isOpen);
+    // Mobile nav buttons
+    const navSpecies = document.getElementById('navBtnSpecies');
+    const navSettings = document.getElementById('navBtnSettings');
+    if (navSpecies) navSpecies.classList.toggle('active', side === 'left' && !isOpen);
+    if (navSettings) navSettings.classList.toggle('active', side === 'right' && !isOpen);
+    // Backdrop
+    document.getElementById('drawerBackdrop').classList.toggle('show', !isOpen);
     updateOverlayVisibility();
+}
+
+function closeDrawers() {
+    document.getElementById('drawerLeft').classList.remove('open');
+    document.getElementById('drawerRight').classList.remove('open');
+    document.getElementById('drawerBackdrop').classList.remove('show');
+    document.querySelectorAll('.pill.active, .mobile-nav-btn.active').forEach(el => el.classList.remove('active'));
+    updateOverlayVisibility();
+}
+
+function openViewer() {
+    if (S.token) window.open(location.origin + '/viewer.html?t=' + S.token.token + '&fresh=' + Date.now(), '_blank');
 }
 
 function updateOverlayVisibility() {
     const anyOpen = document.querySelector('.drawer.open');
-    document.getElementById('legend').classList.toggle('hidden-by-drawer', !!anyOpen);
-    document.getElementById('viewerBar').classList.toggle('hidden-by-drawer', !!anyOpen);
+    const legend = document.getElementById('legend');
+    const viewerBar = document.getElementById('viewerBar');
+    if (legend) legend.classList.toggle('hidden-by-drawer', !!anyOpen);
+    if (viewerBar) viewerBar.classList.toggle('hidden-by-drawer', !!anyOpen);
 }
+
+// ---- Swipe down to close drawers (mobile) ----
+(function() {
+    let startY = 0, startScrollTop = 0, dragging = false, activeDrawer = null;
+    function onTouchStart(e) {
+        const drawer = e.target.closest('.drawer.open');
+        if (!drawer) return;
+        startY = e.touches[0].clientY;
+        startScrollTop = drawer.scrollTop;
+        activeDrawer = drawer;
+        dragging = false;
+    }
+    function onTouchMove(e) {
+        if (!activeDrawer) return;
+        const dy = e.touches[0].clientY - startY;
+        // Only start drag if at top of scroll and swiping down
+        if (activeDrawer.scrollTop <= 0 && dy > 10) {
+            dragging = true;
+            const t = Math.max(0, dy);
+            activeDrawer.style.transform = 'translateY(' + t + 'px)';
+            activeDrawer.style.transition = 'none';
+            e.preventDefault();
+        }
+    }
+    function onTouchEnd(e) {
+        if (!activeDrawer || !dragging) { activeDrawer = null; return; }
+        const dy = e.changedTouches[0].clientY - startY;
+        activeDrawer.style.transform = '';
+        activeDrawer.style.transition = '';
+        if (dy > 80) closeDrawers();
+        activeDrawer = null;
+        dragging = false;
+    }
+    document.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd, { passive: true });
+})();
 
 // ---- Species ----
 function findImg(groupName, species) {
@@ -582,13 +710,7 @@ function flash(id) { const el = document.getElementById(id); el.classList.add('s
 async function handleLogout() { await API.logout(); window.location.href = '/'; }
 
 // Close drawers on map click
-map.on('click', () => {
-    document.getElementById('drawerLeft').classList.remove('open');
-    document.getElementById('drawerRight').classList.remove('open');
-    document.getElementById('btnSpecies').classList.remove('active');
-    document.getElementById('btnSettings').classList.remove('active');
-    updateOverlayVisibility();
-});
+map.on('click', closeDrawers);
 
 // Register tile-caching service worker
 if ('serviceWorker' in navigator) {
