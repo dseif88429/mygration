@@ -140,7 +140,20 @@
             background:var(--glass);backdrop-filter:blur(16px);
             border:1px solid var(--border);border-radius:var(--radius);
             padding:1rem 1.25rem;min-width:220px;
+            transition:transform 0.25s ease,opacity 0.25s ease;
         }
+        /* Legend toggle tab (mobile only) */
+        .legend-tab{
+            display:none;position:fixed;left:0;bottom:calc(5.5rem + env(safe-area-inset-bottom, 0px));z-index:1100;
+            background:var(--glass);backdrop-filter:blur(12px);
+            border:1px solid var(--border);border-left:none;
+            border-radius:0 10px 10px 0;
+            padding:0.5rem 0.5rem 0.5rem 0.375rem;
+            cursor:pointer;color:var(--text-muted);font-size:0.6875rem;font-weight:600;
+            writing-mode:vertical-lr;text-orientation:mixed;letter-spacing:0.04em;
+            pointer-events:auto;
+        }
+        .legend-tab:active{background:rgba(255,255,255,0.1)}
         .legend-title{font-size:0.9375rem;font-weight:700;margin-bottom:0.5rem}
         .legend-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8125rem;color:var(--text-dim);padding:0.3rem 0.35rem;cursor:pointer;border-radius:6px;user-select:none}
         .legend-item:hover{background:rgba(255,255,255,0.05)}
@@ -212,7 +225,9 @@
             .top-bar{padding-top:calc(0.875rem + env(safe-area-inset-top, 0px))}
             .top-center{display:none}
             .mobile-nav{display:block}
-            .legend{display:none}
+            .legend{position:fixed;bottom:calc(5rem + env(safe-area-inset-bottom, 0px));left:0.75rem;z-index:1100;transform:translateX(calc(-100% - 1rem));opacity:0;pointer-events:none;min-width:200px;padding:0.75rem 1rem}
+            .legend.mobile-open{transform:translateX(0);opacity:1;pointer-events:auto}
+            .legend-tab{display:block}
             .viewer-bar{display:none}
             .sponsored-badge{bottom:calc(5rem + env(safe-area-inset-bottom, 0px));right:0.75rem;padding:0.35rem 0.5rem;border-radius:10px;gap:0.4rem}
             .sponsored-logo{height:24px}
@@ -333,6 +348,7 @@
         <div class="legend-title" id="legendTitle"></div>
         <div id="legendItems"></div>
     </div>
+    <div class="legend-tab" id="legendTab" onclick="toggleLegend()">Legend</div>
 
     <!-- Viewer bar (bottom-center) -->
     <div class="viewer-bar" id="viewerBar">
@@ -487,6 +503,9 @@ function closeDrawers() {
     document.getElementById('drawerRight').classList.remove('open');
     document.getElementById('drawerBackdrop').classList.remove('show');
     document.querySelectorAll('.pill.active, .mobile-nav-btn.active').forEach(el => el.classList.remove('active'));
+    // Close mobile legend
+    document.getElementById('legend').classList.remove('mobile-open');
+    document.getElementById('legendTab').style.display = '';
     updateOverlayVisibility();
 }
 
@@ -494,11 +513,20 @@ function openViewer() {
     if (S.token) window.open(location.origin + '/viewer.html?t=' + S.token.token + '&fresh=' + Date.now(), '_blank');
 }
 
+function toggleLegend() {
+    const legend = document.getElementById('legend');
+    legend.classList.toggle('mobile-open');
+    document.getElementById('legendTab').style.display = legend.classList.contains('mobile-open') ? 'none' : '';
+}
+
 function updateOverlayVisibility() {
     const anyOpen = document.querySelector('.drawer.open');
     const legend = document.getElementById('legend');
     const viewerBar = document.getElementById('viewerBar');
-    if (legend) legend.classList.toggle('hidden-by-drawer', !!anyOpen);
+    if (legend) {
+        legend.classList.toggle('hidden-by-drawer', !!anyOpen);
+        if (anyOpen) { legend.classList.remove('mobile-open'); document.getElementById('legendTab').style.display = ''; }
+    }
     if (viewerBar) viewerBar.classList.toggle('hidden-by-drawer', !!anyOpen);
 }
 

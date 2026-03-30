@@ -187,6 +187,14 @@
         });
     }
 
+    // Legend toggle (mobile)
+    window.toggleLegend = function() {
+        var legend = document.getElementById('legend');
+        var tab = document.getElementById('legendTab');
+        legend.classList.toggle('mobile-open');
+        if (tab) tab.style.display = legend.classList.contains('mobile-open') ? 'none' : '';
+    };
+
     // Expose nav functions globally for onclick
     window.navPrev = function() {
         stopRotation();
