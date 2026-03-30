@@ -160,7 +160,7 @@
             .sighting-counter{bottom:6rem}
             .counter-num{font-size:2.5rem}
             .counter-label{font-size:0.8125rem}
-            .sponsored-badge{bottom:calc(2.75rem + env(safe-area-inset-bottom, 0px));left:0.75rem;padding:0.35rem 0.5rem;border-radius:10px;gap:0.4rem}
+            .sponsored-badge{bottom:calc(4rem + env(safe-area-inset-bottom, 0px));left:0.75rem;padding:0.35rem 0.5rem;border-radius:10px;gap:0.4rem}
             .sponsored-logo{height:24px}
             .sponsored-label{display:none}
             .sponsored-name{font-size:0.6875rem}
@@ -171,6 +171,10 @@
             .nav-arrow{width:40px;height:40px;font-size:1rem;opacity:0.7}
             .nav-left{left:0.5rem}
             .nav-right{right:0.5rem}
+            .settings-btn .btn-text{display:none}
+            .settings-btn .btn-back{display:inline}
+            .settings-btn{padding:0.4rem 0.875rem;font-size:0.8125rem}
+            .sighting-counter{bottom:calc(5rem + env(safe-area-inset-bottom, 0px))}
         }
         @media(prefers-reduced-motion:reduce){
             .loading-spinner{animation-duration:1.5s}
@@ -191,7 +195,7 @@
             <span class="powered-by">Powered by axisdigital.ai</span>
         </span>
     </a>
-    <a href="/app.html" class="settings-btn">Settings</a>
+    <a href="/app.html" class="settings-btn"><span class="btn-text">Settings</span><span class="btn-back" style="display:none">&#x2190; Back</span></a>
 </div>
 
 <!-- Centered: species title + view badge -->
