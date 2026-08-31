@@ -263,6 +263,11 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- CARTO vector basemap via MapLibre GL, bridged into Leaflet so existing
+     Leaflet markers/layers keep working. CARTO is retiring raster tiles. -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
 <script>
 if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(function(){}); }
 
@@ -278,7 +283,8 @@ const map = L.map('map', {
     dragging: false, scrollWheelZoom: false, touchZoom: false,
     doubleClickZoom: false, boxZoom: false, keyboard: false
 });
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926', {
+L.maplibreGL({
+    style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926',
     maxZoom: 18, subdomains: 'abcd'
 }).addTo(map);
 

@@ -391,13 +391,27 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- CARTO vector basemap via MapLibre GL, bridged into Leaflet so existing
+     Leaflet markers/layers keep working. CARTO is retiring raster tiles. -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.4/leaflet-maplibre-gl.js"></script>
 <script src="/js/api.js?v=2"></script>
 <script>
+// street/dark are CARTO VECTOR (MapLibre GL); satellite is Esri RASTER, so
+// each basemap has to be built as the right kind of Leaflet layer.
 const TILES = {
-    street: { url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926', label: 'Street' },
-    dark: { url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926', label: 'Dark' },
-    satellite: { url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' }
+    street: { type: 'vector', style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926', label: 'Street' },
+    dark: { type: 'vector', style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json?key=cb1_2np3_1_ea0bf568fe59eb853dc1e926', label: 'Dark' },
+    satellite: { type: 'raster', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', label: 'Satellite' }
 };
+
+function makeBasemap(fmt) {
+    const t = TILES[fmt] || TILES.street;
+    return t.type === 'vector'
+        ? L.maplibreGL({ style: t.style })
+        : L.tileLayer(t.url, { maxZoom: 18, errorTileUrl: '' });
+}
 
 let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, tileLayer: null };
 
@@ -419,7 +433,7 @@ async function boot() {
 
     // Set map
     const fmt = S.prefs.map_format || 'street';
-    S.tileLayer = L.tileLayer((TILES[fmt] || TILES.street).url, { maxZoom: 18, subdomains: 'abcd', errorTileUrl: '' }).addTo(map);
+    S.tileLayer = makeBasemap(fmt).addTo(map);
     // Tile layer is cached by Service Worker -- no manual refresh needed
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 
@@ -662,7 +676,7 @@ function renderStyles() {
         Object.entries(TILES).forEach(([k, t]) => {
             const el = document.getElementById('sp_' + k); if (!el || el._lf) return;
             const m = L.map(el, { center: [lat, lng], zoom: 5, zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false, touchZoom: false, keyboard: false });
-            L.tileLayer(t.url, { maxZoom: 18, subdomains: 'abcd' }).addTo(m);
+            makeBasemap(k).addTo(m);
             el._lf = m;
         });
     }, 200);
@@ -670,7 +684,9 @@ function renderStyles() {
 
 function pickStyle(k) {
     S.prefs.map_format = k;
-    if (S.tileLayer) S.tileLayer.setUrl((TILES[k] || TILES.street).url);
+    // A MapLibre GL layer has no setUrl() -- swap the whole layer instead.
+    if (S.tileLayer) map.removeLayer(S.tileLayer);
+    S.tileLayer = makeBasemap(k).addTo(map);
     document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
     event.currentTarget.classList.add('selected');
     flash('fmtSaved'); save();

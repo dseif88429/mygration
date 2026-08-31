@@ -8,7 +8,7 @@
 // entry as the old un-keyed one -- which was cached as a normal HTTP 200
 // with 'API KEY REQUIRED' painted into the image. Bumping the version is
 // what actually evicts those; editing the tile URL alone does nothing.
-const CACHE_NAME = 'mygration-tiles-v3';
+const CACHE_NAME = 'mygration-tiles-v4';
 const MAX_ENTRIES = 5000;
 
 // Only cache tile URLs from these providers
