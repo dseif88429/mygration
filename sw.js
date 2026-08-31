@@ -3,7 +3,12 @@
  * Cache-first strategy: once a tile is fetched, it's served from cache forever.
  * Tiles are keyed by path (ignoring query params like cache-bust strings).
  */
-const CACHE_NAME = 'mygration-tiles-v2';
+// v3: CARTO raster tiles now require an ?key= API key. cacheKey() below
+// strips the query string, so a keyed tile URL resolves to the SAME cache
+// entry as the old un-keyed one -- which was cached as a normal HTTP 200
+// with 'API KEY REQUIRED' painted into the image. Bumping the version is
+// what actually evicts those; editing the tile URL alone does nothing.
+const CACHE_NAME = 'mygration-tiles-v3';
 const MAX_ENTRIES = 5000;
 
 // Only cache tile URLs from these providers
