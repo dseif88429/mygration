@@ -10,6 +10,8 @@
 // what actually evicts those; editing the tile URL alone does nothing.
 const CACHE_NAME = 'mygration-tiles-v4';
 const MAX_ENTRIES = 5000;
+const ICON_CACHE = 'mygration-icons-20261005';
+const ICON_ASSETS = ['/shared-icons/shared-icons.js?v=approved-20261005', '/shared-icons/shared-icons.css?v=approved-20261005', '/shared-icons/sprite.svg'];
 
 // Only cache tile URLs from these providers
 const TILE_HOSTS = [
@@ -44,6 +46,16 @@ async function evictIfNeeded(cache) {
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
 
+    if (url.origin === self.location.origin && url.pathname.startsWith('/shared-icons/')) {
+        event.respondWith(caches.open(ICON_CACHE).then(async cache => {
+            const cached = await cache.match(event.request);
+            if (cached) return cached;
+            const response = await fetch(event.request);
+            if (response.ok) await cache.put(event.request, response.clone());
+            return response;
+        }));
+        return;
+    }
     if (!isTileRequest(url)) return; // Let non-tile requests pass through
 
     event.respondWith(
@@ -67,12 +79,14 @@ self.addEventListener('fetch', event => {
     );
 });
 
-self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('install', event => {
+    event.waitUntil(caches.open(ICON_CACHE).then(cache => cache.addAll(ICON_ASSETS)).then(() => self.skipWaiting()));
+});
 self.addEventListener('activate', event => {
     // Delete old cache versions
     event.waitUntil(
         caches.keys().then(names => Promise.all(
-            names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n))
+            names.filter(n => (n.startsWith('mygration-tiles-') && n !== CACHE_NAME) || (n.startsWith('mygration-icons-') && n !== ICON_CACHE)).map(n => caches.delete(n))
         )).then(() => self.clients.claim())
     );
 });

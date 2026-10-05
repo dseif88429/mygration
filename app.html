@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="/shared-icons/shared-icons.css?v=approved-20261005">
+<script defer src="/shared-icons/shared-icons.js?v=approved-20261005"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mygration</title>
@@ -372,19 +374,19 @@
 <div class="mobile-nav" id="mobileNav">
     <div class="mobile-nav-inner">
         <button class="mobile-nav-btn" id="navBtnSpecies" onclick="toggleDrawer('left')">
-            <span class="mobile-nav-icon">&#x1F426;</span>
+            <span class="mobile-nav-icon"><svg class="shared-icon" data-icon-key="bird" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="/shared-icons/sprite.svg#bird"></use></svg></span>
             Species
         </button>
         <button class="mobile-nav-btn" id="navBtnSettings" onclick="toggleDrawer('right')">
-            <span class="mobile-nav-icon">&#x2699;</span>
+            <span class="mobile-nav-icon"><svg class="shared-icon" data-icon-key="settings" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="/shared-icons/sprite.svg#settings"></use></svg></span>
             Settings
         </button>
         <button class="mobile-nav-btn" id="navBtnViewer" onclick="openViewer()">
-            <span class="mobile-nav-icon">&#x1F4FA;</span>
+            <span class="mobile-nav-icon"><svg class="shared-icon" data-icon-key="tv" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="/shared-icons/sprite.svg#tv"></use></svg></span>
             Live View
         </button>
         <button class="mobile-nav-btn" onclick="copyLink()">
-            <span class="mobile-nav-icon">&#x1F517;</span>
+            <span class="mobile-nav-icon"><svg class="shared-icon" data-icon-key="link" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="/shared-icons/sprite.svg#link"></use></svg></span>
             Share
         </button>
     </div>
@@ -599,7 +601,7 @@ function renderSpecies() {
         return '<div class="sp-card ' + (sel ? 'selected' : '') + '" onclick="pickGroup(\'' + g.group_key + '\')">' +
             '<div class="sp-card-dot" style="background:' + g.dot_color + '"></div>' +
             (img ? '<img class="sp-card-img" src="' + img + '" alt="' + g.group_name + '" loading="lazy">' :
-                   '<div class="sp-card-img" style="background:linear-gradient(135deg,' + g.dot_color + '22,' + g.dot_color + '08);display:flex;align-items:center;justify-content:center;opacity:0.5;font-size:1.5rem">&#x1F426;</div>') +
+                   '<div class="sp-card-img" style="background:linear-gradient(135deg,' + g.dot_color + '22,' + g.dot_color + '08);display:flex;align-items:center;justify-content:center;opacity:0.5;font-size:1.5rem">[[icon:bird]]</div>') +
             '<div class="sp-card-info"><div class="sp-card-name">' + g.group_name + '</div><div class="sp-card-count">' + g.species_count + ' species</div></div></div>';
     }).join('');
     document.getElementById('dataNotice').classList.toggle('show', S.prefs.primary_group_key !== 'hummingbirds');

@@ -1,0 +1,3172 @@
+{
+  "status-warning": {
+    "label": "Warning",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:triangle-alert@1.49.0",
+    "replaces_emoji": [
+      "⚠"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "calendar": {
+    "label": "Calendar / date / book a demo",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:calendar@1.49.0",
+    "replaces_emoji": [
+      "📅",
+      "📆"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "location": {
+    "label": "Location / stop / waypoint",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:map-pin@1.49.0",
+    "replaces_emoji": [
+      "📍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "motorcycle": {
+    "label": "Motorcycle / ride / trip",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:motorbike@1.49.0",
+    "replaces_emoji": [
+      "🏍",
+      "🛵"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-success": {
+    "label": "Done / OK / all clear",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:circle-check@1.49.0",
+    "replaces_emoji": [
+      "✅"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "package": {
+    "label": "Package / inventory / orders",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:package@1.49.0",
+    "replaces_emoji": [
+      "📦"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "clipboard": {
+    "label": "List / records / history",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:clipboard-list@1.49.0",
+    "replaces_emoji": [
+      "📋"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "chart": {
+    "label": "Reports / analytics / sales",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:chart-column@1.49.0",
+    "replaces_emoji": [
+      "📊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "camera": {
+    "label": "Photo / camera / memories",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:camera@1.49.0",
+    "replaces_emoji": [
+      "📷",
+      "📸"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "document": {
+    "label": "Document / statement / PDF",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:file-text@1.49.0",
+    "replaces_emoji": [
+      "📄",
+      "📃"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "map": {
+    "label": "Map / route / trip overview",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:map@1.49.0",
+    "replaces_emoji": [
+      "🗺",
+      "🍎",
+      "🍏"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "users": {
+    "label": "Team / crew / customers",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:users@1.49.0",
+    "replaces_emoji": [
+      "👥",
+      "👫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "fuel": {
+    "label": "Fuel / gas stop / range",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:fuel@1.49.0",
+    "replaces_emoji": [
+      "⛽"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "money": {
+    "label": "Money / revenue / finance",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:circle-dollar-sign@1.49.0",
+    "replaces_emoji": [
+      "💰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "refresh": {
+    "label": "Refresh / sync",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:refresh-cw@1.49.0",
+    "replaces_emoji": [
+      "🔄"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "road": {
+    "label": "Road / highway / paved",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:route@1.49.0",
+    "replaces_emoji": [
+      "🛣",
+      "🛤",
+      "🐍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "target": {
+    "label": "Goal / target / spiffs",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:target@1.49.0",
+    "replaces_emoji": [
+      "🎯"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "settings": {
+    "label": "Settings / automation",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:settings@1.49.0",
+    "replaces_emoji": [
+      "⚙"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mail": {
+    "label": "Email",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:mail@1.49.0",
+    "replaces_emoji": [
+      "✉",
+      "📧",
+      "📨",
+      "📩"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sparkles": {
+    "label": "AI / new / magic / benefit",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:sparkles@1.49.0",
+    "replaces_emoji": [
+      "✨",
+      "✦",
+      "✸",
+      "🔮",
+      "🌟",
+      "✻",
+      "✼"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sun": {
+    "label": "Sunny / day mode",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:sun@1.49.0",
+    "replaces_emoji": [
+      "☀",
+      "🌞"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "search": {
+    "label": "Search / discover / detect",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:search@1.49.0",
+    "replaces_emoji": [
+      "🔍",
+      "🔎",
+      "⌕"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "trend-up": {
+    "label": "Growth / trending / climb",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:trending-up@1.49.0",
+    "replaces_emoji": [
+      "📈"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "comment": {
+    "label": "Message / comment / chat",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:message-circle@1.49.0",
+    "replaces_emoji": [
+      "💬",
+      "💭"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-pending": {
+    "label": "Pending / awaiting approval",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:hourglass@1.49.0",
+    "replaces_emoji": [
+      "⏳"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-error": {
+    "label": "Failed / error",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:circle-x@1.49.0",
+    "replaces_emoji": [
+      "❌"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "star": {
+    "label": "Favorite / featured / rating",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:star@1.49.0",
+    "replaces_emoji": [
+      "⭐"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "celebrate": {
+    "label": "Celebrate / milestone / welcome",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:party-popper@1.49.0",
+    "replaces_emoji": [
+      "🎉",
+      "🎰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bolt": {
+    "label": "Fast / power / automation",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:zap@1.49.0",
+    "replaces_emoji": [
+      "⚡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "note": {
+    "label": "Note / memo / road note",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:notebook-pen@1.49.0",
+    "replaces_emoji": [
+      "📝",
+      "🗒"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "user": {
+    "label": "Person / profile / account",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:user@1.49.0",
+    "replaces_emoji": [
+      "👤",
+      "🧑",
+      "🙋",
+      "🧍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "lock": {
+    "label": "Locked / restricted",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:lock@1.49.0",
+    "replaces_emoji": [
+      "🔒"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "hotel": {
+    "label": "Hotel / lodging",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:hotel@1.49.0",
+    "replaces_emoji": [
+      "🏨",
+      "🏩"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bird": {
+    "label": "Bird (generic) / birding",
+    "group": "bird",
+    "kind": "stock",
+    "source": "lucide:bird@1.49.0",
+    "replaces_emoji": [
+      "🐦",
+      "🐤",
+      "🐧",
+      "🐥",
+      "🐦‍⬛",
+      "🦢"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-dot": {
+    "label": "Status dot (render as CSS dot)",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:circle@1.49.0",
+    "replaces_emoji": [
+      "🔴",
+      "🟢",
+      "🟡",
+      "⏹",
+      "⚪",
+      "⭕",
+      "🟠",
+      "🔵"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "rain": {
+    "label": "Rain",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-rain@1.49.0",
+    "replaces_emoji": [
+      "🌧"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "home": {
+    "label": "Home",
+    "group": "nav",
+    "kind": "stock",
+    "source": "lucide:house@1.49.0",
+    "replaces_emoji": [
+      "🏠",
+      "🏘",
+      "🏡",
+      "⌂",
+      "🏚"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "tools": {
+    "label": "Tools / repair / service",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:wrench@1.49.0",
+    "replaces_emoji": [
+      "🔧",
+      "🛠",
+      "🧰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "eye": {
+    "label": "View / viewpoint / show",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:eye@1.49.0",
+    "replaces_emoji": [
+      "👁",
+      "👀"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "notification": {
+    "label": "Notifications / alerts / remind",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:bell@1.49.0",
+    "replaces_emoji": [
+      "🔔"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mountain-snow": {
+    "label": "Landmark / off-road / pass",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:mountain-snow@1.49.0",
+    "replaces_emoji": [
+      "🏔"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "link": {
+    "label": "Link / integration / chain",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:link@1.49.0",
+    "replaces_emoji": [
+      "🔗"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "cash": {
+    "label": "Cash / payroll",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:banknote@1.49.0",
+    "replaces_emoji": [
+      "💵"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "robot": {
+    "label": "AI / automation",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:bot@1.49.0",
+    "replaces_emoji": [
+      "🤖"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "edit": {
+    "label": "Edit / rename / manual entry",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:pencil@1.49.0",
+    "replaces_emoji": [
+      "✎",
+      "✏",
+      "🖊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "idea": {
+    "label": "Idea / tip / suggestion",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:lightbulb@1.49.0",
+    "replaces_emoji": [
+      "💡",
+      "🏮"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "thumbs-up": {
+    "label": "Thumbs up / works / all good",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:thumbs-up@1.49.0",
+    "replaces_emoji": [
+      "👍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "attachment": {
+    "label": "Attachment / file",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:paperclip@1.49.0",
+    "replaces_emoji": [
+      "📎"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "upload": {
+    "label": "Upload",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:upload@1.49.0",
+    "replaces_emoji": [
+      "📤"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "alarm": {
+    "label": "Deadline / reminder / time clock",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:alarm-clock@1.49.0",
+    "replaces_emoji": [
+      "⏰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "partly-cloudy": {
+    "label": "Partly cloudy / forecast",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-sun@1.49.0",
+    "replaces_emoji": [
+      "🌤",
+      "⛅",
+      "🌥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mountain": {
+    "label": "Elevation / terrain / canyon",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:mountain@1.49.0",
+    "replaces_emoji": [
+      "⛰",
+      "🏜",
+      "🏞"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "compass": {
+    "label": "Navigate / navigator / apps",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:compass@1.49.0",
+    "replaces_emoji": [
+      "🧭",
+      "❂"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "gravel": {
+    "label": "Gravel / dirt road",
+    "group": "travel",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🪨",
+      "🟫"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "receipt": {
+    "label": "Receipt / invoice / sales tax",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:receipt@1.49.0",
+    "replaces_emoji": [
+      "🧾"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "megaphone": {
+    "label": "Announcements / marketing",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:megaphone@1.49.0",
+    "replaces_emoji": [
+      "📣",
+      "📢"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "snowflake": {
+    "label": "Cold / winter / frost",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:snowflake@1.49.0",
+    "replaces_emoji": [
+      "❄",
+      "❅",
+      "❆"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "utensils": {
+    "label": "Restaurant / food stop",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:utensils@1.49.0",
+    "replaces_emoji": [
+      "🍽",
+      "🍳"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "beer": {
+    "label": "Bar / brewery / drinks",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:beer@1.49.0",
+    "replaces_emoji": [
+      "🍺",
+      "🍻"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "droplet": {
+    "label": "Water / wet road / cash flow",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:droplet@1.49.0",
+    "replaces_emoji": [
+      "💧",
+      "🛢",
+      "💦"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "loading": {
+    "label": "Working… / saving… / sending…",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:loader-circle@1.49.0",
+    "replaces_emoji": [
+      "⏳",
+      "🕓"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "image": {
+    "label": "Image / media library",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:image@1.49.0",
+    "replaces_emoji": [
+      "🖼"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "building": {
+    "label": "Company / clients / city",
+    "group": "place",
+    "kind": "stock",
+    "source": "lucide:building@1.49.0",
+    "replaces_emoji": [
+      "🏢",
+      "🏙",
+      "🏫",
+      "🏬"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "wind": {
+    "label": "Wind / gusts / fatigue",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:wind@1.49.0",
+    "replaces_emoji": [
+      "💨",
+      "🌬",
+      "😮‍💨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-blocked": {
+    "label": "Blocked / not allowed / excluded",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:ban@1.49.0",
+    "replaces_emoji": [
+      "🚫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "finish": {
+    "label": "Finish / complete / destination",
+    "group": "travel",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🏁"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "library": {
+    "label": "Wiki / training library / facts",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:library@1.49.0",
+    "replaces_emoji": [
+      "📚"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "trending-hot": {
+    "label": "Hot / trending / popular",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:flame@1.49.0",
+    "replaces_emoji": [
+      "🔥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "trophy": {
+    "label": "Achievement / goal hit / high score",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:trophy@1.49.0",
+    "replaces_emoji": [
+      "🏆"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-urgent": {
+    "label": "Urgent / critical alert",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:siren@1.49.0",
+    "replaces_emoji": [
+      "🚨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "delete": {
+    "label": "Delete / remove / clean up",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:trash@1.49.0",
+    "replaces_emoji": [
+      "🗑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "download": {
+    "label": "Download / export (CSV, Excel, PDF)",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:download@1.49.0",
+    "replaces_emoji": [
+      "📥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bed": {
+    "label": "Room / bed",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:bed@1.49.0",
+    "replaces_emoji": [
+      "🛏"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "moon": {
+    "label": "Night / dark mode / evening",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:moon@1.49.0",
+    "replaces_emoji": [
+      "🌙",
+      "☽",
+      "🌑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "camping": {
+    "label": "Camping / campground",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:tent@1.49.0",
+    "replaces_emoji": [
+      "⛺",
+      "🏕"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "folder": {
+    "label": "Folder / documents / drop zone",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:folder@1.49.0",
+    "replaces_emoji": [
+      "📁"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "globe": {
+    "label": "Web / sites / global",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:globe@1.49.0",
+    "replaces_emoji": [
+      "🌐"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-question": {
+    "label": "Help / unknown / maybe / quiz",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:circle-question-mark@1.49.0",
+    "replaces_emoji": [
+      "❓",
+      "🤔",
+      "🤷"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "add": {
+    "label": "Add / new",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:plus@1.49.0",
+    "replaces_emoji": [
+      "➕"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "clock": {
+    "label": "Time / hours",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:clock@1.49.0",
+    "replaces_emoji": [
+      "🕐",
+      "🕒",
+      "🕑",
+      "🕓",
+      "⌚",
+      "🕰",
+      "🕘"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "tag": {
+    "label": "Tag / label / product",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:tag@1.49.0",
+    "replaces_emoji": [
+      "🏷"
+    ],
+    "status": "done",
+    "notes": "Converted the reference’s filled micro-dots to stroked circles to comply with the outline-only spec."
+  },
+  "pin": {
+    "label": "Pin / pinned / custom stop",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:pin@1.49.0",
+    "replaces_emoji": [
+      "📌"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mobile": {
+    "label": "Mobile app / phone",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:smartphone@1.49.0",
+    "replaces_emoji": [
+      "📱",
+      "📲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "timer": {
+    "label": "Duration / SLA / variance",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:timer@1.49.0",
+    "replaces_emoji": [
+      "⏱",
+      "⏲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "clapperboard": {
+    "label": "Recap video / recording",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:clapperboard@1.49.0",
+    "replaces_emoji": [
+      "🎬"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "construction": {
+    "label": "Construction / coming soon",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:construction@1.49.0",
+    "replaces_emoji": [
+      "🚧",
+      "🏗"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "medal": {
+    "label": "Award / medal / rank",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:medal@1.49.0",
+    "replaces_emoji": [
+      "🏅",
+      "🎖",
+      "🥇",
+      "🥈",
+      "🥉"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "rocket": {
+    "label": "Launch / onboarding / boost",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:rocket@1.49.0",
+    "replaces_emoji": [
+      "🚀"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "card": {
+    "label": "Card payment / billing",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:credit-card@1.49.0",
+    "replaces_emoji": [
+      "💳"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "cloud": {
+    "label": "Cloudy",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud@1.49.0",
+    "replaces_emoji": [
+      "☁"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "backpack": {
+    "label": "Gear / packing list",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:backpack@1.49.0",
+    "replaces_emoji": [
+      "🎒"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "palm": {
+    "label": "Time off / PTO",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:tree-palm@1.49.0",
+    "replaces_emoji": [
+      "🏖",
+      "🌴",
+      "🏝"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "truck": {
+    "label": "Shipping / suppliers / delivery",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:truck@1.49.0",
+    "replaces_emoji": [
+      "🚚"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-info": {
+    "label": "Info / details",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:info@1.49.0",
+    "replaces_emoji": [
+      "ℹ"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "secure": {
+    "label": "Secure vault / sign-in / SSN",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:lock-keyhole@1.49.0",
+    "replaces_emoji": [
+      "🔐"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mailbox": {
+    "label": "Mailbox / USPS / postal",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:mailbox@1.49.0",
+    "replaces_emoji": [
+      "📬",
+      "📮",
+      "📫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "store": {
+    "label": "Store / store operations",
+    "group": "place",
+    "kind": "stock",
+    "source": "lucide:store@1.49.0",
+    "replaces_emoji": [
+      "🏪"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "coffee": {
+    "label": "Coffee / rest stop",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:coffee@1.49.0",
+    "replaces_emoji": [
+      "☕"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mood-happy": {
+    "label": "Happy / ahead of pace",
+    "group": "mood",
+    "kind": "stock",
+    "source": "lucide:face-slightly-smiling@1.49.0",
+    "replaces_emoji": [
+      "😂",
+      "😊",
+      "😀",
+      "🤩",
+      "😄",
+      "😎"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mood-sad": {
+    "label": "Sad / behind pace",
+    "group": "mood",
+    "kind": "stock",
+    "source": "lucide:face-slightly-frowning@1.49.0",
+    "replaces_emoji": [
+      "😢",
+      "😟",
+      "😭"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bank": {
+    "label": "Bank / banking",
+    "group": "place",
+    "kind": "stock",
+    "source": "lucide:landmark@1.49.0",
+    "replaces_emoji": [
+      "🏦",
+      "🏧"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "shield": {
+    "label": "Protection / safety / insured",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:shield@1.49.0",
+    "replaces_emoji": [
+      "🛡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "storm": {
+    "label": "Thunderstorm / hail",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-lightning@1.49.0",
+    "replaces_emoji": [
+      "⛈",
+      "⚡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "burger": {
+    "label": "Lunch / fast food / local eats",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:hamburger@1.49.0",
+    "replaces_emoji": [
+      "🍔",
+      "🍕",
+      "🍖"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "save": {
+    "label": "Save",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:save@1.49.0",
+    "replaces_emoji": [
+      "💾"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "phone": {
+    "label": "Call / phone",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:phone@1.49.0",
+    "replaces_emoji": [
+      "📞"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "historic": {
+    "label": "Historic site / landmark",
+    "group": "travel",
+    "kind": "custom",
+    "source": "tabler:building-monument@3.48.0",
+    "replaces_emoji": [
+      "🏛",
+      "🗿"
+    ],
+    "status": "done",
+    "notes": "Adapted the handoff Tabler outline reference."
+  },
+  "education": {
+    "label": "Training / certification",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:graduation-cap@1.49.0",
+    "replaces_emoji": [
+      "🎓"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "dollar": {
+    "label": "Price / tolls",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:dollar-sign@1.49.0",
+    "replaces_emoji": [
+      "💲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "cart": {
+    "label": "Cart / orders / procurement",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:shopping-cart@1.49.0",
+    "replaces_emoji": [
+      "🛒"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "scenic": {
+    "label": "Scenic cruise / byway",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:binoculars@1.49.0",
+    "replaces_emoji": [
+      "🌄"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "cake": {
+    "label": "Birthday",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:cake@1.49.0",
+    "replaces_emoji": [
+      "🎂"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "crown": {
+    "label": "Top / leader / captain",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:crown@1.49.0",
+    "replaces_emoji": [
+      "👑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "thumbs-down": {
+    "label": "Thumbs down / doesn't work",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:thumbs-down@1.49.0",
+    "replaces_emoji": [
+      "👎"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "inbox": {
+    "label": "Inbox / notifications / empty state",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:inbox@1.49.0",
+    "replaces_emoji": [
+      "📭",
+      "📬",
+      "📥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "calendar-days": {
+    "label": "Schedule / days",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:calendar-days@1.49.0",
+    "replaces_emoji": [
+      "🗓"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "manager": {
+    "label": "Manager / owner tools / jobs",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:briefcase@1.49.0",
+    "replaces_emoji": [
+      "💼",
+      "👔"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "tv": {
+    "label": "Digital signage / TV",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:tv@1.49.0",
+    "replaces_emoji": [
+      "📺"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "car": {
+    "label": "Car / RV / tow",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:car@1.49.0",
+    "replaces_emoji": [
+      "🚗",
+      "🛻",
+      "🚐",
+      "🏎"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-sos": {
+    "label": "SOS / emergency",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:life-buoy@1.49.0",
+    "replaces_emoji": [
+      "🆘"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "heart": {
+    "label": "Love / like / loyalty",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:heart@1.49.0",
+    "replaces_emoji": [
+      "❤",
+      "💛",
+      "💗"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "wave-hello": {
+    "label": "Hello / greeting / nudge",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:hand@1.49.0",
+    "replaces_emoji": [
+      "👋",
+      "✋"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "repeat": {
+    "label": "Recurring / repeat",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:repeat@1.49.0",
+    "replaces_emoji": [
+      "🔁"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "print": {
+    "label": "Print",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:printer@1.49.0",
+    "replaces_emoji": [
+      "🖨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "pause": {
+    "label": "Pause",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:pause@1.49.0",
+    "replaces_emoji": [
+      "❚",
+      "⏸"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ledger": {
+    "label": "QuickBooks / accounting ledger",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:notebook@1.49.0",
+    "replaces_emoji": [
+      "📒",
+      "📗",
+      "📔"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "desktop": {
+    "label": "Desktop / displays / hosts",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:monitor@1.49.0",
+    "replaces_emoji": [
+      "🖥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "earth": {
+    "label": "Region / discover / geography",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:earth@1.49.0",
+    "replaces_emoji": [
+      "🌎",
+      "🌍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "events": {
+    "label": "Events / registration",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:tickets@1.49.0",
+    "replaces_emoji": [
+      "🎟",
+      "🎪"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "vote": {
+    "label": "Vote / poll",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:vote@1.49.0",
+    "replaces_emoji": [
+      "🗳",
+      "📊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "fog": {
+    "label": "Fog / icy / overcast",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-fog@1.49.0",
+    "replaces_emoji": [
+      "🌫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "parking": {
+    "label": "Parking / pull over",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:square-parking@1.49.0",
+    "replaces_emoji": [
+      "🅿"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sign": {
+    "label": "Sign / sign-ups / signature",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:signature@1.49.0",
+    "replaces_emoji": [
+      "✍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "send": {
+    "label": "Send",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:send-horizontal@1.49.0",
+    "replaces_emoji": [
+      "➤",
+      "👉",
+      "➜"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "menu": {
+    "label": "Menu / navigation",
+    "group": "nav",
+    "kind": "stock",
+    "source": "lucide:menu@1.49.0",
+    "replaces_emoji": [
+      "☰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "trend-down": {
+    "label": "Decline / missing data / low",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:trending-down@1.49.0",
+    "replaces_emoji": [
+      "📉"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "broom": {
+    "label": "Clear / clean up / maintenance",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:broom@1.49.0",
+    "replaces_emoji": [
+      "🧹"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "scale": {
+    "label": "Balance / reconciliation / scale",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:scale@1.49.0",
+    "replaces_emoji": [
+      "⚖"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "waves": {
+    "label": "Water / lake / coast / hot spring",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:waves-horizontal@1.49.0",
+    "replaces_emoji": [
+      "🏞",
+      "🌊",
+      "♨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "leaf": {
+    "label": "Leaf / garden / autumn",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:leaf@1.49.0",
+    "replaces_emoji": [
+      "🌿",
+      "🍂",
+      "🍃"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "tree-pine": {
+    "label": "Evergreen / habitat",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:tree-pine@1.49.0",
+    "replaces_emoji": [
+      "🌲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bug": {
+    "label": "Bug report / issue",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:bug@1.49.0",
+    "replaces_emoji": [
+      "🐞",
+      "🐛"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "checkbox-checked": {
+    "label": "Checked / tasks / select all",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:square-check@1.49.0",
+    "replaces_emoji": [
+      "☑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "handshake": {
+    "label": "Partnership / coverage / pairing",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:handshake@1.49.0",
+    "replaces_emoji": [
+      "🤝"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mood-neutral": {
+    "label": "Neutral / on pace",
+    "group": "mood",
+    "kind": "stock",
+    "source": "lucide:face-neutral@1.49.0",
+    "replaces_emoji": [
+      "😐",
+      "😮"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sleep": {
+    "label": "Snooze / snoozed",
+    "group": "time",
+    "kind": "stock",
+    "source": "lucide:moon-star@1.49.0",
+    "replaces_emoji": [
+      "💤",
+      "😴",
+      "⏾"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "archive": {
+    "label": "Archive / archived",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:archive@1.49.0",
+    "replaces_emoji": [
+      "🗄",
+      "📥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "music": {
+    "label": "Music / playlist",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:music@1.49.0",
+    "replaces_emoji": [
+      "🎵",
+      "♫",
+      "🎶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sun-showers": {
+    "label": "Showers",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-sun-rain@1.49.0",
+    "replaces_emoji": [
+      "🌦"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "flower": {
+    "label": "Flower / spring / native plants",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:flower@1.49.0",
+    "replaces_emoji": [
+      "🌻",
+      "🌸",
+      "🌼",
+      "🌺"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "flag": {
+    "label": "Flag / report / incidents",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:flag@1.49.0",
+    "replaces_emoji": [
+      "🚩",
+      "⚑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "database": {
+    "label": "Database / data management",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:database@1.49.0",
+    "replaces_emoji": [
+      "🗄",
+      "🗃"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "unlock": {
+    "label": "Unlocked / unlock",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:lock-open@1.49.0",
+    "replaces_emoji": [
+      "🔓"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "satellite": {
+    "label": "Satellite / GPS / feed / radar",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:satellite-dish@1.49.0",
+    "replaces_emoji": [
+      "📡",
+      "🛰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "payout": {
+    "label": "Expenses / payables",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:banknote-arrow-up@1.49.0",
+    "replaces_emoji": [
+      "💸"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "transfer": {
+    "label": "Transfer between stores",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:arrow-left-right@1.49.0",
+    "replaces_emoji": [
+      "🔃",
+      "🔁"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "shuffle": {
+    "label": "Reorder / optimize stops",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:shuffle@1.49.0",
+    "replaces_emoji": [
+      "🔀"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "chevron-down": {
+    "label": "Expand / dropdown",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:chevron-down@1.49.0",
+    "replaces_emoji": [
+      "⌄"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "drag-handle": {
+    "label": "Drag to reorder",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:grip-vertical@1.49.0",
+    "replaces_emoji": [
+      "☰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "spreadsheet": {
+    "label": "Spreadsheet / Excel / CSV file",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:file-spreadsheet@1.49.0",
+    "replaces_emoji": [
+      "📊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "presentation": {
+    "label": "Slides / presentation",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:presentation@1.49.0",
+    "replaces_emoji": [
+      "📊",
+      "📽"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "scroll": {
+    "label": "Price list / log / history",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:scroll-text@1.49.0",
+    "replaces_emoji": [
+      "📜"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "backyard": {
+    "label": "Backyard / habitat",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:fence@1.49.0",
+    "replaces_emoji": [
+      "🏡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ticket": {
+    "label": "Support ticket",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:ticket@1.49.0",
+    "replaces_emoji": [
+      "🎫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "gift": {
+    "label": "Gift / member value",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:gift@1.49.0",
+    "replaces_emoji": [
+      "🎁"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mic": {
+    "label": "Voice message / mic",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:mic@1.49.0",
+    "replaces_emoji": [
+      "🎤"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sunrise": {
+    "label": "Sunrise / morning brief",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:sunrise@1.49.0",
+    "replaces_emoji": [
+      "🌅"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ferris-wheel": {
+    "label": "Attraction",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:ferris-wheel@1.49.0",
+    "replaces_emoji": [
+      "🎡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "shirt": {
+    "label": "Riding gear / layers",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:shirt@1.49.0",
+    "replaces_emoji": [
+      "🧥",
+      "🧤"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "raptor": {
+    "label": "Raptor / predator",
+    "group": "bird",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🦅"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "dog": {
+    "label": "Pets / pet friendly",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:dog@1.49.0",
+    "replaces_emoji": [
+      "🐕",
+      "🦴"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "impact": {
+    "label": "Impact / debris / big hit",
+    "group": "status",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "💥"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "book": {
+    "label": "Guide / reference / help",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:book-open@1.49.0",
+    "replaces_emoji": [
+      "📖"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ruler": {
+    "label": "Measure / layouts",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:ruler@1.49.0",
+    "replaces_emoji": [
+      "📐",
+      "📏"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "volume-off": {
+    "label": "Mute sound",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:volume-x@1.49.0",
+    "replaces_emoji": [
+      "🔇"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "laptop": {
+    "label": "Laptop / browser",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:laptop@1.49.0",
+    "replaces_emoji": [
+      "💻"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "umbrella": {
+    "label": "Rain chance",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:umbrella@1.49.0",
+    "replaces_emoji": [
+      "☔",
+      "☂"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "plane": {
+    "label": "Fly / flight log",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:plane@1.49.0",
+    "replaces_emoji": [
+      "✈",
+      "🛫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ship": {
+    "label": "Ferry",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:ship@1.49.0",
+    "replaces_emoji": [
+      "⛴"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "turtle": {
+    "label": "Slow down",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:turtle@1.49.0",
+    "replaces_emoji": [
+      "🐢"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "temp-cold": {
+    "label": "Freezing temperature",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:thermometer-snowflake@1.49.0",
+    "replaces_emoji": [
+      "🥶",
+      "🧊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "chevron-up": {
+    "label": "Collapse",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:chevron-up@1.49.0",
+    "replaces_emoji": [
+      "⌃"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "backspace": {
+    "label": "Backspace (keypad)",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:delete@1.49.0",
+    "replaces_emoji": [
+      "⌫"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "numbers": {
+    "label": "Numbers / POS buttons / counts",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:hash@1.49.0",
+    "replaces_emoji": [
+      "🔢"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "key": {
+    "label": "Key / access / rental",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:key@1.49.0",
+    "replaces_emoji": [
+      "🔑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "wifi": {
+    "label": "Wi-Fi (amenity)",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:wifi@1.49.0",
+    "replaces_emoji": [
+      "📶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "dice": {
+    "label": "Random / mixed / all games",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:dices@1.49.0",
+    "replaces_emoji": [
+      "🎲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "door": {
+    "label": "Sign out / leave",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:door-open@1.49.0",
+    "replaces_emoji": [
+      "🚪"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "calculator": {
+    "label": "Calculator / deal modeling",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:calculator@1.49.0",
+    "replaces_emoji": [
+      "🧮"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "thermometer": {
+    "label": "Temperature",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:thermometer@1.49.0",
+    "replaces_emoji": [
+      "🌡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sunset": {
+    "label": "Sunset / evening",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:sunset@1.49.0",
+    "replaces_emoji": [
+      "🌇"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "fireplace": {
+    "label": "Fireplace (amenity)",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:flame-kindling@1.49.0",
+    "replaces_emoji": [
+      "♨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bike": {
+    "label": "Bicycle / cycling",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:bike@1.49.0",
+    "replaces_emoji": [
+      "🚲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "helmet": {
+    "label": "Helmet laws / safety gear",
+    "group": "travel",
+    "kind": "custom",
+    "source": "tabler:helmet@3.48.0",
+    "replaces_emoji": [
+      "⛑",
+      "🪖"
+    ],
+    "status": "done",
+    "notes": "Adapted the handoff Tabler outline reference."
+  },
+  "kitchen": {
+    "label": "Kitchen (amenity)",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:cooking-pot@1.49.0",
+    "replaces_emoji": [
+      "🍳"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "dessert": {
+    "label": "Snack / treat",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:ice-cream-cone@1.49.0",
+    "replaces_emoji": [
+      "🍦",
+      "🍿",
+      "🥞",
+      "🍪"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sprout": {
+    "label": "Feeding / garden / easy",
+    "group": "nature",
+    "kind": "stock",
+    "source": "lucide:sprout@1.49.0",
+    "replaces_emoji": [
+      "🌱"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "praise": {
+    "label": "Customer praise / new review",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:message-square-heart@1.49.0",
+    "replaces_emoji": [
+      "💌"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "kudos": {
+    "label": "Kudos / thanks / congrats",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:hand-heart@1.49.0",
+    "replaces_emoji": [
+      "🙏",
+      "👏",
+      "💪"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "temp-hot": {
+    "label": "Extreme heat",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:thermometer-sun@1.49.0",
+    "replaces_emoji": [
+      "🥵",
+      "☄"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "retired": {
+    "label": "Retired / off",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:circle-off@1.49.0",
+    "replaces_emoji": [
+      "⌀"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "hexagon": {
+    "label": "Zones (hex select)",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:hexagon@1.49.0",
+    "replaces_emoji": [
+      "⬡"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "contact-card": {
+    "label": "Directory",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:contact@1.49.0",
+    "replaces_emoji": [
+      "📇"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "folder-open": {
+    "label": "Open folder / upload history",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:folder-open@1.49.0",
+    "replaces_emoji": [
+      "📂"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "mute": {
+    "label": "Muted / snoozed alerts",
+    "group": "comms",
+    "kind": "stock",
+    "source": "lucide:bell-off@1.49.0",
+    "replaces_emoji": [
+      "🔕"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "video": {
+    "label": "Video / livestream",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:video@1.49.0",
+    "replaces_emoji": [
+      "🎥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "signal": {
+    "label": "Signal / offline-capable",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:signal@1.49.0",
+    "replaces_emoji": [
+      "📶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "plug": {
+    "label": "Integration / plug-and-play",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:plug@1.49.0",
+    "replaces_emoji": [
+      "🔌"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "game": {
+    "label": "Games",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:gamepad-2@1.49.0",
+    "replaces_emoji": [
+      "🎮"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "palette": {
+    "label": "Design / graphics",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:palette@1.49.0",
+    "replaces_emoji": [
+      "🎨"
+    ],
+    "status": "done",
+    "notes": "Converted the reference’s filled micro-dots to stroked circles to comply with the outline-only spec."
+  },
+  "restroom": {
+    "label": "Restroom / rest stop",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:toilet@1.49.0",
+    "replaces_emoji": [
+      "🚻"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "gem": {
+    "label": "Gem / best / value",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:gem@1.49.0",
+    "replaces_emoji": [
+      "💎"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "basket": {
+    "label": "Basket / units per basket",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:shopping-basket@1.49.0",
+    "replaces_emoji": [
+      "🧺"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "laundry": {
+    "label": "Laundry (amenity)",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:washing-machine@1.49.0",
+    "replaces_emoji": [
+      "🧺"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "snow": {
+    "label": "Snow / ice",
+    "group": "weather",
+    "kind": "stock",
+    "source": "lucide:cloud-snow@1.49.0",
+    "replaces_emoji": [
+      "🌨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "deer": {
+    "label": "Wildlife hazard",
+    "group": "travel",
+    "kind": "custom",
+    "source": "tabler:deer@3.48.0",
+    "replaces_emoji": [
+      "🦌",
+      "🐾"
+    ],
+    "status": "done",
+    "notes": "Adapted the handoff Tabler outline reference."
+  },
+  "privacy": {
+    "label": "Privacy / hide",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:eye-off@1.49.0",
+    "replaces_emoji": [
+      "🕶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-stop": {
+    "label": "Stop / warning sign",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:octagon-x@1.49.0",
+    "replaces_emoji": [
+      "🛑"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "ghost": {
+    "label": "Ghost town / inactive",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:ghost@1.49.0",
+    "replaces_emoji": [
+      "👻",
+      "💀"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "notary": {
+    "label": "Notary stamp",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:stamp@1.49.0",
+    "replaces_emoji": [
+      "🖊"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "copy": {
+    "label": "Copy to clipboard",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:copy@1.49.0",
+    "replaces_emoji": [
+      "📋"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "stop": {
+    "label": "Stop / end recording",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:square@1.49.0",
+    "replaces_emoji": [
+      "⏹"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "skip": {
+    "label": "Skip / skipped",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:skip-forward@1.49.0",
+    "replaces_emoji": [
+      "⏭"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "keyboard": {
+    "label": "Keyboard / keypad",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:keyboard@1.49.0",
+    "replaces_emoji": [
+      "⌨"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "grid": {
+    "label": "Grid / matrix / tiles",
+    "group": "nav",
+    "kind": "stock",
+    "source": "lucide:layout-grid@1.49.0",
+    "replaces_emoji": [
+      "☷",
+      "🔲"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "newspaper": {
+    "label": "Daily summary / news feed",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:newspaper@1.49.0",
+    "replaces_emoji": [
+      "📰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "folders": {
+    "label": "Categories",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:folders@1.49.0",
+    "replaces_emoji": [
+      "🗂"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "walk": {
+    "label": "Bird walk / visit",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:footprints@1.49.0",
+    "replaces_emoji": [
+      "🚶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "brain": {
+    "label": "AI insight / segments",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:brain@1.49.0",
+    "replaces_emoji": [
+      "🧠"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "puzzle": {
+    "label": "Extension / module",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:puzzle@1.49.0",
+    "replaces_emoji": [
+      "🧩"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "id-card": {
+    "label": "Rider profile / ID",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:id-card@1.49.0",
+    "replaces_emoji": [
+      "🪪"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "coins": {
+    "label": "Coins / points",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:coins@1.49.0",
+    "replaces_emoji": [
+      "🪙"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "moon-new": {
+    "label": "Moon phase: new",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌑"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-waxing-crescent": {
+    "label": "Moon phase: waxing crescent",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌒"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-first-quarter": {
+    "label": "Moon phase: first quarter",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌓"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-waxing-gibbous": {
+    "label": "Moon phase: waxing gibbous",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌔"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-full": {
+    "label": "Moon phase: full",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌕"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-waning-gibbous": {
+    "label": "Moon phase: waning gibbous",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌖"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-last-quarter": {
+    "label": "Moon phase: last quarter",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌗"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "moon-waning-crescent": {
+    "label": "Moon phase: waning crescent",
+    "group": "weather",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🌘"
+    ],
+    "status": "done",
+    "notes": "Filled area represents the illuminated portion; waxing is lit on the right, waning on the left."
+  },
+  "feather": {
+    "label": "Feather / bird cards",
+    "group": "bird",
+    "kind": "stock",
+    "source": "lucide:feather@1.49.0",
+    "replaces_emoji": [
+      "🪶"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "nest": {
+    "label": "Nest / no entries yet",
+    "group": "bird",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🪹",
+      "🪺"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "butterfly": {
+    "label": "Butterfly / pollinator",
+    "group": "nature",
+    "kind": "custom",
+    "source": "tabler:butterfly@3.48.0",
+    "replaces_emoji": [
+      "🦋"
+    ],
+    "status": "done",
+    "notes": "Adapted the handoff Tabler outline reference."
+  },
+  "health": {
+    "label": "System health / heartbeat",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:heart-pulse@1.49.0",
+    "replaces_emoji": [
+      "💓"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "status-new": {
+    "label": "New",
+    "group": "status",
+    "kind": "stock",
+    "source": "lucide:badge-plus@1.49.0",
+    "replaces_emoji": [
+      "🆕"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "command": {
+    "label": "Command / shortcut",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:command@1.49.0",
+    "replaces_emoji": [
+      "⌘"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "filter": {
+    "label": "Filters",
+    "group": "action",
+    "kind": "stock",
+    "source": "lucide:funnel@1.49.0",
+    "replaces_emoji": [
+      "☰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "text-recognition": {
+    "label": "Read printed text (OCR)",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:type@1.49.0",
+    "replaces_emoji": [
+      "🔤"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "chart-pie": {
+    "label": "Category mix",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:chart-pie@1.49.0",
+    "replaces_emoji": [
+      "🥧"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "code": {
+    "label": "Code / Python files",
+    "group": "data",
+    "kind": "stock",
+    "source": "lucide:file-code@1.49.0",
+    "replaces_emoji": [
+      "🐍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "fitness": {
+    "label": "Fitness",
+    "group": "people",
+    "kind": "stock",
+    "source": "lucide:dumbbell@1.49.0",
+    "replaces_emoji": [
+      "🏋"
+    ],
+    "status": "done",
+    "notes": "Uniformly inset reference geometry by less than 1% to keep its curved edges within the specified 2px padding; stroke stays 2px."
+  },
+  "film": {
+    "label": "GIF",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:film@1.49.0",
+    "replaces_emoji": [
+      "🎞"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "network": {
+    "label": "Network",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:network@1.49.0",
+    "replaces_emoji": [
+      "🖧"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "hospital": {
+    "label": "Hospital",
+    "group": "place",
+    "kind": "stock",
+    "source": "lucide:hospital@1.49.0",
+    "replaces_emoji": [
+      "🏥"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "telescope": {
+    "label": "Telescope",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:telescope@1.49.0",
+    "replaces_emoji": [
+      "🔭"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "microscope": {
+    "label": "Microscope / taxonomy",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:microscope@1.49.0",
+    "replaces_emoji": [
+      "🔬"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "headphones": {
+    "label": "Support inbox",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:headphones@1.49.0",
+    "replaces_emoji": [
+      "🎧"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "guitar": {
+    "label": "Live music / biker bars",
+    "group": "media",
+    "kind": "stock",
+    "source": "lucide:guitar@1.49.0",
+    "replaces_emoji": [
+      "🎸"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "flashlight": {
+    "label": "Flashlight",
+    "group": "object",
+    "kind": "stock",
+    "source": "lucide:flashlight@1.49.0",
+    "replaces_emoji": [
+      "🔦"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "shower": {
+    "label": "Shower / bird bath",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:shower-head@1.49.0",
+    "replaces_emoji": [
+      "🚿"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "bag": {
+    "label": "Shopping bag",
+    "group": "commerce",
+    "kind": "stock",
+    "source": "lucide:shopping-bag@1.49.0",
+    "replaces_emoji": [
+      "🛍"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "sunscreen": {
+    "label": "Sunscreen (packing item)",
+    "group": "travel",
+    "kind": "stock",
+    "source": "lucide:tube-lotion@1.49.0",
+    "replaces_emoji": [
+      "🧴"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "nut": {
+    "label": "Peanuts / seed",
+    "group": "food",
+    "kind": "stock",
+    "source": "lucide:nut@1.49.0",
+    "replaces_emoji": [
+      "🥜",
+      "🌰"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "egg": {
+    "label": "Egg / breeding",
+    "group": "bird",
+    "kind": "stock",
+    "source": "lucide:egg@1.49.0",
+    "replaces_emoji": [
+      "🥚"
+    ],
+    "status": "done",
+    "notes": ""
+  },
+  "owl": {
+    "label": "Owl",
+    "group": "bird",
+    "kind": "custom",
+    "source": "original",
+    "replaces_emoji": [
+      "🦉"
+    ],
+    "status": "done",
+    "notes": "Original outline drawing for the handoff meaning."
+  },
+  "wheelsup-mark": {
+    "label": "WheelsUp mark",
+    "group": "brand",
+    "kind": "brand",
+    "source": "existing:wheelsup",
+    "replaces_emoji": [
+      "🛞"
+    ],
+    "status": "done",
+    "notes": "Existing WheelsUp app icon from its repository, preserved unchanged. The existing header/favicon still contain the wheel emoji; this entry uses the supplied app artwork. Brand artwork is exempt from outline SVG normalization.",
+    "asset": "brands/wheelsup-mark.png",
+    "asset_format": "png",
+    "provenance": {
+      "repository": "wheelsup",
+      "file": "static/img/icons/icon-512.png",
+      "revision": "7813b9942e7a2651ba0f572bcfeb48b32599319c",
+      "sha256": "6b75a0a00e59ee507dcad8af806a17205c0fb7079748a3e9f4e5dd6ecdfe6d97"
+    }
+  },
+  "chirp-mark": {
+    "label": "Chirp (Axis messaging) mark",
+    "group": "brand",
+    "kind": "brand",
+    "source": "existing:axis",
+    "replaces_emoji": [
+      "🐦",
+      "♪",
+      "♫"
+    ],
+    "status": "done",
+    "notes": "Existing Chirp bird-with-phone artwork, explicitly selected by the user for the messaging mark. Original image preserved unchanged. Brand artwork is exempt from outline SVG normalization.",
+    "asset": "brands/chirp-mark.webp",
+    "asset_format": "webp",
+    "provenance": {
+      "repository": "axis",
+      "file": "static/website/chirp-bird.webp",
+      "revision": "319b9324de0561a40035332b88defe0e6218f42b",
+      "sha256": "f117a9359bb716759f0eb23f5cdd1ad0b97265e4df91fb1993777564a67e75ed"
+    }
+  },
+  "birdreel-mark": {
+    "label": "BirdReel mark",
+    "group": "brand",
+    "kind": "brand",
+    "source": "existing:birdreel",
+    "replaces_emoji": [
+      "🐦",
+      "🎥"
+    ],
+    "status": "done",
+    "notes": "Exact existing logo downloaded from the live BirdReel home-page header. Original artwork and wordmark preserved unchanged, as requested. Brand artwork is exempt from outline SVG normalization.",
+    "asset": "brands/birdreel-mark.png",
+    "asset_format": "png",
+    "provenance": {
+      "repository": "birdreel",
+      "file": "static/img/birdreel-logo.png",
+      "source_url": "https://www.birdreel.com/static/img/birdreel-logo.png",
+      "verified_from": "https://www.birdreel.com/",
+      "sha256": "5d8a90eb0683f5de73dabd057608bb6f0244d351a40cf5d75080ea36d5dcdcb5"
+    }
+  },
+  "watchdog-mark": {
+    "label": "Watchdog mark",
+    "group": "brand",
+    "kind": "brand",
+    "source": "generated:imagegen",
+    "replaces_emoji": [
+      "🐕"
+    ],
+    "status": "done",
+    "notes": "Generated Watchdog silhouette based on the user's attached reference: alert standing dog facing right, pointed ears, raised tail, eye and collar cutouts, transparent background. First draft for review. Shown in white on dark comparison panels for visibility. Brand artwork is exempt from outline SVG normalization.",
+    "asset": "brands/watchdog-mark.png",
+    "asset_format": "png",
+    "provenance": {
+      "prompt_file": "watchdog-generation-prompt.txt",
+      "sha256": "39187bf33e9c3c2fc8e5d6e5c045c308a4eb019d38b90ed03fb3ff03985fb564"
+    }
+  },
+  "axis-mark": {
+    "label": "Axis mark",
+    "group": "brand",
+    "kind": "brand",
+    "source": "edited:imagegen:axis",
+    "replaces_emoji": [
+      "🔷"
+    ],
+    "status": "done",
+    "notes": "Background removed from the existing Axis mark at the user's request with imagegen. Transparent exterior and triangular opening; background sparkle removed. Original repository image retained separately. Brand artwork is exempt from outline SVG normalization.",
+    "asset": "brands/axis-mark.png",
+    "asset_format": "png",
+    "provenance": {
+      "repository": "axis",
+      "file": "static/favicon-512x512.png",
+      "revision": "319b9324de0561a40035332b88defe0e6218f42b",
+      "prompt_file": "axis-background-removal-prompt-v2.txt",
+      "sha256": "0b398fd7f1ebbfdd239ea18a59b2dd006f511e9fb1b040d111016d1edf6aa28f"
+    }
+  }
+}
