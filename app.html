@@ -225,7 +225,9 @@
         .mobile-nav-icon svg{display:block;width:1em;height:1em;margin:0 auto}
         .radar-note{display:none;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:0.625rem 0.75rem;font-size:0.8125rem;color:#bfdbfe;margin-bottom:0.75rem;line-height:1.45}
         body.radar-on .radar-note{display:block}
-        body.radar-on .legend,body.radar-on .legend-tab,body.radar-on .viewer-bar{display:none!important}
+        body.radar-on .viewer-bar{display:none!important}
+        /* Radar mode keeps the legend up as the key to the report blips; its counts are reports in the range */
+        body.radar-on .legend-title::after{content:' \00b7  reports';color:var(--text-muted);font-weight:500}
         body.drawer-open .mr-dock{opacity:0;pointer-events:none}
         /* Narrower screens: a tighter centre group in the bar's own flow (not pinned to the
            middle of the screen), so it can't slide under the brand or the user pills */
@@ -241,6 +243,10 @@
         /* Keep the sponsor badge clear of the radar dock (660px wide) where they'd overlap */
         @media(min-width:701px) and (max-width:1500px){
             body.radar-on .sponsored-badge{bottom:calc(var(--radar-dock-h, 8rem) + 1.75rem)}
+        }
+        /* ...and the legend, where the dock would reach it */
+        @media(min-width:701px) and (max-width:1240px){
+            body.radar-on .legend{bottom:calc(var(--radar-dock-h, 8rem) + 1.75rem)}
         }
 
         /* Mid-size desktop: badge would collide with the centered viewer bar, so lift it above */
@@ -278,6 +284,7 @@
             .sp-card-name{font-size:0.6875rem}
             .drawer-section{margin-bottom:1rem}
             body.radar-on .sponsored-badge{bottom:calc(var(--radar-dock-h, 9rem) + 5.1rem + env(safe-area-inset-bottom, 0px))}
+            body.radar-on .legend,body.radar-on .legend-tab{bottom:calc(var(--radar-dock-h, 9rem) + 5.6rem + env(safe-area-inset-bottom, 0px))}
         }
         @media(max-width:380px){
             .mobile-nav-btn{min-width:0;padding:0.375rem 0.45rem}
@@ -323,7 +330,7 @@
             <div class="drawer-handle"></div>
             <div class="drawer-title">Species Group <button class="drawer-close" onclick="toggleDrawer('left')">&times;</button></div>
         </div>
-        <div class="radar-note">Bird radar shows all migrating birds at once. Pick a group to go back to its sightings.</div>
+        <div class="radar-note">Bird radar shows every bird in the air but can’t tell species apart. The colored blips on it are eBird reports of the group you pick here.</div>
         <div class="sp-grid" id="speciesGrid"></div>
         <div class="data-notice" id="dataNotice">Migration data for this group will be available soon. Hummingbird data is live now.</div>
         <div id="subSection" style="display:none">
@@ -537,13 +544,18 @@ async function loadSightings() {
                 '<span class="legend-name">' + sp.name + '</span>' +
                 '<span class="legend-count">' + (sightingCounts[sp.code] || 0).toLocaleString() + '</span></div>'
             ).join('');
+        if (radarOn) showLegendCounts();  // radar mode: reports, not sightings
     } catch (e) { console.error('Load sightings:', e); }
 }
 
 function toggleSpecies(code) {
-    if (speciesVisible[code]) { map.removeLayer(speciesLayers[code]); speciesVisible[code] = false; }
-    else { map.addLayer(speciesLayers[code]); speciesVisible[code] = true; }
+    speciesVisible[code] = !speciesVisible[code];
+    // Radar mode keeps the dots off the map; the toggle hides or shows that species' blips instead.
+    if (!radarOn && speciesLayers[code]) {
+        if (speciesVisible[code]) map.addLayer(speciesLayers[code]); else map.removeLayer(speciesLayers[code]);
+    }
     document.querySelector('[data-species="' + code + '"]')?.classList.toggle('off', !speciesVisible[code]);
+    if (radarOn && radar) radar.refreshReports();
 }
 
 // ---- Drawers ----
@@ -662,7 +674,6 @@ function renderSpecies() {
 }
 
 async function pickGroup(k) {
-    if (radarOn) toggleRadar(false);  // picking a group means its sightings
     S.prefs.primary_group_key = k; S.prefs.selected_species = null;
     const g = S.groups.find(x => x.group_key === k);
 
@@ -687,6 +698,7 @@ async function pickGroup(k) {
     renderSpecies(); renderSubs();
     await saveNow();
     loadSightings();
+    if (radarOn && radar) radar.refreshReports();  // the radar's blips follow the group
 }
 
 function renderSubs() {
@@ -701,12 +713,12 @@ function renderSubs() {
 
 function toggleAll(c) { document.querySelectorAll('#subGrid input').forEach(cb => cb.checked = c); updateSubs(); }
 function updateSubs() {
-    if (radarOn) toggleRadar(false);
     const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
     const checked = Array.from(document.querySelectorAll('#subGrid input:checked')).map(cb => cb.value);
     S.prefs.selected_species = checked.length === g.species.length ? null : checked;
     document.getElementById('selAll').checked = !S.prefs.selected_species;
     save(); loadSightings();
+    if (radarOn && radar) radar.refreshReports();
 }
 
 // ---- Location ----
@@ -803,7 +815,7 @@ function copyLink() {
 // echoes over a time range the viewer picks, in place of the sighting dots.
 // The radar itself (frames, playback, ranges) is served from /radar/ with the
 // radar worker's data, and loads the first time it's switched on.
-const RADAR_V = '1';
+const RADAR_V = '2';
 let radar = null, radarOn = false, radarAssets = null;
 
 function loadRadarAssets() {
@@ -821,6 +833,27 @@ function loadRadarAssets() {
     return radarAssets;
 }
 
+// The radar's report blips: the selected group's eBird reports, played on the
+// echoes (radar-layer.js asks /api/mygration/viewer/{token}/reports per frame).
+// The legend stays up as their key, and its counts become reports in the range.
+let radarCounts = null;
+function radarReports() {
+    return {
+        url: () => S.token ? '/api/mygration/viewer/' + S.token.token + '/reports' : null,
+        selection: () => ({ group: S.prefs.primary_group_key, species: S.prefs.selected_species || [],
+                            hidden: Object.keys(speciesVisible).filter(c => speciesVisible[c] === false) }),
+        onCounts: counts => { radarCounts = counts; showLegendCounts(); }
+    };
+}
+
+function showLegendCounts() {
+    document.querySelectorAll('#legendItems .legend-item').forEach(el => {
+        const c = el.dataset.species, out = el.querySelector('.legend-count');
+        const n = radarOn && radarCounts ? radarCounts[c] : sightingCounts[c];
+        if (out) out.textContent = (n || 0).toLocaleString();
+    });
+}
+
 async function toggleRadar(force) {
     const on = typeof force === 'boolean' ? force : !radarOn;
     if (on === radarOn) return;
@@ -835,7 +868,7 @@ async function toggleRadar(force) {
         try {
             const R = await loadRadarAssets();
             if (!radarOn) return;  // switched off again while it loaded
-            radar = radar || R.create(map, { mount: document.querySelector('.ui') });
+            radar = radar || R.create(map, { mount: document.querySelector('.ui'), reports: radarReports() });
             radar.show();
         } catch (e) {
             console.error('Bird radar:', e);
@@ -845,6 +878,7 @@ async function toggleRadar(force) {
         if (radar) radar.hide();
         setBasemap(S.prefs?.map_format || 'street');
         Object.keys(speciesLayers).forEach(c => { if (speciesVisible[c]) speciesLayers[c].addTo(map); });
+        showLegendCounts();  // back to the sightings' counts
     }
 }
 
