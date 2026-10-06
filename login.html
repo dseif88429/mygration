@@ -69,7 +69,7 @@
         <h2>Welcome back</h2>
         <p class="sub">Log in to your account</p>
         <form id="loginForm" onsubmit="return handleLogin(event)">
-            <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="loginEmail" required autocomplete="email" autofocus placeholder="jane@example.com"></div>
+            <div class="form-group"><label class="form-label">Email or Username</label><input class="form-input" type="text" id="loginEmail" required autocomplete="username" autocapitalize="none" spellcheck="false" autofocus placeholder="jane@example.com or jane"></div>
             <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="loginPassword" required autocomplete="current-password" placeholder="Your password"></div>
             <div id="loginError" class="form-error" style="display:none;"></div>
             <button type="submit" class="btn" id="loginBtn">Log In</button>
@@ -112,7 +112,7 @@ async function handleLogin(e) {
         const res = await fetch('/api/mygration/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: document.getElementById('loginEmail').value.trim(), password: document.getElementById('loginPassword').value }), credentials: 'same-origin' });
         const result = await res.json();
         if (result.success) window.location.href = result.redirect || '/app.html';
-        else { errEl.textContent = result.error || 'Invalid email or password'; errEl.style.display = 'block'; }
+        else { errEl.textContent = result.error || 'Invalid email/username or password'; errEl.style.display = 'block'; }
     } catch (err) { errEl.textContent = 'Network error.'; errEl.style.display = 'block'; }
     finally { btn.disabled = false; btn.innerHTML = 'Log In'; }
 }
