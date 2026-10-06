@@ -180,7 +180,7 @@
         .sponsored-logo{height:44px;width:auto}
         .sponsored-text{display:flex;flex-direction:column;gap:0.15rem}
         .sponsored-name{font-size:0.875rem;font-weight:700;color:#2d5016;line-height:1.1}
-        .sponsored-locations{font-size:0.625rem;font-weight:500;color:#666;line-height:1;letter-spacing:0.02em}
+        .sponsored-locations{font-size:0.625rem;font-weight:500;color:#666;line-height:1.3;letter-spacing:0.02em;white-space:nowrap}
 
         /* Legend/viewer hide state (toggled by JS) */
         .legend.hidden-by-drawer, .viewer-bar.hidden-by-drawer { opacity:0;pointer-events:none;transition:opacity 0.2s }
@@ -211,6 +211,11 @@
         /* Drawer backdrop */
         .drawer-backdrop{display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,0.4)}
         .drawer-backdrop.show{display:block}
+
+        /* Mid-size desktop: badge would collide with the centered viewer bar, so lift it above */
+        @media(min-width:701px) and (max-width:1300px){
+            .sponsored-badge{bottom:5.25rem}
+        }
 
         /* Mobile */
         @media(max-width:700px){
@@ -363,7 +368,7 @@
         <div class="sponsored-text">
             <span class="sponsored-label">Sponsored by</span>
             <span class="sponsored-name">Wild Birds Unlimited</span>
-            <span class="sponsored-locations">Denver &bull; Arvada &bull; Highlands Ranch &bull; Aurora &bull; Scottsdale</span>
+            <span class="sponsored-locations">Denver &bull; Arvada &bull; Highlands Ranch<br>Aurora &bull; Scottsdale</span>
         </div>
     </a>
 </div>
