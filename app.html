@@ -212,6 +212,35 @@
         .drawer-backdrop{display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,0.4)}
         .drawer-backdrop.show{display:block}
 
+        /* Bird radar: the switch next to Species, and radar mode (the radar's own
+           dock and styles load from /radar/ the first time it's turned on) */
+        .radar-pill .rt-switch{position:relative;width:26px;height:15px;border-radius:999px;background:rgba(255,255,255,0.22);flex-shrink:0;transition:background 0.2s}
+        .radar-pill .rt-switch::after{content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#fff;transition:transform 0.2s}
+        .radar-pill[aria-checked="true"]{border-color:var(--success)}
+        .radar-pill[aria-checked="true"] .rt-switch{background:var(--success)}
+        .radar-pill[aria-checked="true"] .rt-switch::after{transform:translateX(11px)}
+        .mobile-nav-btn[aria-checked="true"]{color:var(--accent);background:rgba(255,255,255,0.06)}
+        .mobile-nav-icon svg{display:block;width:1em;height:1em;margin:0 auto}
+        .radar-note{display:none;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:0.625rem 0.75rem;font-size:0.8125rem;color:#bfdbfe;margin-bottom:0.75rem;line-height:1.45}
+        body.radar-on .radar-note{display:block}
+        body.radar-on .legend,body.radar-on .legend-tab,body.radar-on .viewer-bar{display:none!important}
+        body.drawer-open .mr-dock{opacity:0;pointer-events:none}
+        /* Narrower screens: a tighter centre group in the bar's own flow (not pinned to the
+           middle of the screen), so it can't slide under the brand or the user pills */
+        @media(min-width:701px) and (max-width:1100px){
+            .top-center{position:static;transform:none}
+            .top-center .pill{padding:0.5rem 0.75rem}
+            .radar-pill .rt-word{display:none}
+        }
+        @media(min-width:701px) and (max-width:760px){
+            .top-center{gap:0.35rem}
+            .top-center .pill{padding:0.5rem 0.6rem}
+        }
+        /* Keep the sponsor badge clear of the radar dock (660px wide) where they'd overlap */
+        @media(min-width:701px) and (max-width:1500px){
+            body.radar-on .sponsored-badge{bottom:calc(var(--radar-dock-h, 8rem) + 1.75rem)}
+        }
+
         /* Mid-size desktop: badge would collide with the centered viewer bar, so lift it above */
         @media(min-width:701px) and (max-width:1300px){
             .sponsored-badge{bottom:5.25rem}
@@ -246,6 +275,10 @@
             .sp-card-info{padding:0.375rem 0.5rem}
             .sp-card-name{font-size:0.6875rem}
             .drawer-section{margin-bottom:1rem}
+            body.radar-on .sponsored-badge{bottom:calc(var(--radar-dock-h, 9rem) + 5.1rem + env(safe-area-inset-bottom, 0px))}
+        }
+        @media(max-width:380px){
+            .mobile-nav-btn{min-width:0;padding:0.375rem 0.45rem}
         }
 
         @media(prefers-reduced-motion:reduce){
@@ -269,6 +302,7 @@
         </a>
         <div class="top-center">
             <button class="pill" id="btnSpecies" onclick="toggleDrawer('left')">Species</button>
+            <button class="pill radar-pill" id="btnRadar" role="switch" aria-checked="false" aria-label="Bird Radar" onclick="toggleRadar()"><span class="rt-switch" aria-hidden="true"></span><span class="rt-word">Bird&nbsp;</span>Radar</button>
             <button class="pill" id="btnSettings" onclick="toggleDrawer('right')">Settings</button>
         </div>
         <div class="top-right">
@@ -287,6 +321,7 @@
             <div class="drawer-handle"></div>
             <div class="drawer-title">Species Group <button class="drawer-close" onclick="toggleDrawer('left')">&times;</button></div>
         </div>
+        <div class="radar-note">Bird radar shows all migrating birds at once. Pick a group to go back to its sightings.</div>
         <div class="sp-grid" id="speciesGrid"></div>
         <div class="data-notice" id="dataNotice">Migration data for this group will be available soon. Hummingbird data is live now.</div>
         <div id="subSection" style="display:none">
@@ -380,6 +415,10 @@
             <span class="mobile-nav-icon">&#x1F426;</span>
             Species
         </button>
+        <button class="mobile-nav-btn" id="navBtnRadar" role="switch" aria-checked="false" onclick="toggleRadar()">
+            <span class="mobile-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6.4-6.4"/></svg></span>
+            Radar
+        </button>
         <button class="mobile-nav-btn" id="navBtnSettings" onclick="toggleDrawer('right')">
             <span class="mobile-nav-icon">&#x2699;</span>
             Settings
@@ -418,7 +457,15 @@ function makeBasemap(fmt) {
         : L.tileLayer(t.url, { maxZoom: 18, errorTileUrl: '' });
 }
 
-let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, tileLayer: null };
+// A MapLibre GL layer has no setUrl() -- swap the whole layer instead.
+function setBasemap(fmt) {
+    if (S.tileLayer && S.basemap === fmt) return;
+    if (S.tileLayer) map.removeLayer(S.tileLayer);
+    S.tileLayer = makeBasemap(fmt).addTo(map);
+    S.basemap = fmt;
+}
+
+let S = { prefs: null, groups: [], token: null, birdImages: {}, saveTimer: null, tileLayer: null, basemap: null };
 
 // Map
 const map = L.map('map', { center: [39, -98], zoom: 5, zoomControl: false, attributionControl: false });
@@ -436,9 +483,9 @@ async function boot() {
     document.getElementById('userLabel').textContent = me.user.full_name || '';
     if (me.user.is_admin) document.getElementById('adminBtn').style.display = '';
 
-    // Set map
+    // Set map (a link to #radar opens straight into the radar, on its dark map)
     const fmt = S.prefs.map_format || 'street';
-    S.tileLayer = makeBasemap(fmt).addTo(map);
+    setBasemap(location.hash === '#radar' ? 'dark' : fmt);
     // Tile layer is cached by Service Worker -- no manual refresh needed
     if (S.prefs.location_lat) map.setView([S.prefs.location_lat, S.prefs.location_lng], 6);
 
@@ -448,6 +495,7 @@ async function boot() {
 
     renderSpecies(); renderSubs(); renderLoc(); renderStyles(); renderOpts(); renderLink();
     loadSightings();
+    if (location.hash === '#radar') toggleRadar(true);
 }
 
 // ---- Load sightings onto map ----
@@ -472,7 +520,7 @@ async function loadSightings() {
             });
             speciesLayers[sp.code] = layer;
             speciesVisible[sp.code] = true;
-            layer.addTo(map);
+            if (!radarOn) layer.addTo(map);  // radar mode puts them back when it's switched off
         });
 
         // Legend
@@ -547,6 +595,7 @@ function updateOverlayVisibility() {
         if (anyOpen) { legend.classList.remove('mobile-open'); document.getElementById('legendTab').style.display = ''; }
     }
     if (viewerBar) viewerBar.classList.toggle('hidden-by-drawer', !!anyOpen);
+    document.body.classList.toggle('drawer-open', !!anyOpen);
 }
 
 // ---- Swipe down to close drawers (mobile) ----
@@ -611,6 +660,7 @@ function renderSpecies() {
 }
 
 async function pickGroup(k) {
+    if (radarOn) toggleRadar(false);  // picking a group means its sightings
     S.prefs.primary_group_key = k; S.prefs.selected_species = null;
     const g = S.groups.find(x => x.group_key === k);
 
@@ -649,6 +699,7 @@ function renderSubs() {
 
 function toggleAll(c) { document.querySelectorAll('#subGrid input').forEach(cb => cb.checked = c); updateSubs(); }
 function updateSubs() {
+    if (radarOn) toggleRadar(false);
     const g = S.groups.find(x => x.group_key === S.prefs.primary_group_key);
     const checked = Array.from(document.querySelectorAll('#subGrid input:checked')).map(cb => cb.value);
     S.prefs.selected_species = checked.length === g.species.length ? null : checked;
@@ -689,9 +740,7 @@ function renderStyles() {
 
 function pickStyle(k) {
     S.prefs.map_format = k;
-    // A MapLibre GL layer has no setUrl() -- swap the whole layer instead.
-    if (S.tileLayer) map.removeLayer(S.tileLayer);
-    S.tileLayer = makeBasemap(k).addTo(map);
+    setBasemap(k);
     document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
     event.currentTarget.classList.add('selected');
     flash('fmtSaved'); save();
@@ -745,6 +794,56 @@ function copyLink() {
         try { document.execCommand('copy'); } catch(e) {}
         document.body.removeChild(ta);
     });
+}
+
+// ---- Bird radar ----
+// The switch next to Species turns the map into a bird radar: NEXRAD bird
+// echoes over a time range the viewer picks, in place of the sighting dots.
+// The radar itself (frames, playback, ranges) is served from /radar/ with the
+// radar worker's data, and loads the first time it's switched on.
+const RADAR_V = '1';
+let radar = null, radarOn = false, radarAssets = null;
+
+function loadRadarAssets() {
+    if (!radarAssets) radarAssets = new Promise((resolve, reject) => {
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = '/radar/radar-layer.css?v=' + RADAR_V;
+        document.head.appendChild(css);
+        const js = document.createElement('script');
+        js.src = '/radar/radar-layer.js?v=' + RADAR_V;
+        js.onload = () => window.MygrationRadar ? resolve(window.MygrationRadar) : js.onerror();
+        js.onerror = () => { css.remove(); js.remove(); radarAssets = null; reject(new Error('radar did not load')); };
+        document.body.appendChild(js);
+    });
+    return radarAssets;
+}
+
+async function toggleRadar(force) {
+    const on = typeof force === 'boolean' ? force : !radarOn;
+    if (on === radarOn) return;
+    if (on) closeDrawers();
+    radarOn = on;
+    document.body.classList.toggle('radar-on', on);
+    document.querySelectorAll('#btnRadar, #navBtnRadar').forEach(b => b.setAttribute('aria-checked', String(on)));
+    history.replaceState(null, '', location.pathname + location.search + (on ? '#radar' : ''));
+    if (on) {
+        Object.values(speciesLayers).forEach(l => map.removeLayer(l));
+        setBasemap('dark');  // the radar's colours are made for a dark map
+        try {
+            const R = await loadRadarAssets();
+            if (!radarOn) return;  // switched off again while it loaded
+            radar = radar || R.create(map, { mount: document.querySelector('.ui') });
+            radar.show();
+        } catch (e) {
+            console.error('Bird radar:', e);
+            toggleRadar(false);
+        }
+    } else {
+        if (radar) radar.hide();
+        setBasemap(S.prefs?.map_format || 'street');
+        Object.keys(speciesLayers).forEach(c => { if (speciesVisible[c]) speciesLayers[c].addTo(map); });
+    }
 }
 
 // ---- Save ----
