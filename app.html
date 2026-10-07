@@ -222,9 +222,16 @@
         .radar-pill[aria-checked="true"] .rt-switch{background:var(--success)}
         .radar-pill[aria-checked="true"] .rt-switch::after{transform:translateX(11px)}
         .mobile-nav-btn[aria-checked="true"]{color:var(--accent);background:rgba(255,255,255,0.06)}
-        /* The Species switch beside it, in radar mode only: off plays the radar on its own */
-        .radar-species-pill,#navBtnRadarSpecies{display:none}
-        body.radar-on .radar-species-pill{display:inline-flex}
+        /* The Species switch, in radar mode only (off plays the radar on its own). It hangs
+           under Bird Radar (on phones, under the top bar), so no button moves when the
+           radar turns on or off and a click always lands where it was aimed. */
+        .radar-wrap{position:relative;display:inline-flex}
+        .species-chip{display:none;align-items:center;gap:0.4rem;white-space:nowrap;
+            background:rgba(15,23,42,0.92);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);border-radius:999px;
+            padding:0.3rem 0.75rem 0.3rem 0.5rem;font-size:0.75rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;
+            box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+        .radar-wrap .species-chip{position:absolute;top:calc(100% + 0.45rem);left:50%;transform:translateX(-50%)}
+        body.radar-on .radar-wrap .species-chip{display:inline-flex}
         body.radar-on.radar-species-off .legend,body.radar-on.radar-species-off .legend-tab{display:none!important}
         .mobile-nav-icon svg{display:block;width:1em;height:1em;margin:0 auto}
         .radar-note{display:none;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:0.625rem 0.75rem;font-size:0.8125rem;color:#bfdbfe;margin-bottom:0.75rem;line-height:1.45}
@@ -289,9 +296,9 @@
             .drawer-section{margin-bottom:1rem}
             body.radar-on .sponsored-badge{bottom:calc(var(--radar-dock-h, 9rem) + 5.1rem + env(safe-area-inset-bottom, 0px))}
             body.radar-on .legend,body.radar-on .legend-tab{bottom:calc(var(--radar-dock-h, 9rem) + 5.6rem + env(safe-area-inset-bottom, 0px))}
-            /* radar mode adds the Species switch to the nav: six buttons, so tighter ones */
-            body.radar-on #navBtnRadarSpecies{display:flex}
-            body.radar-on .mobile-nav-btn{min-width:0;padding:0.375rem 0.45rem}
+            /* the phones' Species switch: centred under the top bar, so the nav never reflows */
+            body.radar-on #speciesChipM{display:inline-flex;position:fixed;left:50%;transform:translateX(-50%);z-index:1100;
+                top:calc(4.25rem + env(safe-area-inset-top, 0px))}
         }
         @media(max-width:380px){
             .mobile-nav-btn{min-width:0;padding:0.375rem 0.45rem}
@@ -318,8 +325,10 @@
         </a>
         <div class="top-center">
             <button class="pill" id="btnSpecies" onclick="toggleDrawer('left')">Species</button>
-            <button class="pill radar-pill" id="btnRadar" role="switch" aria-checked="false" aria-label="Bird Radar" onclick="toggleRadar()"><span class="rt-switch" aria-hidden="true"></span><span class="rt-word">Bird</span>Radar</button>
-            <button class="pill radar-pill radar-species-pill" id="btnRadarSpecies" role="switch" aria-checked="true" aria-label="Species on the radar" title="Show the species reports on the radar, or just the radar" onclick="toggleRadarSpecies()"><span class="rt-switch" aria-hidden="true"></span>Species</button>
+            <span class="radar-wrap">
+                <button class="pill radar-pill" id="btnRadar" role="switch" aria-checked="false" aria-label="Bird Radar" onclick="toggleRadar()"><span class="rt-switch" aria-hidden="true"></span><span class="rt-word">Bird</span>Radar</button>
+                <button class="radar-pill species-chip" id="btnRadarSpecies" role="switch" aria-checked="true" aria-label="Species on the radar" title="Show the species reports on the radar, or just the radar" onclick="toggleRadarSpecies()"><span class="rt-switch" aria-hidden="true"></span>Species</button>
+            </span>
             <button class="pill" id="btnSettings" onclick="toggleDrawer('right')">Settings</button>
         </div>
         <div class="top-right">
@@ -328,6 +337,9 @@
             <button class="pill" onclick="handleLogout()">Log out</button>
         </div>
     </div>
+
+    <!-- Phones: the Species switch (radar mode only), under the top bar -->
+    <button class="radar-pill species-chip" id="speciesChipM" role="switch" aria-checked="true" aria-label="Species on the radar" onclick="toggleRadarSpecies()"><span class="rt-switch" aria-hidden="true"></span>Species</button>
 
     <!-- Drawer backdrop (mobile) -->
     <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawers()"></div>
@@ -435,10 +447,6 @@
         <button class="mobile-nav-btn" id="navBtnRadar" role="switch" aria-checked="false" onclick="toggleRadar()">
             <span class="mobile-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><path d="M12 12l6.4-6.4"/></svg></span>
             Radar
-        </button>
-        <button class="mobile-nav-btn" id="navBtnRadarSpecies" role="switch" aria-checked="true" aria-label="Species on the radar" onclick="toggleRadarSpecies()">
-            <span class="mobile-nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="8" r="2.2"/><circle cx="16.5" cy="6.5" r="1.6"/><circle cx="10.5" cy="16.5" r="2.7"/><circle cx="18" cy="15" r="2"/></svg></span>
-            Species
         </button>
         <button class="mobile-nav-btn" id="navBtnSettings" onclick="toggleDrawer('right')">
             <span class="mobile-nav-icon"><svg class="shared-icon" data-icon-key="settings" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="/shared-icons/sprite.svg#settings"></use></svg></span>
@@ -839,7 +847,7 @@ try { radarSpecies = localStorage.getItem('mygration.radarSpecies') !== 'off'; }
 
 function showRadarSpecies() {
     document.body.classList.toggle('radar-species-off', !radarSpecies);
-    document.querySelectorAll('#btnRadarSpecies, #navBtnRadarSpecies').forEach(b => b.setAttribute('aria-checked', String(radarSpecies)));
+    document.querySelectorAll('#btnRadarSpecies, #speciesChipM').forEach(b => b.setAttribute('aria-checked', String(radarSpecies)));
 }
 
 function setRadarSpecies(on) {
@@ -847,7 +855,7 @@ function setRadarSpecies(on) {
     radarSpecies = on;
     try { localStorage.setItem('mygration.radarSpecies', on ? 'on' : 'off'); } catch (e) { /* not remembered */ }
     showRadarSpecies();
-    if (radar && radar.setReports) radar.setReports(on);
+    try { if (radar && radar.setReports) radar.setReports(on); } catch (e) { console.error('Bird radar species:', e); }
 }
 
 function toggleRadarSpecies() { setRadarSpecies(!radarSpecies); }
@@ -910,7 +918,9 @@ async function toggleRadar(force) {
             toggleRadar(false);
         }
     } else {
-        if (radar) radar.hide();
+        // Back to the sightings map whatever the radar was doing (Species on or off): a
+        // radar error must never leave the map half-switched.
+        try { if (radar) radar.hide(); } catch (e) { console.error('Bird radar:', e); }
         setBasemap(S.prefs?.map_format || 'street');
         Object.keys(speciesLayers).forEach(c => { if (speciesVisible[c]) speciesLayers[c].addTo(map); });
         showLegendCounts();  // back to the sightings' counts
