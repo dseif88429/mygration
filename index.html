@@ -257,6 +257,7 @@
                 <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" id="password" placeholder="8+ characters" required minlength="8" autocomplete="new-password"></div>
                 <div class="form-group"><label class="form-label">Zip Code</label><input class="form-input" type="text" id="zip_code" placeholder="80202" required pattern="[0-9]{5}" autocomplete="postal-code"></div>
             </div>
+            <input type="text" id="signupWebsite" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
             <div id="signupError" class="form-error" style="display:none;"></div>
             <button type="submit" class="btn-cta btn-cta-primary" id="signupBtn">Create Free Account</button>
             <p class="fine-print">Already have an account? <a href="/login.html">Log in</a></p>
@@ -364,7 +365,9 @@ async function handleSignup(e) {
         full_name: document.getElementById('full_name').value.trim(),
         email: document.getElementById('email').value.trim().toLowerCase(),
         password: document.getElementById('password').value,
-        zip_code: document.getElementById('zip_code').value.trim()
+        zip_code: document.getElementById('zip_code').value.trim(),
+        website: document.getElementById('signupWebsite').value,
+        elapsed_ms: Math.round(performance.now())
     };
     try {
         const res = await fetch('/api/mygration/signup', {
