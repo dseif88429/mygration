@@ -1163,7 +1163,7 @@ function elninoFitText(forecast, pct) {
 function fmtPct(p) {
     return (p > 0 ? '+' : p < 0 ? '−' : '') + Math.abs(Math.round(p)) + '%';
 }
-function elninoHidesDots() { return elnino.on && elnino.view !== 'forecast'; }
+function elninoHidesDots() { return elnino.on; }  // the state colors are the story; dots bury them
 
 function elninoStyle(f) {
     const fill = ELNINO_FILL[elnino.strength];
