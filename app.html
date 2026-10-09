@@ -249,6 +249,16 @@
         .en-key-row{display:flex;align-items:center;gap:0.5rem;font-size:0.8125rem;color:var(--text-dim);padding:0.15rem 0}
         .en-swatch{width:14px;height:14px;border-radius:3px;flex-shrink:0}
         .en-key-tip{font-size:0.6875rem;color:var(--text-muted);margin-top:0.4rem}
+        .en-seg{display:flex;gap:2px;background:rgba(15,23,42,0.6);border:1px solid var(--border);border-radius:8px;padding:2px;margin:0.5rem 0 0.4rem}
+        .en-seg button{flex:1;background:none;border:0;color:var(--text-muted);font:inherit;font-size:0.75rem;font-weight:600;padding:0.3rem 0;border-radius:6px;cursor:pointer}
+        .en-seg button.on{background:rgba(59,130,246,0.25);color:var(--text)}
+        .en-pickers{display:none;gap:0.3rem;flex-direction:column;margin-bottom:0.35rem}
+        .en-key.observed .en-pickers{display:flex}
+        .en-pickers select{width:100%;font-size:0.75rem;padding:0.25rem 0.35rem}
+        .en-key-score{font-size:0.75rem;color:var(--text-dim);margin-top:0.4rem;line-height:1.35}
+        .en-key-score b{color:var(--text)}
+        .en-key-credit{font-size:0.625rem;color:var(--text-muted);margin-top:0.35rem;line-height:1.3;display:none}
+        .en-key.observed .en-key-credit{display:block}
         .en-row{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
         .en-popup .leaflet-popup-content-wrapper{background:#0f172a;color:var(--text);border:1px solid var(--border);border-radius:10px}
         .en-popup .leaflet-popup-tip{background:#0f172a}
@@ -318,7 +328,10 @@
             body.radar-on #speciesChipM{display:inline-flex;position:fixed;left:50%;transform:translateX(-50%);z-index:1100;
                 top:calc(4.25rem + env(safe-area-inset-top, 0px))}
             /* the El Nino key: compact, top-right, below where the radar's Species switch sits */
-            .en-key{position:fixed;top:calc(4.25rem + env(safe-area-inset-top, 0px));right:0.75rem;width:176px;padding:0.5rem 0.625rem}
+            .en-key{position:fixed;top:calc(4.25rem + env(safe-area-inset-top, 0px));right:0.75rem;width:188px;padding:0.5rem 0.625rem}
+            .en-seg{margin:0.25rem 0 0.3rem}
+            .en-seg button{font-size:0.6875rem;padding:0.25rem 0}
+            .en-key-score{font-size:0.6875rem;margin-top:0.25rem}
             body.radar-on .en-key{top:calc(6.6rem + env(safe-area-inset-top, 0px))}
             .en-key-sub,.en-key-tip{display:none}
             .en-key-title{font-size:0.75rem;margin-bottom:0.3rem}
@@ -424,7 +437,7 @@
                     <option value="light">Light</option><option value="medium" selected>Medium</option><option value="strong">Strong</option>
                 </select>
             </div>
-            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.4">Colours each state and province by expected backyard feeder use this October through April. Works with the sightings map and with Bird Radar, so you can play a range on the radar over it.</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.4">Colours each state and province by expected backyard feeder use this October through April. Works with the sightings map and with Bird Radar, so you can play a range on the radar over it. Switch the key to <b>Actual</b> or <b>Check</b> to see what feeders really recorded in past strong El Niño winters, and how well the outlook held up.</div>
         </div>
 
         <div class="drawer-section">
@@ -458,14 +471,23 @@
     <!-- Super El Nino outlook key (top-right, while the overlay is on) -->
     <div class="en-key" id="elninoKey">
         <div class="en-key-head">
-            <div class="en-key-title">Super El Niño outlook</div>
+            <div class="en-key-title" id="enKeyTitle">Super El Niño outlook</div>
             <button class="drawer-close" style="font-size:1rem;padding:0 0.15rem" aria-label="Turn off the El Niño outlook" onclick="setElNino(false)">&times;</button>
         </div>
-        <div class="en-key-sub">Likelihood of normal to heavy bird feeder use, October – April</div>
-        <div class="en-key-row"><span class="en-swatch" style="background:#2e9e44"></span>More favorable</div>
-        <div class="en-key-row"><span class="en-swatch" style="background:#f5cc2e"></span>Variable</div>
-        <div class="en-key-row"><span class="en-swatch" style="background:#f2852a"></span>Less favorable</div>
-        <div class="en-key-tip">Tap a state for its outlook.</div>
+        <div class="en-seg" role="group" aria-label="What to show">
+            <button data-v="forecast" onclick="setElNinoView('forecast')">Forecast</button>
+            <button data-v="actual" onclick="setElNinoView('actual')">Actual</button>
+            <button data-v="check" onclick="setElNinoView('check')">Check</button>
+        </div>
+        <div class="en-pickers">
+            <select class="opt-select" id="enWinter" onchange="setElNinoPick('winter', this.value)" aria-label="Winter"></select>
+            <select class="opt-select" id="enSpecies" onchange="setElNinoPick('sp', this.value)" aria-label="Birds"></select>
+        </div>
+        <div class="en-key-sub" id="enKeySub"></div>
+        <div id="enKeyRows"></div>
+        <div class="en-key-score" id="enKeyScore"></div>
+        <div class="en-key-tip">Tap a state for details.</div>
+        <div class="en-key-credit">Data: Project FeederWatch, from its participants, Birds Canada and the Cornell Lab of Ornithology.</div>
     </div>
 
     <!-- Viewer bar (bottom-center) -->
@@ -991,18 +1013,154 @@ const ELNINO_CATS = {
     less: { color: '#f2852a', label: 'Less favorable', note: 'Conditions likely to reduce the need for bird feeders.' }
 };
 const ELNINO_FILL = { light: 0.18, medium: 0.32, strong: 0.5 };
-let elnino = { on: false, strength: 'medium', layer: null, data: null, loading: null, popup: null };
+// "Actual" and "Check": what Project FeederWatch feeders recorded in past strong El Nino
+// winters, per state, against neutral winters at the same feeders (built offline from the
+// FeederWatch raw data; see C:\data\feederwatch on the build machine).
+const ELNINO_CHECK_URL = '/data/elnino-check.json?v=1';
+const ELNINO_OBS = {
+    more: { color: '#2e9e44', label: 'More than normal' },
+    variable: { color: '#f5cc2e', label: 'Near normal' },
+    less: { color: '#f2852a', label: 'Fewer than normal' }
+};
+const ELNINO_RESULT = {
+    match: { color: '#3b82f6', label: 'Matched the forecast' },
+    partial: { color: '#94a3b8', label: 'Partly matched' },
+    miss: { color: '#dc2626', label: 'Opposite of the forecast' }
+};
+const ELNINO_VIEWS = ['forecast', 'actual', 'check'];
+let elnino = { on: false, strength: 'medium', layer: null, data: null, loading: null, popup: null,
+               view: 'forecast', winter: null, sp: 'all', check: null, checkLoading: null };
 try {
     elnino.on = localStorage.getItem('mygration.elnino') === 'on';
     const s = localStorage.getItem('mygration.elninoStrength');
     if (ELNINO_FILL[s]) elnino.strength = s;
-} catch (e) { /* storage blocked: off, medium */ }
+    const v = localStorage.getItem('mygration.elninoView');
+    if (ELNINO_VIEWS.includes(v)) elnino.view = v;
+    elnino.winter = localStorage.getItem('mygration.elninoWinter');
+    elnino.sp = localStorage.getItem('mygration.elninoSpecies') || 'all';
+} catch (e) { /* storage blocked: off, medium, forecast */ }
 
 map.createPane('elNino').style.zIndex = 350;
 
+// The observed record for one state in the picked winter and birds, or null.
+function elninoObs(name) {
+    const w = elnino.check && elnino.check.winters[elnino.winter];
+    const sp = w && w.species[elnino.sp];
+    const st = sp && sp.states[name];
+    return st ? { pct: st[0], sites: st[1] } : null;
+}
+function elninoBin(pct) {
+    const sp = elnino.check.species.find(s => s.code === elnino.sp);
+    const t = (sp ? sp.bin : 0.05) * 100;
+    return pct > t ? 'more' : pct < -t ? 'less' : 'variable';
+}
+function elninoResult(forecast, observed) {
+    if (forecast === observed) return 'match';
+    return forecast === 'variable' || observed === 'variable' ? 'partial' : 'miss';
+}
+
 function elninoStyle(f) {
-    const c = (ELNINO_CATS[f.properties.c] || {}).color || '#64748b';
-    return { color: c, weight: 1, opacity: 0.7, fillColor: c, fillOpacity: ELNINO_FILL[elnino.strength] };
+    const fill = ELNINO_FILL[elnino.strength];
+    if (elnino.view === 'forecast' || !elnino.check) {
+        const c = (ELNINO_CATS[f.properties.c] || {}).color || '#64748b';
+        return { color: c, weight: 1, opacity: 0.7, fillColor: c, fillOpacity: fill };
+    }
+    const o = elninoObs(f.properties.n);
+    if (!o) return { color: '#64748b', weight: 0.6, opacity: 0.5, fillOpacity: 0 };  // too few feeders
+    const bin = elninoBin(o.pct);
+    const c = elnino.view === 'actual' ? ELNINO_OBS[bin].color : ELNINO_RESULT[elninoResult(f.properties.c, bin)].color;
+    return { color: c, weight: 1, opacity: 0.7, fillColor: c, fillOpacity: fill };
+}
+
+function loadElNinoCheck() {
+    if (!elnino.checkLoading) elnino.checkLoading = fetch(ELNINO_CHECK_URL)
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(d => { elnino.check = d; fillElNinoPickers(); return d; })
+        .catch(e => { elnino.checkLoading = null; throw e; });
+    return elnino.checkLoading;
+}
+
+function winterLabel(k, w) {
+    return k.replace('-', '–') + (w.oni >= 2.3 ? ' (super)' : ' (strong)');
+}
+function fillElNinoPickers() {
+    const d = elnino.check, ws = Object.keys(d.winters);
+    if (!d.winters[elnino.winter]) elnino.winter = ws[0];
+    if (!d.species.some(s => s.code === elnino.sp)) elnino.sp = 'all';
+    const wSel = document.getElementById('enWinter'), sSel = document.getElementById('enSpecies');
+    wSel.replaceChildren(...ws.map(k => new Option(winterLabel(k, d.winters[k]), k)));
+    sSel.replaceChildren(...d.species.map(s => new Option(s.name, s.code)));
+    wSel.value = elnino.winter;
+    sSel.value = elnino.sp;
+}
+
+function elninoKeyRow(color, label, outline) {
+    const row = document.createElement('div'); row.className = 'en-key-row';
+    const sw = document.createElement('span'); sw.className = 'en-swatch';
+    if (outline) { sw.style.border = '1px solid ' + color; } else { sw.style.background = color; }
+    row.append(sw, document.createTextNode(label));
+    return row;
+}
+function renderElNinoKey() {
+    const key = document.getElementById('elninoKey');
+    const observed = elnino.view !== 'forecast' && !!elnino.check;
+    key.classList.toggle('observed', observed);
+    key.querySelectorAll('.en-seg button').forEach(b => b.classList.toggle('on', b.dataset.v === elnino.view));
+    const title = document.getElementById('enKeyTitle'), sub = document.getElementById('enKeySub');
+    const rows = document.getElementById('enKeyRows'), score = document.getElementById('enKeyScore');
+    rows.replaceChildren(); score.replaceChildren();
+    if (!observed) {
+        title.textContent = 'Super El Niño outlook';
+        sub.textContent = 'Likelihood of normal to heavy bird feeder use, October – April';
+        for (const k of ['more', 'variable', 'less']) rows.append(elninoKeyRow(ELNINO_CATS[k].color, ELNINO_CATS[k].label));
+        return;
+    }
+    const w = elnino.check.winters[elnino.winter], sp = w.species[elnino.sp];
+    const spName = (elnino.check.species.find(s => s.code === elnino.sp) || {}).name || '';
+    title.textContent = elnino.view === 'actual' ? 'What feeders saw' : 'Did the outlook hold?';
+    sub.textContent = spName + ', November – April, against normal winters at the same feeders';
+    if (!sp) {
+        score.textContent = 'Not enough FeederWatch counts of this bird that winter.';
+        return;
+    }
+    const t = Math.round(((elnino.check.species.find(s => s.code === elnino.sp) || {}).bin || 0.05) * 100);
+    const src = elnino.view === 'actual'
+        ? [['more', ELNINO_OBS.more.label + ' (+' + t + '%)'], ['variable', ELNINO_OBS.variable.label], ['less', ELNINO_OBS.less.label + ' (−' + t + '%)']]
+        : [['match'], ['partial'], ['miss']];
+    const set = elnino.view === 'actual' ? ELNINO_OBS : ELNINO_RESULT;
+    for (const [k, label] of src) rows.append(elninoKeyRow(set[k].color, label || set[k].label));
+    rows.append(elninoKeyRow('#64748b', 'Too few feeders', true));
+    if (sp.score != null) {
+        const b = document.createElement('b'); b.textContent = (sp.score > 0 ? '+' : '') + sp.score.toFixed(2);
+        score.append('Fit to the outlook: ', b,
+            ' (' + ordinal(sp.rank) + ' best of ' + sp.of + ' winters; +1 = exactly the outlook, 0 = no relation)');
+    }
+}
+function ordinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+async function setElNinoView(v) {
+    if (!ELNINO_VIEWS.includes(v)) return;
+    elnino.view = v;
+    try { localStorage.setItem('mygration.elninoView', v); } catch (e) { /* not remembered */ }
+    if (elnino.popup) map.closePopup(elnino.popup);
+    if (v !== 'forecast' && !elnino.check) {
+        try { await loadElNinoCheck(); } catch (e) {
+            console.error('El Nino check:', e);
+            elnino.view = 'forecast';
+        }
+    }
+    renderElNinoKey();
+    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
+}
+function setElNinoPick(which, value) {
+    elnino[which] = value;
+    try { localStorage.setItem(which === 'winter' ? 'mygration.elninoWinter' : 'mygration.elninoSpecies', value); } catch (e) { /* not remembered */ }
+    if (elnino.popup) map.closePopup(elnino.popup);
+    renderElNinoKey();
+    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
 }
 
 function loadElNino() {
@@ -1023,6 +1181,8 @@ async function setElNino(on) {
         if (elnino.popup) map.closePopup(elnino.popup);
         return;
     }
+    renderElNinoKey();
+    if (elnino.view !== 'forecast') setElNinoView(elnino.view);
     try {
         const d = await loadElNino();
         if (!elnino.on) return;  // switched off again while it loaded
@@ -1074,14 +1234,35 @@ map.on('click', e => {
     if (!f) return;
     const c = ELNINO_CATS[f.properties.c];
     const box = document.createElement('div');
-    const name = document.createElement('div'); name.style.fontWeight = '700'; name.textContent = f.properties.n;
-    const what = document.createElement('div'); what.style.color = c.color; what.style.fontWeight = '600'; what.textContent = c.label;
-    const note = document.createElement('div'); note.style.color = '#cbd5e1'; note.textContent = c.note;
-    box.append(name, what, note);
+    const line = (text, color, bold) => {
+        const el = document.createElement('div'); el.textContent = text;
+        if (color) el.style.color = color;
+        if (bold) el.style.fontWeight = bold;
+        return el;
+    };
+    box.append(line(f.properties.n, null, '700'));
+    if (elnino.view === 'forecast' || !elnino.check) {
+        box.append(line(c.label, c.color, '600'), line(c.note, '#cbd5e1'));
+    } else {
+        const o = elninoObs(f.properties.n);
+        const spName = (elnino.check.species.find(s => s.code === elnino.sp) || {}).name || '';
+        box.append(line(spName + ', ' + elnino.winter.replace('-', '–'), '#cbd5e1'));
+        if (!o) {
+            box.append(line('Too few FeederWatch feeders here to say.', '#94a3b8'));
+        } else {
+            const bin = elninoBin(o.pct), r = ELNINO_RESULT[elninoResult(f.properties.c, bin)];
+            const pct = (o.pct > 0 ? '+' : o.pct < 0 ? '−' : '') + Math.abs(Math.round(o.pct)) + '%';
+            box.append(line(pct + ' vs normal: ' + ELNINO_OBS[bin].label.toLowerCase(), ELNINO_OBS[bin].color, '600'),
+                       line(o.sites + ' feeders compared', '#94a3b8'),
+                       line('Outlook said: ' + c.label.toLowerCase(), c.color),
+                       line(r.label, r.color, '600'));
+        }
+    }
     elnino.popup = L.popup({ className: 'en-popup', maxWidth: 240, autoPan: false }).setLatLng(e.latlng).setContent(box).openOn(map);
 });
 
 document.getElementById('elninoStrength').value = elnino.strength;
+renderElNinoKey();
 if (elnino.on) setElNino(true);
 
 // ---- Save ----
