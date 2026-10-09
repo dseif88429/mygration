@@ -279,6 +279,9 @@
         .en-strip-cap b{color:var(--text)}
         .en-key-credit{font-size:0.625rem;color:var(--text-muted);margin-top:0.35rem;line-height:1.3;display:none}
         .en-key.observed .en-key-credit,.en-key.fw .en-key-credit{display:block}
+        .en-basis{display:none;margin:-0.15rem 0 0.4rem}
+        .en-key.fw .en-basis{display:block}
+        .en-basis select{width:100%;font-size:0.75rem;padding:0.25rem 0.35rem}
         .en-seg-row{display:flex;align-items:center;gap:0.4rem;margin:-0.15rem 0 0.4rem}
         .en-seg-row span{font-size:0.6875rem;color:var(--text-muted);white-space:nowrap}
         .en-seg-row .en-seg{flex:1;margin:0}
@@ -503,6 +506,12 @@
             <button data-v="ours" onclick="setElNinoView('ours')">Ours</button>
             <button data-v="compare" onclick="setElNinoView('compare')">Compare</button>
         </div>
+        <div class="en-basis">
+            <select class="opt-select" id="enBasis" onchange="setElNinoBasis(this.value)" aria-label="Our outlook is built from">
+                <option value="weather">Based on NOAA weather</option>
+                <option value="record">Based on past El Niño winters</option>
+            </select>
+        </div>
         <div class="en-seg-row">
             <span>Past winters:</span>
             <div class="en-seg" role="group" aria-label="Past winters">
@@ -518,7 +527,7 @@
         <div id="enKeyRows"></div>
         <div class="en-key-score" id="enKeyScore"></div>
         <div class="en-key-tip">Tap a state for details.</div>
-        <div class="en-key-credit">Data: Project FeederWatch, from its participants, Birds Canada and the Cornell Lab of Ornithology.</div>
+        <div class="en-key-credit" id="enKeyCredit">Data: Project FeederWatch, from its participants, Birds Canada and the Cornell Lab of Ornithology.</div>
     </div>
 
     <!-- Viewer bar (bottom-center) -->
@@ -1053,10 +1062,12 @@ const ELNINO_OBS = {
     variable: { color: '#f5cc2e', label: 'Near normal' },
     less: { color: '#f2852a', label: 'Fewer than normal' }
 };
-// "Ours" and "Compare": an outlook built from the FeederWatch record itself (every El Nino
-// winter since 1991, ONI-weighted, same paired-feeder method; scripts/pfw_ours.py), drawn in
-// the published outlook's three categories, and the step distance between the two calls.
-const ELNINO_OURS_URL = '/data/elnino-ours.json?v=1';
+// "Ours" and "Compare": our own outlook, drawn in the published outlook's three categories, and
+// the step distance between the two calls. Two bases:
+//   weather  NOAA's Nov-Mar temperature forecast (CPC outlook; Canada from NMME scaled to CPC),
+//            colder than the continent = more feeder use (scripts/pfw_wxfcst.py)
+//   record   what feeders saw in every strong El Nino winter since 1991 (scripts/pfw_ours.py)
+const ELNINO_FW_URLS = { weather: '/data/elnino-weather.json?v=1', record: '/data/elnino-ours.json?v=1' };
 const ELNINO_STEP = { more: 1, variable: 0, less: -1 };
 const ELNINO_DIFF = {
     0: { color: '#3b82f6', label: 'Same call' },
@@ -1066,7 +1077,7 @@ const ELNINO_DIFF = {
 const ELNINO_VIEWS = ['forecast', 'ours', 'compare', 'actual', 'check'];
 let elnino = { on: false, strength: 'medium', layer: null, data: null, loading: null, popup: null,
                view: 'forecast', winter: null, sp: 'all', check: null, checkLoading: null,
-               ours: null, oursLoading: null };
+               ours: null, basis: 'weather', fwDocs: {}, fwLoading: {} };
 try {
     elnino.on = localStorage.getItem('mygration.elnino') === 'on';
     const s = localStorage.getItem('mygration.elninoStrength');
@@ -1075,6 +1086,8 @@ try {
     if (ELNINO_VIEWS.includes(v)) elnino.view = v;
     elnino.winter = localStorage.getItem('mygration.elninoWinter');
     elnino.sp = localStorage.getItem('mygration.elninoSpecies') || 'all';
+    const b = localStorage.getItem('mygration.elninoBasis');
+    if (ELNINO_FW_URLS[b]) elnino.basis = b;
 } catch (e) { /* storage blocked: off, medium, forecast */ }
 
 map.createPane('elNino').style.zIndex = 350;
@@ -1094,6 +1107,10 @@ function elninoOurs(f) {
     const st = elnino.ours && elnino.ours.states[f.properties.n];
     if (!st || !ELNINO_CATS[f.properties.c]) return null;
     return Object.assign({ diff: ELNINO_STEP[st.cat] - ELNINO_STEP[f.properties.c] }, st);
+}
+function fmtDeg(f) {
+    f = Math.round(f * 10) / 10;
+    return (f > 0 ? '+' : f < 0 ? '−' : '') + Math.abs(f).toFixed(1) + '°';
 }
 function fmtPct1(p) {
     return Math.abs(p) >= 10 ? fmtPct(p) : (p > 0 ? '+' : p < 0 ? '−' : '') + Math.abs(p).toFixed(1) + '%';
@@ -1212,7 +1229,7 @@ function refreshElNinoLabels() {
         if (pt.w * pxPerDeg < 34) continue;
         let text = fmtPct(o.pct);
         if (elnino.view === 'ours') {
-            text = fmtPct1(o.pct);
+            text = o.f != null ? fmtDeg(o.f) : fmtPct1(o.pct);
         } else if (elnino.view === 'compare') {
             // ▲ = FeederWatch calls the state busier than the outlook did, ▼ = quieter
             text = o.diff === 0 ? '✓' : (o.diff > 0 ? '▲' : '▼') + Math.abs(o.diff);
@@ -1249,11 +1266,19 @@ function loadElNinoCheck() {
 }
 
 function loadElNinoOurs() {
-    if (!elnino.oursLoading) elnino.oursLoading = fetch(ELNINO_OURS_URL)
+    const b = elnino.basis;
+    if (!elnino.fwLoading[b]) elnino.fwLoading[b] = fetch(ELNINO_FW_URLS[b])
         .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(d => { elnino.ours = d; return d; })
-        .catch(e => { elnino.oursLoading = null; throw e; });
-    return elnino.oursLoading;
+        .then(d => { elnino.fwDocs[b] = d; return d; })
+        .catch(e => { elnino.fwLoading[b] = null; throw e; });
+    return elnino.fwLoading[b].then(d => { if (elnino.basis === b) elnino.ours = d; return d; });
+}
+async function setElNinoBasis(b) {
+    if (!ELNINO_FW_URLS[b]) return;
+    elnino.basis = b;
+    elnino.ours = elnino.fwDocs[b] || null;
+    try { localStorage.setItem('mygration.elninoBasis', b); } catch (e) { /* not remembered */ }
+    await setElNinoView(elnino.view);
 }
 
 function winterLabel(k, w) {
@@ -1286,6 +1311,9 @@ function renderElNinoKey() {
     const title = document.getElementById('enKeyTitle'), sub = document.getElementById('enKeySub');
     const rows = document.getElementById('enKeyRows'), score = document.getElementById('enKeyScore');
     rows.replaceChildren(); score.replaceChildren();
+    document.getElementById('enBasis').value = elnino.basis;
+    document.getElementById('enKeyCredit').textContent = fw && elnino.ours.credit ? elnino.ours.credit
+        : 'Data: Project FeederWatch, from its participants, Birds Canada and the Cornell Lab of Ornithology.';
     if (fw) {
         renderElNinoOursKey(title, sub, rows, score);
         return;
@@ -1343,8 +1371,7 @@ function renderElNinoKey() {
 // "FeederWatch" (our own outlook, built from every strong El Nino winter in the record) and
 // "Compare" (how many category steps it sits from the published outlook, state by state).
 function renderElNinoOursKey(title, sub, rows, score) {
-    const d = elnino.ours, ws = d.winters;
-    const yrs = ws[0].label.slice(0, 4) + '–' + ws[ws.length - 1].label.slice(0, 2) + ws[ws.length - 1].label.slice(-2);
+    const d = elnino.ours;
     const count = {}, tally = { 0: 0, 1: 0, 2: 0 };
     let shown = 0;
     if (elnino.data) for (const f of elnino.data.features) {
@@ -1354,6 +1381,12 @@ function renderElNinoOursKey(title, sub, rows, score) {
         count[u.cat] = (count[u.cat] || 0) + 1;
         tally[Math.abs(u.diff)]++;
     }
+    if (d.hindcast) {
+        renderElNinoWeatherKey(d, title, sub, rows, score, count, tally, shown);
+        return;
+    }
+    const ws = d.winters;
+    const yrs = ws[0].label.slice(0, 4) + '–' + ws[ws.length - 1].label.slice(0, 2) + ws[ws.length - 1].label.slice(-2);
     if (elnino.view === 'ours') {
         title.textContent = 'FeederWatch El Niño outlook';
         sub.textContent = 'Built from what feeders saw in the ' + ws.length + ' strong El Niño winters, ' + yrs +
@@ -1385,6 +1418,35 @@ function renderElNinoOursKey(title, sub, rows, score) {
     score.append('Hindcast test (each winter scored with a FeederWatch map built from the other ' + (ws.length - 1) +
         '): FeederWatch ', b1, ', published outlook ', b2,
         '. +1 = perfect, 0 = no better than chance. The record alone does not predict the next El Niño.');
+}
+// The weather basis: NOAA's Nov-Mar temperature outlook (Canada from the NMME models, scaled to
+// NOAA's) turned into feeder use by the FeederWatch record, colder than the continent = busier.
+function renderElNinoWeatherKey(d, title, sub, rows, score, count, tally, shown) {
+    const day = s => new Date(s + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const band = d.band.toFixed(1) + '°F';
+    if (elnino.view === 'ours') {
+        title.textContent = 'NOAA weather outlook';
+        sub.textContent = 'NOAA\'s November – March temperature forecast (issued ' + day(d.issued.cpc) +
+            '; Canada from the NMME climate models, ' + day(d.issued.nmme) + '). A colder winter than the rest of the continent ' +
+            'means busier feeders, about ' + Math.abs(d.slope).toFixed(1) + '% more birds per 1°F. Numbers: °F vs the continent.';
+        const why = { more: band + '+ colder than the continent', variable: 'within ' + band, less: band + '+ warmer than the continent' };
+        for (const k of ['more', 'variable', 'less']) {
+            rows.append(elninoKeyRow(ELNINO_CATS[k].color, ELNINO_CATS[k].label + ' (' + (count[k] || 0) + '): ' + why[k]));
+        }
+    } else {
+        title.textContent = 'NOAA weather vs the outlook';
+        sub.textContent = 'How far the weather-based call sits from the published outlook in each state, in category steps (more favorable → variable → less favorable).';
+        for (const k of [0, 1, 2]) rows.append(elninoKeyRow(ELNINO_DIFF[k].color, ELNINO_DIFF[k].label + ' (' + tally[k] + ' of ' + shown + ')'));
+        const arrows = document.createElement('div'); arrows.className = 'en-key-cont';
+        arrows.textContent = '▲ = the weather calls it busier than the outlook did, ▼ = quieter; the number is the steps apart.';
+        score.append(arrows);
+    }
+    const h = d.hindcast, sg = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+    const b = v => { const e = document.createElement('b'); e.textContent = sg(v); return e; };
+    score.append('Hindcast test (NOAA\'s October outlooks, ' + h.winters + ' winters 2012–24): NOAA weather ', b(h.noaa),
+        ', published outlook ', b(h.outlook), ', even the weather that actually happened only ', b(h.perfect),
+        '. In the ' + h.el_winters + ' El Niño winters: NOAA ', b(h.el_noaa), ', outlook ', b(h.el_outlook),
+        '. +1 = perfect, 0 = no better than chance. Weather nudges feeders, it does not drive them.');
 }
 // The whole Check in one picture: a column per outlook word, a dot per state at what its
 // feeders saw, the column's target shaded and its middle state marked. If the outlook were
@@ -1563,7 +1625,22 @@ map.on('click', e => {
     if (elninoIsOurs() && elnino.ours) {
         const u = elninoOurs(f);
         if (!u) {
-            box.append(line('Too few FeederWatch feeders here to say.', '#94a3b8'));
+            box.append(line(elnino.ours.hindcast ? 'No forecast here.' : 'Too few FeederWatch feeders here to say.', '#94a3b8'));
+        } else if (elnino.ours.hindcast) {
+            const uc = ELNINO_CATS[u.cat];
+            if (elnino.view === 'compare') {
+                const dc = ELNINO_DIFF[Math.abs(u.diff)];
+                box.append(line('Outlook said: ' + c.label.toLowerCase(), c.color),
+                           line('Weather says: ' + uc.label.toLowerCase(), uc.color),
+                           line(u.diff === 0 ? 'Same call' : Math.abs(u.diff) + (Math.abs(u.diff) === 1 ? ' step' : ' steps') +
+                                ' apart (weather ' + (u.diff > 0 ? 'busier' : 'quieter') + ')', dc.color, '600'));
+            } else {
+                box.append(line('Weather: ' + uc.label.toLowerCase(), uc.color, '600'));
+            }
+            box.append(line(u.f === 0 ? 'Same as the continent, Nov – Mar' : Math.abs(u.f).toFixed(1) + '°F ' + (u.f > 0 ? 'warmer' : 'colder') +
+                            ' than the continent, Nov – Mar', '#cbd5e1'),
+                       line('≈ ' + fmtPct1(u.pct) + ' birds per count', '#94a3b8'),
+                       line(u.src === 'nmme' ? 'From the NMME climate models (scaled to NOAA)' : 'From NOAA\'s seasonal outlook', '#94a3b8'));
         } else {
             const uc = ELNINO_CATS[u.cat], agreeN = Math.round(u.agree * u.n);
             const lean = u.pct > 0 ? 'busier' : u.pct < 0 ? 'quieter' : 'neither';
