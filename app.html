@@ -267,6 +267,16 @@
         .en-lbl{background:none;border:0}
         .en-lbl span{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font:700 11px/1 Inter,system-ui,sans-serif;
             color:#0f172a;text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 4px #fff}
+        .en-strip-wrap{margin:0.35rem 0 0.2rem}
+        .en-strip{width:100%;height:auto;display:block;margin:0.2rem 0}
+        .en-strip .ax{font-size:9px;fill:#94a3b8}
+        .en-strip .col{font-size:10px;font-weight:700;fill:#e2e8f0}
+        .en-strip .zero{stroke:#64748b;stroke-width:0.75;stroke-dasharray:2 2}
+        .en-strip .target{fill:rgba(59,130,246,0.16)}
+        .en-strip .dot{stroke:#0f172a;stroke-width:0.6}
+        .en-strip .mid{stroke:#fff;stroke-width:2;stroke-linecap:round}
+        .en-strip-cap{font-size:0.6875rem;color:var(--text-muted);line-height:1.35}
+        .en-strip-cap b{color:var(--text)}
         .en-key-credit{font-size:0.625rem;color:var(--text-muted);margin-top:0.35rem;line-height:1.3;display:none}
         .en-key.observed .en-key-credit{display:block}
         .en-row{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
@@ -1032,11 +1042,6 @@ const ELNINO_OBS = {
     variable: { color: '#f5cc2e', label: 'Near normal' },
     less: { color: '#f2852a', label: 'Fewer than normal' }
 };
-const ELNINO_RESULT = {
-    match: { color: '#3b82f6', label: 'Matched the forecast' },
-    partial: { color: '#94a3b8', label: 'Partly matched' },
-    miss: { color: '#dc2626', label: 'Opposite of the forecast' }
-};
 const ELNINO_VIEWS = ['forecast', 'actual', 'check'];
 let elnino = { on: false, strength: 'medium', layer: null, data: null, loading: null, popup: null,
                view: 'forecast', winter: null, sp: 'all', check: null, checkLoading: null };
@@ -1064,10 +1069,6 @@ function elninoBin(pct) {
     const t = (sp ? sp.bin : 0.05) * 100;
     return pct > t ? 'more' : pct < -t ? 'less' : 'variable';
 }
-function elninoResult(forecast, observed) {
-    if (forecast === observed) return 'match';
-    return forecast === 'variable' || observed === 'variable' ? 'partial' : 'miss';
-}
 
 // "Actual" shades each state on one scale, fewer (orange) through normal (pale) to more
 // (green), saturating at +-4x the species' near-normal band, and prints its percent on it.
@@ -1076,12 +1077,37 @@ function elninoRange() {
     const sp = elnino.check.species.find(s => s.code === elnino.sp);
     return Math.round((sp ? sp.bin : 0.05) * 400);
 }
-function rampColor(pct) {
+function rampColor(pct, ramp = ELNINO_RAMP) {
     const t = Math.max(-1, Math.min(1, pct / elninoRange()));
     let i = 0;
-    while (i < ELNINO_RAMP.length - 2 && t > ELNINO_RAMP[i + 1][0]) i++;
-    const [t0, a] = ELNINO_RAMP[i], [t1, b] = ELNINO_RAMP[i + 1], k = (t - t0) / (t1 - t0);
+    while (i < ramp.length - 2 && t > ramp[i + 1][0]) i++;
+    const [t0, a] = ramp[i], [t1, b] = ramp[i + 1], k = (t - t0) / (t1 - t0);
     return 'rgb(' + a.map((v, j) => Math.round(v + (b[j] - v) * k)).join(',') + ')';
+}
+function rampCss(ramp) {
+    return 'linear-gradient(90deg,' + ramp.map(([s, c]) => 'rgb(' + c.join(',') + ') ' + ((s + 1) * 50) + '%').join(',') + ')';
+}
+
+// "Check": how far each state landed from what the outlook said. The outlook gives a
+// direction, not a number, so its words become targets: "more" = above normal, "less" =
+// below normal, "variable" = within the near-normal band (+-5% all birds, +-10% one species).
+// fit > 0 = on target by that many points, fit < 0 = missed by that many; shaded red
+// (missed) through gray (on the line) to blue (on target), on the same +-4x band scale.
+const ELNINO_FIT_RAMP = [[-1, [220, 38, 38]], [-0.5, [240, 150, 150]], [0, [203, 213, 225]], [0.5, [125, 170, 240]], [1, [37, 99, 235]]];
+function elninoBand() { return elninoRange() / 4; }
+function elninoFit(forecast, pct) {
+    if (forecast === 'more') return pct;
+    if (forecast === 'less') return -pct;
+    return elninoBand() - Math.abs(pct);
+}
+function elninoFitText(forecast, pct) {
+    const fit = elninoFit(forecast, pct), pts = Math.abs(Math.round(fit));
+    if (forecast === 'variable') {
+        return fit >= 0 ? 'On target: inside near normal (±' + elninoBand() + '%)'
+                        : 'Missed: ' + pts + ' pts outside near normal (±' + elninoBand() + '%)';
+    }
+    return fit >= 0 ? 'On target: ' + pts + ' pts the right way'
+                    : 'Missed: ' + pts + ' pts the wrong way';
 }
 function fmtPct(p) {
     return (p > 0 ? '+' : p < 0 ? '−' : '') + Math.abs(Math.round(p)) + '%';
@@ -1100,8 +1126,8 @@ function elninoStyle(f) {
         const c = rampColor(o.pct);
         return { color: '#475569', weight: 0.6, opacity: 0.6, fillColor: c, fillOpacity: Math.max(fill, 0.6) };
     }
-    const c = ELNINO_RESULT[elninoResult(f.properties.c, elninoBin(o.pct))].color;
-    return { color: c, weight: 1, opacity: 0.7, fillColor: c, fillOpacity: fill };
+    const c = rampColor(elninoFit(f.properties.c, o.pct), ELNINO_FIT_RAMP);
+    return { color: '#475569', weight: 0.6, opacity: 0.6, fillColor: c, fillOpacity: Math.max(fill, 0.6) };
 }
 
 // Where a state's number goes: the centroid of its largest piece (the bounding-box middle
@@ -1144,8 +1170,13 @@ function refreshElNinoLabels() {
         if (!o) continue;
         const pt = elninoLabelPoint(f);
         if (pt.w * pxPerDeg < 34) continue;
+        let text = fmtPct(o.pct);
+        if (elnino.view === 'check') {
+            const fit = elninoFit(f.properties.c, o.pct), pts = Math.abs(Math.round(fit));
+            text = (fit >= 0 ? '✓' : '✗') + (f.properties.c === 'variable' && fit >= 0 ? '' : ' ' + pts);
+        }
         L.marker(pt.ll, { pane: 'elNinoLbl', interactive: false, keyboard: false,
-            icon: L.divIcon({ className: 'en-lbl', iconSize: null, html: '<span>' + fmtPct(o.pct) + '</span>' }) }).addTo(elnino.labels);
+            icon: L.divIcon({ className: 'en-lbl', iconSize: null, html: '<span>' + text + '</span>' }) }).addTo(elnino.labels);
     }
     elnino.labels.addTo(map);
 }
@@ -1158,6 +1189,7 @@ function syncSightingDots() {
     });
 }
 function refreshElNino() {
+    renderElNinoKey();  // the Check chart needs the outlook, which may have just arrived
     if (elnino.layer) elnino.layer.setStyle(elninoStyle);
     refreshElNinoLabels();
     syncSightingDots();
@@ -1226,9 +1258,20 @@ function renderElNinoKey() {
         }
         rows.append(bar, ticks);
     } else {
-        for (const k of ['match', 'partial', 'miss']) rows.append(elninoKeyRow(ELNINO_RESULT[k].color, ELNINO_RESULT[k].label));
+        const r = elninoRange();
+        const bar = document.createElement('div'); bar.className = 'en-ramp';
+        bar.style.background = rampCss(ELNINO_FIT_RAMP);
+        const ticks = document.createElement('div'); ticks.className = 'en-ramp-ticks';
+        for (const t of ['✗ ' + r + '+ pts\nmissed', 'on the\nline', '✓ ' + r + '+ pts\non target']) {
+            const s = document.createElement('span'); s.textContent = t; ticks.append(s);
+        }
+        rows.append(bar, ticks);
     }
     rows.append(elninoKeyRow('#64748b', 'Too few feeders', true));
+    if (elnino.view === 'check') {
+        const chart = elninoStripChart(sp);
+        if (chart) rows.append(chart);
+    }
     const cont = document.createElement('div'); cont.className = 'en-key-cont';
     const cb = document.createElement('b'); cb.textContent = fmtPct(sp.cont);
     cont.append('Numbers: birds per count vs normal winters at the same feeders, beyond the whole continent\'s change (', cb, ').');
@@ -1238,6 +1281,67 @@ function renderElNinoKey() {
         score.append('Fit to the outlook: ', b,
             ' (' + ordinal(sp.rank) + ' best of ' + sp.of + ' winters; +1 = exactly the outlook, 0 = no relation)');
     }
+}
+// The whole Check in one picture: a column per outlook word, a dot per state at what its
+// feeders saw, the column's target shaded and its middle state marked. If the outlook were
+// right the dots would sit in the shading and the columns would step down left to right.
+function elninoStripChart(sp) {
+    if (!elnino.data) return null;
+    const cat = {};
+    for (const f of elnino.data.features) cat[f.properties.n] = f.properties.c;
+    const band = elninoBand(), cols = ['more', 'variable', 'less'];
+    const pts = { more: [], variable: [], less: [] };
+    for (const [n, [pct]] of Object.entries(sp.states)) if (pts[cat[n]]) pts[cat[n]].push([n, pct]);
+    const all = [].concat(...cols.map(c => pts[c].map(p => Math.abs(p[1]))));
+    if (!all.length) return null;
+    const ymax = Math.max(10, Math.ceil(Math.max(...all, band * 2) / 10) * 10);
+    const W = 200, H = 150, L0 = 30, T = 8, B = 34, cw = (W - L0) / 3;
+    const y = p => T + (ymax - Math.max(-ymax, Math.min(ymax, p))) / (2 * ymax) * (H - T - B);
+    const NS = 'http://www.w3.org/2000/svg';
+    const el = (tag, attrs, text) => {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        if (text != null) e.textContent = text;
+        return e;
+    };
+    const svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'en-strip', role: 'img',
+                            'aria-label': 'States by what the outlook said and what feeders saw' });
+    for (const [v, lbl] of [[ymax, fmtPct(ymax)], [0, '0%'], [-ymax, fmtPct(-ymax)]]) {
+        svg.append(el('text', { x: L0 - 4, y: y(v) + 3, 'text-anchor': 'end', class: 'ax' }, lbl));
+    }
+    svg.append(el('line', { x1: L0, x2: W, y1: y(0), y2: y(0), class: 'zero' }));
+    let hit = 0, tot = 0;
+    cols.forEach((c, i) => {
+        const x0 = L0 + i * cw, cx = x0 + cw / 2;
+        const [a, b] = c === 'more' ? [ymax, 0] : c === 'less' ? [0, -ymax] : [band, -band];
+        svg.append(el('rect', { x: x0 + 3, y: y(a), width: cw - 6, height: y(b) - y(a), class: 'target' }));
+        const list = pts[c].slice().sort((p, q) => p[1] - q[1]);
+        let ok = 0;
+        list.forEach(([n, pct], k) => {
+            const fit = elninoFit(c, pct);
+            if (fit >= 0) ok++;
+            const dot = el('circle', { cx: cx + ((k * 7) % 9 - 4) * 3.4, cy: y(pct), r: 3,
+                                       fill: rampColor(fit, ELNINO_FIT_RAMP), class: 'dot' });
+            dot.append(el('title', {}, n + ': ' + fmtPct(pct)));
+            svg.append(dot);
+        });
+        if (list.length) {
+            const mid = list.length % 2 ? list[(list.length - 1) / 2][1]
+                                        : (list[list.length / 2 - 1][1] + list[list.length / 2][1]) / 2;
+            svg.append(el('line', { x1: cx - 15, x2: cx + 15, y1: y(mid), y2: y(mid), class: 'mid' }));
+        }
+        svg.append(el('text', { x: cx, y: H - B + 13, 'text-anchor': 'middle', class: 'col' }, ELNINO_CATS[c].label.split(' ')[0]));
+        svg.append(el('text', { x: cx, y: H - B + 25, 'text-anchor': 'middle', class: 'ax' }, ok + ' of ' + list.length + ' ✓'));
+        hit += ok; tot += list.length;
+    });
+    const wrap = document.createElement('div'); wrap.className = 'en-strip-wrap';
+    const cap = document.createElement('div'); cap.className = 'en-strip-cap';
+    cap.textContent = 'Each dot is a state, grouped by what the outlook said. Shaded = its target; bar = the middle state.';
+    const tally = document.createElement('div'); tally.className = 'en-strip-cap';
+    const tb = document.createElement('b'); tb.textContent = hit + ' of ' + tot;
+    tally.append('On target: ', tb, ' states (' + Math.round(hit / tot * 100) + '%).');
+    wrap.append(cap, svg, tally);
+    return wrap;
 }
 function ordinal(n) {
     const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
@@ -1355,11 +1459,11 @@ map.on('click', e => {
         if (!o) {
             box.append(line('Too few FeederWatch feeders here to say.', '#94a3b8'));
         } else {
-            const bin = elninoBin(o.pct), r = ELNINO_RESULT[elninoResult(f.properties.c, bin)];
+            const bin = elninoBin(o.pct), fit = elninoFit(f.properties.c, o.pct);
             box.append(line(fmtPct(o.pct) + ' vs normal: ' + ELNINO_OBS[bin].label.toLowerCase(), rampColor(o.pct), '600'),
                        line(o.sites + ' feeders compared', '#94a3b8'),
                        line('Outlook said: ' + c.label.toLowerCase(), c.color),
-                       line(r.label, r.color, '600'));
+                       line(elninoFitText(f.properties.c, o.pct), fit >= 0 ? '#93c5fd' : '#fca5a5', '600'));
         }
     }
     elnino.popup = L.popup({ className: 'en-popup', maxWidth: 240, autoPan: false }).setLatLng(e.latlng).setContent(box).openOn(map);
