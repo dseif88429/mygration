@@ -257,6 +257,16 @@
         .en-pickers select{width:100%;font-size:0.75rem;padding:0.25rem 0.35rem}
         .en-key-score{font-size:0.75rem;color:var(--text-dim);margin-top:0.4rem;line-height:1.35}
         .en-key-score b{color:var(--text)}
+        .en-ramp{height:12px;border-radius:3px;margin:0.2rem 0 0.25rem}
+        .en-ramp-ticks{display:flex;justify-content:space-between;font-size:0.6875rem;color:var(--text-dim);line-height:1.25;margin-bottom:0.3rem}
+        .en-ramp-ticks span{white-space:pre;text-align:center}
+        .en-ramp-ticks span:first-child{text-align:left}
+        .en-ramp-ticks span:last-child{text-align:right}
+        .en-key-cont{margin-bottom:0.3rem}
+        .en-key-cont b{color:var(--text)}
+        .en-lbl{background:none;border:0}
+        .en-lbl span{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font:700 11px/1 Inter,system-ui,sans-serif;
+            color:#0f172a;text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 4px #fff}
         .en-key-credit{font-size:0.625rem;color:var(--text-muted);margin-top:0.35rem;line-height:1.3;display:none}
         .en-key.observed .en-key-credit{display:block}
         .en-row{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
@@ -620,7 +630,7 @@ async function loadSightings() {
             });
             speciesLayers[sp.code] = layer;
             speciesVisible[sp.code] = true;
-            if (!radarOn) layer.addTo(map);  // radar mode puts them back when it's switched off
+            if (!radarOn && !elninoHidesDots()) layer.addTo(map);  // radar / Actual / Check put them back when switched off
         });
 
         // Legend
@@ -642,7 +652,7 @@ async function loadSightings() {
 function toggleSpecies(code) {
     speciesVisible[code] = !speciesVisible[code];
     // Radar mode keeps the dots off the map; the toggle hides or shows that species' blips instead.
-    if (!radarOn && speciesLayers[code]) {
+    if (!radarOn && !elninoHidesDots() && speciesLayers[code]) {
         if (speciesVisible[code]) map.addLayer(speciesLayers[code]); else map.removeLayer(speciesLayers[code]);
     }
     document.querySelector('[data-species="' + code + '"]')?.classList.toggle('off', !speciesVisible[code]);
@@ -994,7 +1004,7 @@ async function toggleRadar(force) {
         // radar error must never leave the map half-switched.
         try { if (radar) radar.hide(); } catch (e) { console.error('Bird radar:', e); }
         setBasemap(S.prefs?.map_format || 'street');
-        Object.keys(speciesLayers).forEach(c => { if (speciesVisible[c]) speciesLayers[c].addTo(map); });
+        syncSightingDots();
         showLegendCounts();  // back to the sightings' counts
     }
 }
@@ -1059,6 +1069,25 @@ function elninoResult(forecast, observed) {
     return forecast === 'variable' || observed === 'variable' ? 'partial' : 'miss';
 }
 
+// "Actual" shades each state on one scale, fewer (orange) through normal (pale) to more
+// (green), saturating at +-4x the species' near-normal band, and prints its percent on it.
+const ELNINO_RAMP = [[-1, [194, 65, 12]], [-0.5, [242, 133, 42]], [0, [245, 231, 168]], [0.5, [92, 184, 95]], [1, [30, 123, 52]]];
+function elninoRange() {
+    const sp = elnino.check.species.find(s => s.code === elnino.sp);
+    return Math.round((sp ? sp.bin : 0.05) * 400);
+}
+function rampColor(pct) {
+    const t = Math.max(-1, Math.min(1, pct / elninoRange()));
+    let i = 0;
+    while (i < ELNINO_RAMP.length - 2 && t > ELNINO_RAMP[i + 1][0]) i++;
+    const [t0, a] = ELNINO_RAMP[i], [t1, b] = ELNINO_RAMP[i + 1], k = (t - t0) / (t1 - t0);
+    return 'rgb(' + a.map((v, j) => Math.round(v + (b[j] - v) * k)).join(',') + ')';
+}
+function fmtPct(p) {
+    return (p > 0 ? '+' : p < 0 ? '−' : '') + Math.abs(Math.round(p)) + '%';
+}
+function elninoHidesDots() { return elnino.on && elnino.view !== 'forecast'; }
+
 function elninoStyle(f) {
     const fill = ELNINO_FILL[elnino.strength];
     if (elnino.view === 'forecast' || !elnino.check) {
@@ -1067,9 +1096,71 @@ function elninoStyle(f) {
     }
     const o = elninoObs(f.properties.n);
     if (!o) return { color: '#64748b', weight: 0.6, opacity: 0.5, fillOpacity: 0 };  // too few feeders
-    const bin = elninoBin(o.pct);
-    const c = elnino.view === 'actual' ? ELNINO_OBS[bin].color : ELNINO_RESULT[elninoResult(f.properties.c, bin)].color;
+    if (elnino.view === 'actual') {
+        const c = rampColor(o.pct);
+        return { color: '#475569', weight: 0.6, opacity: 0.6, fillColor: c, fillOpacity: Math.max(fill, 0.6) };
+    }
+    const c = ELNINO_RESULT[elninoResult(f.properties.c, elninoBin(o.pct))].color;
     return { color: c, weight: 1, opacity: 0.7, fillColor: c, fillOpacity: fill };
+}
+
+// Where a state's number goes: the centroid of its largest piece (the bounding-box middle
+// when the centroid falls outside, e.g. a crescent), and how wide that piece is in degrees
+// so labels only appear once the state is wide enough on screen to hold one.
+map.createPane('elNinoLbl').style.zIndex = 455;
+map.getPane('elNinoLbl').style.pointerEvents = 'none';
+const elninoLblPts = {};
+function elninoLabelPoint(f) {
+    const n = f.properties.n;
+    if (elninoLblPts[n]) return elninoLblPts[n];
+    const g = f.geometry, polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+    let best = null, bestArea = -1;
+    for (const p of polys) {
+        const xs = p[0].map(c => c[0]), ys = p[0].map(c => c[1]);
+        const bb = [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)];
+        const a = (bb[2] - bb[0]) * (bb[3] - bb[1]);
+        if (a > bestArea) { bestArea = a; best = { p, bb }; }
+    }
+    const r = best.p[0];
+    let A = 0, cx = 0, cy = 0;
+    for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+        const cr = r[j][0] * r[i][1] - r[i][0] * r[j][1];
+        A += cr; cx += (r[j][0] + r[i][0]) * cr; cy += (r[j][1] + r[i][1]) * cr;
+    }
+    let x = cx / (3 * A), y = cy / (3 * A);
+    if (!A || !polyHas(best.p, x, y)) { x = (best.bb[0] + best.bb[2]) / 2; y = (best.bb[1] + best.bb[3]) / 2; }
+    return (elninoLblPts[n] = { ll: [y, x], w: best.bb[2] - best.bb[0] });
+}
+function refreshElNinoLabels() {
+    if (!elnino.labels) elnino.labels = L.layerGroup();
+    elnino.labels.clearLayers();
+    if (!elnino.on || !elnino.layer || !elnino.data || elnino.view === 'forecast' || !elnino.check) {
+        map.removeLayer(elnino.labels);
+        return;
+    }
+    const pxPerDeg = 256 * Math.pow(2, map.getZoom()) / 360;
+    for (const f of elnino.data.features) {
+        const o = elninoObs(f.properties.n);
+        if (!o) continue;
+        const pt = elninoLabelPoint(f);
+        if (pt.w * pxPerDeg < 34) continue;
+        L.marker(pt.ll, { pane: 'elNinoLbl', interactive: false, keyboard: false,
+            icon: L.divIcon({ className: 'en-lbl', iconSize: null, html: '<span>' + fmtPct(o.pct) + '</span>' }) }).addTo(elnino.labels);
+    }
+    elnino.labels.addTo(map);
+}
+map.on('zoomend', () => { if (elnino.on) refreshElNinoLabels(); });
+
+function syncSightingDots() {
+    const hide = radarOn || elninoHidesDots();
+    Object.keys(speciesLayers).forEach(c => {
+        if (!hide && speciesVisible[c]) speciesLayers[c].addTo(map); else map.removeLayer(speciesLayers[c]);
+    });
+}
+function refreshElNino() {
+    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
+    refreshElNinoLabels();
+    syncSightingDots();
 }
 
 function loadElNinoCheck() {
@@ -1123,13 +1214,25 @@ function renderElNinoKey() {
         score.textContent = 'Not enough FeederWatch counts of this bird that winter.';
         return;
     }
-    const t = Math.round(((elnino.check.species.find(s => s.code === elnino.sp) || {}).bin || 0.05) * 100);
-    const src = elnino.view === 'actual'
-        ? [['more', ELNINO_OBS.more.label + ' (+' + t + '%)'], ['variable', ELNINO_OBS.variable.label], ['less', ELNINO_OBS.less.label + ' (−' + t + '%)']]
-        : [['match'], ['partial'], ['miss']];
-    const set = elnino.view === 'actual' ? ELNINO_OBS : ELNINO_RESULT;
-    for (const [k, label] of src) rows.append(elninoKeyRow(set[k].color, label || set[k].label));
+    if (elnino.view === 'actual') {
+        const r = elninoRange();
+        const bar = document.createElement('div'); bar.className = 'en-ramp';
+        bar.style.background = 'linear-gradient(90deg,' + ELNINO_RAMP.map(([s, c]) => 'rgb(' + c.join(',') + ') ' + ((s + 1) * 50) + '%').join(',') + ')';
+        const ticks = document.createElement('div'); ticks.className = 'en-ramp-ticks';
+        for (const [v, word] of [[-r, 'fewer'], [0, 'normal'], [r, 'more']]) {
+            const s = document.createElement('span');
+            s.textContent = (v ? fmtPct(v) : '0%') + '\n' + word;
+            ticks.append(s);
+        }
+        rows.append(bar, ticks);
+    } else {
+        for (const k of ['match', 'partial', 'miss']) rows.append(elninoKeyRow(ELNINO_RESULT[k].color, ELNINO_RESULT[k].label));
+    }
     rows.append(elninoKeyRow('#64748b', 'Too few feeders', true));
+    const cont = document.createElement('div'); cont.className = 'en-key-cont';
+    const cb = document.createElement('b'); cb.textContent = fmtPct(sp.cont);
+    cont.append('Numbers: birds per count vs normal winters at the same feeders, beyond the whole continent\'s change (', cb, ').');
+    score.append(cont);
     if (sp.score != null) {
         const b = document.createElement('b'); b.textContent = (sp.score > 0 ? '+' : '') + sp.score.toFixed(2);
         score.append('Fit to the outlook: ', b,
@@ -1153,14 +1256,14 @@ async function setElNinoView(v) {
         }
     }
     renderElNinoKey();
-    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
+    refreshElNino();
 }
 function setElNinoPick(which, value) {
     elnino[which] = value;
     try { localStorage.setItem(which === 'winter' ? 'mygration.elninoWinter' : 'mygration.elninoSpecies', value); } catch (e) { /* not remembered */ }
     if (elnino.popup) map.closePopup(elnino.popup);
     renderElNinoKey();
-    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
+    refreshElNino();
 }
 
 function loadElNino() {
@@ -1179,6 +1282,7 @@ async function setElNino(on) {
     if (!on) {
         if (elnino.layer) map.removeLayer(elnino.layer);
         if (elnino.popup) map.closePopup(elnino.popup);
+        refreshElNino();
         return;
     }
     renderElNinoKey();
@@ -1190,6 +1294,7 @@ async function setElNino(on) {
             pane: 'elNino', renderer: L.canvas({ pane: 'elNino' }), interactive: false, style: elninoStyle
         });
         elnino.layer.addTo(map);
+        refreshElNino();
     } catch (e) {
         console.error('El Nino outlook:', e);
         elnino.on = false;
@@ -1202,7 +1307,7 @@ function setElNinoStrength(v) {
     if (!ELNINO_FILL[v]) return;
     elnino.strength = v;
     try { localStorage.setItem('mygration.elninoStrength', v); } catch (e) { /* not remembered */ }
-    if (elnino.layer) elnino.layer.setStyle(elninoStyle);
+    refreshElNino();
 }
 
 // Tapping the map while the outlook is on names the state under the tap and its outlook.
@@ -1251,8 +1356,7 @@ map.on('click', e => {
             box.append(line('Too few FeederWatch feeders here to say.', '#94a3b8'));
         } else {
             const bin = elninoBin(o.pct), r = ELNINO_RESULT[elninoResult(f.properties.c, bin)];
-            const pct = (o.pct > 0 ? '+' : o.pct < 0 ? '−' : '') + Math.abs(Math.round(o.pct)) + '%';
-            box.append(line(pct + ' vs normal: ' + ELNINO_OBS[bin].label.toLowerCase(), ELNINO_OBS[bin].color, '600'),
+            box.append(line(fmtPct(o.pct) + ' vs normal: ' + ELNINO_OBS[bin].label.toLowerCase(), rampColor(o.pct), '600'),
                        line(o.sites + ' feeders compared', '#94a3b8'),
                        line('Outlook said: ' + c.label.toLowerCase(), c.color),
                        line(r.label, r.color, '600'));
