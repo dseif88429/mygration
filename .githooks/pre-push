@@ -10,7 +10,9 @@
 #
 # This catches what pre-commit can't: `git commit --no-verify`, and commits
 # made by rebase, cherry-pick, merge or am, or in a clone or GUI that has no
-# hook or no gitleaks.
+# hook or no gitleaks. A merge commit is checked for what the merge itself
+# adds (lines and files in no parent); what it brings in from its parents is
+# checked in those parents' own commits.
 #
 # Enable in a fresh clone with:  git config core.hooksPath .githooks
 #
@@ -21,8 +23,8 @@ z40=0000000000000000000000000000000000000000
 fail=0
 
 # Keep these two patterns identical to the ones in .githooks/pre-commit.
-SECRET_PATHS='(^|/)\.env($|\.)|\.env$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|(^|/)credentials[^/]*\.json$|service[-_]account[^/]*\.json$|client_secret[^/]*\.json$|(^|/)token\.json$|(^|/)rclone\.conf$|(^|/)\.my\.cnf$|(^|/)\.netrc$|(^|/)\.pypirc$|(^|/)\.npmrc$|(^|/)\.htpasswd$|\.sql\.gz$|\.dump$'
-TEMPLATES='\.env\.(example|sample|template)$|(^|/)(example|sample|template)\.env$'
+SECRET_PATHS='(^|/)\.env($|[._-])|\.env$|\.pem$|\.key$|\.p8$|\.p12$|\.pfx$|\.jks$|\.keystore$|(^|/)AuthKey_[^/]*$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|(^|/)credentials[^/]*\.json$|service[-_]account[^/]*\.json$|client_secret[^/]*\.json$|(^|/)token\.json$|(^|/)rclone\.conf$|(^|/)\.my\.cnf$|(^|/)\.netrc$|(^|/)\.pypirc$|(^|/)\.npmrc$|(^|/)\.htpasswd$|\.sql\.gz$|\.dump$'
+TEMPLATES='\.env[._-](example|sample|template)$|(^|/)(example|sample|template)\.env$'
 
 if command -v gitleaks >/dev/null 2>&1; then
   have_gitleaks=1
@@ -52,9 +54,11 @@ while read -r local_ref local_sha remote_ref remote_sha; do
 
   # ------------------------------------------------------------ layer 1
   # Every path any outgoing commit added or changed, even if a later commit
-  # deleted it again: it is still in the history being pushed.
-  bad=$(git log --format= --name-only --diff-filter=ACMR $range </dev/null \
-        | sort -u | grep -E "$SECRET_PATHS" | grep -vE "$TEMPLATES" || true)
+  # deleted it again: it is still in the history being pushed. --cc adds the
+  # paths a merge commit changed relative to every parent. -z gives raw names
+  # (git otherwise quotes non-ASCII ones, which the patterns would miss).
+  bad=$(git log --format= --name-only -z --cc --diff-filter=ACMR $range </dev/null \
+        | tr '\0' '\n' | sort -u | grep -iE "$SECRET_PATHS" | grep -viE "$TEMPLATES" || true)
   if [ -n "$bad" ]; then
     echo "pre-push: BLOCKED - outgoing commits to $remote_ref add paths that look like secret material:" >&2
     printf '%s\n' "$bad" | sed 's/^/    /' >&2
@@ -68,6 +72,15 @@ while read -r local_ref local_sha remote_ref remote_sha; do
       echo "pre-push: BLOCKED - gitleaks found secrets in the $count outgoing commit(s) to $remote_ref (values redacted above)." >&2
       fail=1
     fi
+    # gitleaks reads `git log -p`, which shows no diff for a merge commit, so
+    # scan each outgoing merge's dense combined diff (only what is in no parent).
+    for merge in $(git rev-list --merges $range </dev/null 2>/dev/null); do
+      if ! git show --cc --format= "$merge" </dev/null \
+           | gitleaks stdin --no-banner --redact --exit-code 1 --log-level warn; then
+        echo "pre-push: BLOCKED - gitleaks found secrets added by merge commit $(git rev-parse --short "$merge") to $remote_ref (values redacted above)." >&2
+        fail=1
+      fi
+    done
   fi
 done
 
