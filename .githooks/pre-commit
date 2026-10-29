@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+# Blocks commits that contain secrets. Two independent layers:
+#
+#   1. Filename guard - refuses env files, private keys and credential
+#      dumps outright, whatever their contents.
+#   2. gitleaks - content scan of the staged diff, if gitleaks is on PATH.
+#
+# .githooks/pre-push runs the same two layers over every commit being pushed.
+#
+# Enable in a fresh clone with:  git config core.hooksPath .githooks
+#
+# Bypass with `git commit --no-verify` - but be certain first. This hook
+# exists because live production credentials reached the remote once already.
+
+set -u
+fail=0
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+# ---------------------------------------------------------------- layer 1
+# .env, .env.<anything> and *.env are blocked; documented templates are allowed.
+# Keep these two patterns identical to the ones in .githooks/pre-push.
+SECRET_PATHS='(^|/)\.env($|\.)|\.env$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|(^|/)credentials[^/]*\.json$|service[-_]account[^/]*\.json$|client_secret[^/]*\.json$|(^|/)token\.json$|(^|/)rclone\.conf$|(^|/)\.my\.cnf$|(^|/)\.netrc$|(^|/)\.pypirc$|(^|/)\.npmrc$|(^|/)\.htpasswd$|\.sql\.gz$|\.dump$'
+TEMPLATES='\.env\.(example|sample|template)$|(^|/)(example|sample|template)\.env$'
+
+bad=$(printf '%s\n' "$staged" | grep -E "$SECRET_PATHS" | grep -vE "$TEMPLATES" || true)
+
+if [ -n "$bad" ]; then
+  echo "pre-commit: BLOCKED - these staged paths look like secret material:"
+  printf '%s\n' "$bad" | sed 's/^/    /'
+  echo "    (if one is genuinely a template, name it .env.example)"
+  fail=1
+fi
+
+# ---------------------------------------------------------------- layer 2
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --staged --no-banner --redact --exit-code 1; then
+    echo "pre-commit: BLOCKED - gitleaks found secrets in the staged diff (values redacted above)."
+    fail=1
+  fi
+else
+  echo "pre-commit: warning - gitleaks not on PATH, content scan skipped."
+  echo "            install: https://github.com/gitleaks/gitleaks/releases"
+fi
+
+# ----------------------------------------------------------------
+if [ "$fail" -ne 0 ]; then
+  cat <<'EOF'
+
+Commit aborted.
+
+  * False positive?  add the finding to .gitleaksignore, or annotate the
+                     line with a  gitleaks:allow  comment.
+  * Really need it?  git commit --no-verify
+
+Secrets already committed are not fixed by removing the file - the value
+stays in history and must be rotated.
+EOF
+  exit 1
+fi
+
+exit 0

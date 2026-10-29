@@ -1,0 +1,90 @@
+#!/bin/sh
+#
+# Blocks pushes that carry secrets. The same two layers as pre-commit, run
+# over every commit being pushed (only those the remote doesn't have yet):
+#
+#   1. Filename guard - refuses any outgoing commit that adds or changes an
+#      env file, private key or credential dump, whatever its contents.
+#   2. gitleaks - content scan of the outgoing commits, if gitleaks is on
+#      PATH. Without gitleaks it warns and lets the push through.
+#
+# This catches what pre-commit can't: `git commit --no-verify`, and commits
+# made by rebase, cherry-pick, merge or am, or in a clone or GUI that has no
+# hook or no gitleaks.
+#
+# Enable in a fresh clone with:  git config core.hooksPath .githooks
+#
+# Bypass with `git push --no-verify` - but be certain first.
+
+set -u
+z40=0000000000000000000000000000000000000000
+fail=0
+
+# Keep these two patterns identical to the ones in .githooks/pre-commit.
+SECRET_PATHS='(^|/)\.env($|\.)|\.env$|\.pem$|\.key$|\.p12$|\.pfx$|\.jks$|\.keystore$|(^|/)id_(rsa|dsa|ecdsa|ed25519)|(^|/)credentials[^/]*\.json$|service[-_]account[^/]*\.json$|client_secret[^/]*\.json$|(^|/)token\.json$|(^|/)rclone\.conf$|(^|/)\.my\.cnf$|(^|/)\.netrc$|(^|/)\.pypirc$|(^|/)\.npmrc$|(^|/)\.htpasswd$|\.sql\.gz$|\.dump$'
+TEMPLATES='\.env\.(example|sample|template)$|(^|/)(example|sample|template)\.env$'
+
+if command -v gitleaks >/dev/null 2>&1; then
+  have_gitleaks=1
+else
+  have_gitleaks=0
+  echo "pre-push: warning - gitleaks not on PATH, content scan skipped (the filename guard still runs)." >&2
+  echo "          install: https://github.com/gitleaks/gitleaks/releases" >&2
+fi
+
+# stdin: one line per ref being pushed - <local ref> <local sha> <remote ref> <remote sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  # Deleting a remote branch sends no commits.
+  [ "$local_sha" = "$z40" ] && continue
+
+  # The outgoing commits. An existing remote branch we have locally: what it
+  # lacks. A new branch, or a remote tip we haven't fetched: everything that is
+  # on no remote-tracking ref yet.
+  if [ "$remote_sha" != "$z40" ] && git cat-file -e "$remote_sha^{commit}" 2>/dev/null; then
+    range="$remote_sha..$local_sha"
+  else
+    range="$local_sha --not --remotes"
+  fi
+  # $range is deliberately unquoted below: it is one or three git arguments.
+  count=$(git rev-list --count $range </dev/null 2>/dev/null || echo 0)
+  [ "$count" -eq 0 ] && continue
+  [ "$count" -gt 500 ] && echo "pre-push: scanning $count outgoing commits for secrets; this can take a minute." >&2
+
+  # ------------------------------------------------------------ layer 1
+  # Every path any outgoing commit added or changed, even if a later commit
+  # deleted it again: it is still in the history being pushed.
+  bad=$(git log --format= --name-only --diff-filter=ACMR $range </dev/null \
+        | sort -u | grep -E "$SECRET_PATHS" | grep -vE "$TEMPLATES" || true)
+  if [ -n "$bad" ]; then
+    echo "pre-push: BLOCKED - outgoing commits to $remote_ref add paths that look like secret material:" >&2
+    printf '%s\n' "$bad" | sed 's/^/    /' >&2
+    fail=1
+  fi
+
+  # ------------------------------------------------------------ layer 2
+  if [ "$have_gitleaks" -eq 1 ]; then
+    if ! gitleaks git --no-banner --redact --exit-code 1 --log-level warn \
+         --log-opts="$range" . </dev/null; then
+      echo "pre-push: BLOCKED - gitleaks found secrets in the $count outgoing commit(s) to $remote_ref (values redacted above)." >&2
+      fail=1
+    fi
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  cat >&2 <<'EOF'
+
+Push aborted. Nothing was sent.
+
+  * False positive?  add the finding to .gitleaksignore, or annotate the
+                     line with a  gitleaks:allow  comment, then amend.
+  * Really need it?  git push --no-verify
+
+A secret that reached a commit is still in that commit's history: rewrite the
+unpushed commits (rebase/amend) before pushing, and rotate the value if it was
+ever pushed anywhere.
+EOF
+  exit 1
+fi
+
+exit 0
